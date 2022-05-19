@@ -3,6 +3,8 @@ package io.mosip.registration.clientmanager.jobservice;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 import io.mosip.registration.clientmanager.spi.PacketService;
 
@@ -26,10 +28,12 @@ public class PacketStatusSyncJob extends SyncJobServiceBase {
     }
 
     @Override
-    public boolean triggerJob() {
+    public boolean triggerJob(int jobId) {
         Log.d(TAG, TAG + " Started");
         try {
             packetService.syncAllPacketStatus();
+            long timeStampInSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+            logJobTransaction(jobId, timeStampInSeconds);
             return true;
         } catch (Exception e) {
             Log.e(TAG, TAG + " failed", e);
