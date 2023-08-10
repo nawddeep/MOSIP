@@ -94,12 +94,6 @@ class _CustomDropDownState extends State<DropDownControl> {
         .getLocationValues(hierarchyLevelName, langCode);
   }
 
-  Future<List<String?>> _getFieldValues(String fieldId, String langCode) async {
-    return await context
-        .read<RegistrationTaskProvider>()
-        .getFieldValues(fieldId, langCode);
-  }
-
   Future<List<GenericData?>> _getLocationValuesBasedOnParent(
       String parentCode, String hierarchyLevelName, String langCode) async {
     return await context
@@ -111,9 +105,7 @@ class _CustomDropDownState extends State<DropDownControl> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: widget.field.fieldType == "dynamic"
-            ? _getFieldValues(widget.field.subType!, "eng")
-            : _getLocationValues(widget.field.subType!, "eng"),
+        future: _getLocationValues(widget.field.subType!, "eng"),
         builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
           return Card(
             elevation: 0,
