@@ -14,7 +14,10 @@ import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/biometric_capture_control_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
+import 'package:registration_client/utils/biometrics_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'package:registration_client/provider/auth_provider.dart';
 
 class OperatorBiometricCaptureScanBlockView extends StatefulWidget {
   const OperatorBiometricCaptureScanBlockView({super.key});
@@ -28,6 +31,28 @@ class _OperatorBiometricCaptureScanBlockViewState
     extends State<OperatorBiometricCaptureScanBlockView> {
   bool isPortrait = true;
   late GlobalProvider globalProvider;
+  
+  // Helper function to safely convert qualityPercentage to int
+  int safeQualityToInt(double qualityPercentage) {
+    if (!qualityPercentage.isFinite || qualityPercentage < 0) {
+      return 0;
+    }
+    if (qualityPercentage > 100) {
+      return 100;
+    }
+    return qualityPercentage.toInt();
+  }
+  
+  // Helper function to safely clamp qualityPercentage for percent calculations
+  double safeQualityPercent(double qualityPercentage) {
+    if (!qualityPercentage.isFinite || qualityPercentage < 0) {
+      return 0.0;
+    }
+    if (qualityPercentage > 100) {
+      return 1.0;
+    }
+    return qualityPercentage / 100;
+  }
 
   @override
   void initState() {
@@ -318,10 +343,10 @@ class _OperatorBiometricCaptureScanBlockViewState
                   LinearPercentIndicator(
                     width: (isMobileSize) ? 250.w : 450.w,
                     lineHeight: 15.4,
-                    percent: biometricAttributeData.qualityPercentage / 100,
+                    percent: safeQualityPercent(biometricAttributeData.qualityPercentage),
                     backgroundColor: Colors.grey,
                     progressColor:
-                        (biometricAttributeData.qualityPercentage.toInt() <
+                        (safeQualityToInt(biometricAttributeData.qualityPercentage) <
                                 int.parse(
                                     biometricAttributeData.thresholdPercentage))
                             ? secondaryColors.elementAt(26)
@@ -331,7 +356,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                     width: (isMobileSize) ? 20.w : 43.w,
                   ),
                   Text(
-                    "${biometricAttributeData.qualityPercentage.toInt()}%",
+                    "${safeQualityToInt(biometricAttributeData.qualityPercentage)}%",
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontSize: 23,
                           fontWeight: semiBold,
@@ -388,8 +413,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                 }
               });
               biometricAttributeData.qualityPercentage =
-                  biometricCaptureControlProvider
-                      .avgScore(biometricAttributeData.listOfBiometricsDto);
+                  biometricAttributeData.listOfBiometricsDto.avgScore();
               await BiometricsApi()
                   .extractImageValues("operatorBiometrics",
                       biometricAttributeData.title.replaceAll(" ", ""))
@@ -1238,17 +1262,22 @@ class _OperatorBiometricCaptureScanBlockViewState
                       ),
                     );
                   },
-                  child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(1000),
-                          color: solidPrimary),
-                      height: 75,
-                      width: 75,
-                      child: Icon(
-                        Icons.zoom_in,
-                        color: pureWhite,
-                        size: 35,
-                      )))),
+                  child: Semantics(
+                    label: "zoom_in_button",
+                    container: true,
+                    excludeSemantics: true,
+                    child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(1000),
+                            color: solidPrimary),
+                        height: 75,
+                        width: 75,
+                        child: Icon(
+                          Icons.zoom_in,
+                          color: pureWhite,
+                          size: 35,
+                        )),
+                  ))),
         ],
       );
     }
@@ -1899,17 +1928,22 @@ class _OperatorBiometricCaptureScanBlockViewState
                       ),
                     );
                   },
-                  child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(1000),
-                          color: solidPrimary),
-                      height: 75,
-                      width: 75,
-                      child: Icon(
-                        Icons.zoom_in,
-                        color: pureWhite,
-                        size: 35,
-                      )))),
+                  child: Semantics(
+                    label: "zoom_in_button",
+                    container: true,
+                    excludeSemantics: true,
+                    child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(1000),
+                            color: solidPrimary),
+                        height: 75,
+                        width: 75,
+                        child: Icon(
+                          Icons.zoom_in,
+                          color: pureWhite,
+                          size: 35,
+                        ))),
+                )),
         ],
       );
     }
@@ -2251,6 +2285,31 @@ class _OperatorBiometricCaptureScanBlockViewState
 
   late BiometricAttributeData biometricAttributeData;
   late BiometricCaptureControlProvider biometricCaptureControlProvider;
+  String getRoleBasedBiometricTitle(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    final bool isOnboarding =
+        globalProvider.onboardingProcessName == "Onboarding";
+
+    if (authProvider.isOfficer) {
+      return isOnboarding
+          ? AppLocalizations.of(context)!.onboard_officer_biometric
+          : AppLocalizations.of(context)!.update_officer_biometric;
+    } else if (authProvider.isOperator) {
+      return isOnboarding
+          ? AppLocalizations.of(context)!.onboard_operator_biomterics
+          : AppLocalizations.of(context)!.update_operator_biomterics;
+    } else if (authProvider.isSupervisor) {
+      return isOnboarding
+          ? AppLocalizations.of(context)!.supervisors_biometric_onboard
+          : AppLocalizations.of(context)!.supervisors_biometric_update;
+    }
+
+    return globalProvider.onboardingProcessName == "Onboarding"
+        ? AppLocalizations.of(context)!.supervisors_biometric_onboard
+        : AppLocalizations.of(context)!.supervisors_biometric_update;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -2323,26 +2382,28 @@ class _OperatorBiometricCaptureScanBlockViewState
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        globalProvider.onboardingProcessName == "Onboarding"
-                            ? AppLocalizations.of(context)!
-                                .supervisors_biometric_onboard
-                            : AppLocalizations.of(context)!
-                                .supervisors_biometric_update,
+                        getRoleBasedBiometricTitle(context),
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontSize: (isMobileSize) ? 14.h : 24.h,
-                            color: blackShade1,
-                            fontWeight: semiBold,
-                            overflow: TextOverflow.ellipsis),
+                          fontSize: (isMobileSize) ? 14.h : 24.h,
+                          color: blackShade1,
+                          fontWeight: semiBold,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 30),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Image.asset(
-                            "assets/images/Group 57951.png",
-                            height: (isMobileSize) ? 30.h : 52.h,
+                      Semantics(
+                        label: "menu_back_button",
+                        container: true,
+                        excludeSemantics: true,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 30),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Image.asset(
+                              "assets/images/Menu_Grid.png",
+                              height: (isMobileSize) ? 30.h : 52.h,
+                            ),
                           ),
                         ),
                       )

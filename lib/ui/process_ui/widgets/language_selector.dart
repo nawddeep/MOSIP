@@ -82,13 +82,29 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     globalProvider.fieldDisplayValues = {};
     await globalProvider.fieldValues(widget.newProcess);
 
+    // Capture GPS location before starting registration to validate distance
+    double? latitude;
+    double? longitude;
+    try {
+      final position = await globalProvider.fetchLocation()
+          .timeout(const Duration(seconds: 10), onTimeout: () => null);
+      if (position != null) {
+        latitude = position.latitude;
+        longitude = position.longitude;
+      }
+    } catch (e) {
+      debugPrint("GPS location capture failed: $e");
+    }
+
     List<String> langList = _getRegistrationLanguageList();
     await registrationTaskProvider.startRegistration(
         langList,
         widget.newProcess.flow! == "UPDATE"
             ? "Update"
             : widget.newProcess.flow!,
-        widget.newProcess.id!);
+        widget.newProcess.id!,
+        latitude: latitude,
+        longitude: longitude);
 
     registrationTaskProvider.addDemographicField("preferredLang",
         globalProvider.fieldInputValue["preferredLang"].toString());
@@ -98,7 +114,9 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     if (registrationStartError.isEmpty) {
       _triggerNavigation();
     } else {
-      _showInSnackBar(registrationStartError);
+      // Get error message using the centralized errors() method from i18n
+      String errorMessage = AppLocalizations.of(context)!.errors(registrationStartError);
+      _showInSnackBar(errorMessage);
     }
   }
 
@@ -114,23 +132,21 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   }
 
   _getDataEntryLabel() {
-    String dataEntryLanguage = "";
-    context.watch<GlobalProvider>().chosenLang.forEach((element) {
-      String code = context.read<GlobalProvider>().selectedLanguage;
-      dataEntryLanguage +=
-          " / ${AppLocalizations.of(context)!.dataEntryLanguage(code)}";
-    });
-    return dataEntryLanguage.substring(3);
+    String label = "";
+    for (var lang in context.watch<GlobalProvider>().chosenLang) {
+      String code = context.read<GlobalProvider>().langToCode(lang);
+      label += " / ${AppLocalizations.of(context)!.dataEntryLanguage(code)}";
+    }
+    return label.isEmpty ? "" : label.substring(3);
   }
 
   _getNotificationLabel() {
-    String notificationLanguage = "";
-    context.watch<GlobalProvider>().chosenLang.forEach((element) {
-      String code = context.read<GlobalProvider>().selectedLanguage;
-      notificationLanguage +=
-          " / ${AppLocalizations.of(context)!.notificationLanguage(code)}";
-    });
-    return notificationLanguage.substring(3);
+    String label = "";
+    for (var lang in context.watch<GlobalProvider>().chosenLang) {
+      String code = context.read<GlobalProvider>().langToCode(lang);
+      label += " / ${AppLocalizations.of(context)!.notificationLanguage(code)}";
+    }
+    return label.isEmpty ? "" : label.substring(3);
   }
 
   @override

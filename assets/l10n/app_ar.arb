@@ -37,7 +37,6 @@
   "login_failed": "فشل تسجيل الدخول. حاول مرة أخرى!",
   "password_incorrect": "كلمة المرور غير صحيحة!",
   "machine_not_found": "لم يتم العثور على الجهاز!",
-  "network_error": "فشل تسجيل الدخول. تحقق من اتصال الشبكة!",
   "cred_expired": "لم يتم العثور على بيانات الاعتماد أو انتهت صلاحيتها. يرجى محاولة تسجيل الدخول عبر الإنترنت!",
   "not_initialized": "تعذر تهيئة الجهاز!",
   "invalid_user": "اسم المستخدم غير صالح!",
@@ -211,8 +210,6 @@
   "language_selector_note": "يرجى ملاحظة أن اللغة قد تعتمد على البيانات التي تم إدخالها أثناء التسجيل المسبق.",
   "cancel": "يلغي",
   "submit": "يُقدِّم",
-  "go_back": "عُد",
-  "informed": "أُبلغ",
   "logo_text": "مدعوم من موسيب",
   "get_onboard": "إركب",
   "skip_to_home": "انتقل إلى المنزل",
@@ -305,7 +302,7 @@
   "logout_success": "لقد تم تسجيل بنجاح!",
   "logout_failure": "حدث خطأ ما، يرجى المحاولة مرة أخرى بعد مرور بعض الوقت",
   "go_to_home": "اذهب إلى المنزل",
-  "errors": "{messages, select, REG_TRY_AGAIN{فشل تسجيل الدخول. حاول مرة أخرى!} REG_INVALID_REQUEST{كلمة المرور غير صحيحة!} REG_MACHINE_NOT_FOUND{لم يتم العثور على الجهاز!} REG_NETWORK_ERROR{فشل تسجيل الدخول. تحقق من اتصال الشبكة!} REG_CRED_EXPIRED{لم يتم العثور على بيانات الاعتماد أو انتهت صلاحيتها. يرجى محاولة تسجيل الدخول عبر الإنترنت!} REG_MACHINE_INACTIVE{الآلة غير نشطة!} REG_CENTER_INACTIVE{المركز غير نشط!} other{'Some error occurred!'}}",
+  "errors": "{messages, select, REG_TRY_AGAIN{فشل تسجيل الدخول. حاول مرة أخرى!} REG_INVALID_REQUEST{كلمة المرور غير صحيحة!} REG_MACHINE_NOT_FOUND{لم يتم تسجيل هذا الجهاز بعد. يرجى التواصل مع المسؤول للحصول على المساعدة!} REG_NETWORK_ERROR{فشل تسجيل الدخول. تحقق من اتصال الشبكة!} REG_CRED_EXPIRED{لم يتم العثور على بيانات الاعتماد أو انتهت صلاحيتها. يرجى محاولة تسجيل الدخول عبر الإنترنت!} REG_MACHINE_INACTIVE{الآلة غير نشطة!} REG_CENTER_INACTIVE{المركز غير نشط!} REG_LOGIN_LOCKED{تم الوصول إلى الحد الأقصى لمحاولة تسجيل الدخول. حاول مرة أخرى لاحقا!} KER_SYN_AUTH_001{تعذر الحصول على رمز المصادقة!} PAK_APPRVL_MAX_TIME{الإجراء المطلوب: لقد تجاوزت الحزم المسجلة المعلقة وقت الموافقة المسموح به. يرجى مسح التراكم للمتابعة.} PAK_UPLOAD_MAX_TIME{الإجراء المطلوب: تحميل الحزم أو تصديرها إلى الخادم قبل متابعة التسجيل.} PAK_UPLOAD_MAX_COUNT{الإجراء المطلوب: تم الوصول إلى الحد الأقصى للحزمة. الرجاء تصدير أو تحميل الحزم الموجودة قبل إنشاء تسجيلات جديدة.} PAK_DISK_SPACE_LOW{الحد الأدنى من المساحة المطلوبة غير متوفر لإنشاء الحزمة.} REG_PKT_APPRVL_CNT_EXCEED{تم الوصول إلى الحد الأقصى لعدد حزم التسجيل المعلقة للموافقة على العميل. يرجى الموافقة على الحزم أو رفضها قبل متابعة هذا التسجيل.} OPT_TO_REG_TIME_SYNC_EXCEED{تجاوز الوقت منذ آخر مزامنة الحد الأقصى المسموح به. يرجى المزامنة من الخادم قبل المتابعة مع هذا التسجيل.} OPT_TO_REG_OUTSIDE_LOCATION{موقع جهاز العميل الخاص بك خارج مركز التسجيل. يرجى ملاحظة أنه يمكن إجراء التسجيل فقط من داخل مركز التسجيل} other{'Some error occurred!'}}",
   "@errors": {
     "description": "Error messages",
     "placeholders": {
@@ -318,6 +315,14 @@
   "application_id_not_exist": "معرف التطبيق غير موجود!",
   "correct_application_id": "يرجى التحقق من معرف التطبيق الذي تم إدخاله أو إدخال معرف صحيح ومحاولة جلبه مرة أخرى.",
   "enter_application_id": "الرجاء إدخال معرف التطبيق",
+  "prid_length_greater": "يجب أن يتكون معرف التطبيق من أرقام {length} بالضبط",
+  "@prid_length_greater": {
+     "placeholders": {
+        "length": {
+          "type": "int"
+        }
+     }
+  },
   "okay": "تمام",
   "no_internet_connection": "لا يوجد اتصال بالإنترنت!",
   "connect_and_retry": "يرجى الاتصال بالإنترنت وإعادة المحاولة.",
@@ -332,5 +337,37 @@
   "enter_additional_info_req_id": "أدخل معرف طلب المعلومات الإضافية",
   "additional_info_req_id": "معرف طلب المعلومات الإضافية",
   "no_access_to_this_page": "ليست لديك صلاحية الوصول إلى هذه الصفحة",
-  "scheduled_job_settings": "إعدادات المهمة المجدولة"
+  "scheduled_job_settings": "إعدادات المهمة المجدولة",
+  "doc_size_exceeded": "حجم الملف يتجاوز الحد {size}",
+  "@doc_size_exceeded": {
+       "placeholders": {
+         "size": {
+           "type": "String"
+         }
+       }
+  },
+  "age_should_not_be_greater": "يجب ألا يزيد العمر عن {age} سنة",
+  "@age_should_not_be_greater": {
+       "placeholders": {
+            "age": {
+            "type": "int"
+            }
+       }
+  },
+  "onboard_officer_biometric": "التحقق البيومتري للضابط (التسجيل)",
+  "update_officer_biometric": "تحديث التحقق البيومتري للضابط",
+  "submit_changes": "إرسال التغييرات",
+  "local_preferences_saved_msg": "تم حفظ التفضيلات المحلية بنجاح. يلزم إعادة تشغيل التطبيق لرؤية التغييرات. هل ترغب في الإنهاء الآن؟",
+  "search_for_key": "ابحث عن المفتاح",
+  "no_devices_found": "لم يتم العثور على أجهزة",
+  "connect_devices_and_scan": "يرجى توصيل أجهزتك والضغط على 'مسح' لاكتشافها",
+  "search_for_key": "ابحث عن المفتاح",
+  "sync_restart_dialog_message": "سيتم إعادة تشغيل التطبيق بمجرد النقر على إعادة التشغيل، وسيتم توجيهك إلى صفحة تسجيل الدخول.",
+  "sync_restart_button": "إعادة التشغيل",
+  "app_restart_message": "تم حفظ التكوين بنجاح. جارٍ إعادة تشغيل التطبيق...",
+  "select_option": "اختر خياراً",
+  "cron_expression": "تعبير كرون",
+  "id": "بطاقة تعريف",
+  "name": "اسم"
 }
+

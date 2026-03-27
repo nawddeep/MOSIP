@@ -15,7 +15,7 @@ import regclient.page.BiometricDetailsPage;
 import regclient.page.CameraPage;
 import regclient.page.DocumentUploadPage;
 import regclient.pages.english.BiometricDetailsPageEnglish;
-import regclient.pages.english.DocumentuploadPageEnglish;
+import regclient.pages.english.DocumentUploadPageEnglish;
 
 public class DocumentUploadPageHindi extends DocumentUploadPage{
 
@@ -49,7 +49,7 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 
 	public  BiometricDetailsPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageHindi(driver);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -59,7 +59,7 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 
 	public  DocumentUploadPage clickOnSaveButton() {
 		clickOnElement(saveButton);
-		return new DocumentuploadPageEnglish(driver);
+		return new DocumentUploadPageHindi(driver);
 	}
 
 	public boolean isRetakeButtonDisplayed() {
@@ -88,6 +88,7 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 					assertTrue(isEnabled,"Verify if scan  button enabled for "+FetchUiSpec.getValueUsingId(id));
 					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
 					CameraPage cameraPage=new CameraPage(driver);
+					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
 					assertTrue(isRetakeButtonDisplayed(),"Verify if retake  button displayed");
@@ -106,6 +107,7 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 					assertTrue(isEnabled,"Verify if scan  button enabled for "+FetchUiSpec.getValueUsingId(id));
 					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
 					CameraPage cameraPage=new CameraPage(driver);
+					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
 					assertTrue(isRetakeButtonDisplayed(),"Verify if retake  button displayed");
@@ -126,6 +128,7 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 					assertTrue(isEnabled,"Verify if scan  button enabled for "+FetchUiSpec.getValueUsingId(id));
 					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
 					CameraPage cameraPage=new CameraPage(driver);
+					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
 					assertTrue(isRetakeButtonDisplayed(),"Verify if retake  button displayed");
@@ -152,6 +155,7 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 				assertTrue(isEnabled,"Verify if scan  button enabled for "+FetchUiSpec.getValueUsingId(id));
 				clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
 				CameraPage cameraPage=new CameraPage(driver);
+				cameraPage.handleCameraPermission();
 				cameraPage.clickimage();
 				cameraPage.clickOkButton();
 				assertTrue(isRetakeButtonDisplayed(),"Verify if retake  button displayed");
@@ -170,6 +174,7 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 					assertTrue(isEnabled,"Verify if scan  button enabled for "+FetchUiSpec.getValueUsingId(id));
 					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
 					CameraPage cameraPage=new CameraPage(driver);
+					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
 					assertTrue(isRetakeButtonDisplayed(),"Verify if retake  button displayed");

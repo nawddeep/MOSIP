@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
@@ -21,6 +23,7 @@ import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.entity.FileSignature;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
+import io.mosip.registration.clientmanager.entity.DocumentType;
 import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
@@ -29,6 +32,7 @@ import io.mosip.registration.clientmanager.entity.ReasonList;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.repository.*;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -111,6 +115,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private FileSignatureDao fileSignatureDao;
     private PermittedLocalConfigRepository permittedLocalConfigRepository;
     private LocalConfigDAO localConfigDAO;
+    private AuditManagerService auditManagerService;
     private String regCenterId;
     private String result = "";
     SharedPreferences sharedPreferences;
@@ -138,7 +143,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  FileSignatureDao fileSignatureDao,
                                  JobTransactionService jobTransactionService,
                                  PermittedLocalConfigRepository permittedLocalConfigRepository,
-                                 LocalConfigDAO localConfigDAO) {
+                                 LocalConfigDAO localConfigDAO,
+                                 AuditManagerService auditManagerService) {
         this.context = context;
         this.objectMapper = objectMapper;
         this.syncRestService = syncRestService;
@@ -163,6 +169,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.jobTransactionService = jobTransactionService;
         this.permittedLocalConfigRepository = permittedLocalConfigRepository;
         this.localConfigDAO = localConfigDAO;
+        this.auditManagerService = auditManagerService;
         sharedPreferences = this.context.getSharedPreferences(
                 this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE);
@@ -536,6 +543,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public void syncUserDetails(Runnable onFinish, boolean isManualSync, String jobId) throws Exception {
+        auditManagerService.audit(AuditEvent.FETCH_USR_DET, Components. JOB_SERVICE);
         String serverVersion = getServerVersionFromConfigs();
         if (serverVersion.startsWith(SERVER_VERSION_1_1_5)) {
             result = "";
@@ -1042,8 +1050,8 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public List<String> getDocumentTypes(String categoryCode, String applicantType, String langCode) {
-        return this.applicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCode);
+    public List<DocumentType> getDocumentTypes(String categoryCode, String applicantType, List<String> langCodes) {
+        return this.applicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCodes);
     }
 
     @Override
@@ -1080,6 +1088,42 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Override
     public Map<String, Object> getRegistrationParams() {
         return globalParamRepository.getGlobalParamsByPattern("mosip.registration%");
+    }
+
+    @Override
+    public String getCachedStringOnboardYourselfUrl() {
+        String value = globalParamRepository.getCachedStringOnboardYourselfUrl();
+        return value == null ? "" : value;
+    }
+
+    @Override
+    public String getCachedStringRegisteringIndividualUrl() {
+        String value = globalParamRepository.getCachedStringRegisteringIndividualUrl();
+        return value == null ? "" : value;
+    }
+
+    @Override
+    public String getCachedStringSyncDataUrl() {
+        String value = globalParamRepository.getCachedStringSyncDataUrl();
+        return value == null ? "" : value;
+    }
+
+    @Override
+    public String getCachedStringMappingDevicesUrl() {
+        String value = globalParamRepository.getCachedStringMappingDevicesUrl();
+        return value == null ? "" : value;
+    }
+
+    @Override
+    public String getCachedStringUploadingDataUrl() {
+        String value = globalParamRepository.getCachedStringUploadingDataUrl();
+        return value == null ? "" : value;
+    }
+
+    @Override
+    public String getCachedStringUpdatingBiometricsUrl() {
+        String value = globalParamRepository.getCachedStringUpdatingBiometricsUrl();
+        return value == null ? "" : value;
     }
 
 }

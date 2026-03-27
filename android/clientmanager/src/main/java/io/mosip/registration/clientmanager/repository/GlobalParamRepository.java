@@ -7,6 +7,7 @@ import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,15 +16,22 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class GlobalParamRepository {
 
     private static final String TAG = GlobalParamRepository.class.getSimpleName();
+    /** Config prefix for biometric SDK providers; only keys starting with this prefix are used. */
+    public static final String BIOMETRIC_SDK_PROVIDERS_PREFIX = "mosip.biometric.sdk.providers";
+
+    private static final String CLASSNAME = "classname";
+
     private static Map<String, String> globalParamMap = new HashMap<>();
     private GlobalParamDao globalParamDao;
     private LocalConfigDAO localConfigDAO;
+
+    /** Cached parsed config: modality -> vendorId -> (paramKey -> paramValue). Cleared on refresh. */
+    private Map<String, Map<String, Map<String, String>>> bioSdkProviderConfigCache = null;
 
     @Inject
     public GlobalParamRepository(GlobalParamDao globalParamDao, LocalConfigDAO localConfigDAO) {
@@ -158,6 +166,45 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.DIST_FRM_MACHINE_TO_CENTER);
     }
 
+    public String getCachedStringOperatorOnboardingBioAttributes() {
+        return globalParamMap.get(RegistrationConstants.OPERATOR_ONBOARDING_BIO_ATTRIBUTES);
+    }
+
+    public String getCachedStringOnboardYourselfUrl() {
+        return globalParamMap.get(RegistrationConstants.ONBOARD_YOURSELF_URL);
+    }
+
+    public String getCachedStringRegisteringIndividualUrl() {
+        return globalParamMap.get(RegistrationConstants.REGISTERING_INDIVIDUAL_URL);
+    }
+
+    public String getCachedStringSyncDataUrl() {
+        return globalParamMap.get(RegistrationConstants.SYNC_DATA_URL);
+    }
+
+    public String getCachedStringMappingDevicesUrl() {
+        return globalParamMap.get(RegistrationConstants.MAPPING_DEVICES_URL);
+    }
+
+    public String getCachedStringUploadingDataUrl() {
+        return globalParamMap.get(RegistrationConstants.UPLOADING_DATA_URL);
+    }
+
+    public String getCachedStringUpdatingBiometricsUrl() {
+        return globalParamMap.get(RegistrationConstants.UPDATING_BIOMETRICS_URL);
+    }
+
+    public String getCachedStringPasswordLength() {
+        return globalParamMap.get(RegistrationConstants.PWORD_LENGTH);
+    }
+
+    public String getCachedStringDocumentSize() {
+        return globalParamMap.get(RegistrationConstants.DOC_SIZE);
+    }
+
+    public String getCachedStringDOBAgeLimit() {
+        return globalParamMap.get(RegistrationConstants.MAX_AGE);
+    }
     public long getCachedReadTimeout() {
         return parseLongWithDefault(RegistrationConstants.HTTP_API_READ_TIMEOUT);
     }
@@ -166,6 +213,78 @@ public class GlobalParamRepository {
         return parseLongWithDefault(RegistrationConstants.HTTP_API_WRITE_TIMEOUT);
     }
 
+    public String getCachedStringInvalidLoginCount() {
+        return globalParamMap.get(RegistrationConstants.INVALID_LOGIN_COUNT);
+    }
+
+    public String getCachedStringInvalidLoginTime() {
+        return globalParamMap.get(RegistrationConstants.INVALID_LOGIN_TIME);
+    }
+
+    public int getCachedIntegerDiskSpaceSize() {
+        return getCachedIntegerGlobalParam(RegistrationConstants.DISK_SPACE);
+    }
+
+    public int getCachedIntegerPRIDLength(){
+        return getCachedIntegerGlobalParam(RegistrationConstants.PRID_LENGTH);
+    }
+
+    public int getCachedIntegerUINLength(){
+        return getCachedIntegerGlobalParam(RegistrationConstants.UIN_LENGTH);
+    }
+
+    public int getCachedIntegerVIDLength(){
+        return getCachedIntegerGlobalParam(RegistrationConstants.VID_LENGTH);
+    }
+    public String getCachedStringDocType() {
+        return globalParamMap.get(RegistrationConstants.DOC_TYPE);
+    }
+
+    public String getCachedStringAppName() {
+        return globalParamMap.get(RegistrationConstants.APP_NAME);
+    }
+
+    public String getCachedStringAppId() {
+        return globalParamMap.get(RegistrationConstants.APP_ID);
+    }
+
+    public String getCachedStringDefaultHostIp() {
+        return globalParamMap.get(RegistrationConstants.DEFAULT_HOST_IP);
+    }
+
+    public String getCachedStringDefaultHostName() {
+        return globalParamMap.get(RegistrationConstants.DEFAULT_HOST_NAME);
+    }
+
+    public String getCachedStringFieldsToRetainOnPridFetch(){
+        return globalParamMap.get(RegistrationConstants.FIELDS_TO_RETAIN_ON_PRID_FETCH);
+    }
+
+    public int getCachedIntRegMaxCountApproveLimit(){
+        return getCachedIntegerGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_APPRV_LIMIT);
+    }
+
+    public String getCachedStringPacketStoreLocation() {
+        return globalParamMap.get(RegistrationConstants.PACKET_STORE_LOCATION);
+    }
+
+    public String getCachedStringJobsOffline() {
+        return globalParamMap.get(RegistrationConstants.JOBS_OFFLINE);
+    }
+
+    public String getCachedStringJobsUntagged() {
+        return globalParamMap.get(RegistrationConstants.JOBS_UNTAGGED);
+    }
+
+    public String getCachedStringJobsRestart() {
+        return globalParamMap.get(RegistrationConstants.JOBS_RESTART);
+    }
+
+    public int getCachedIntCaptureTimeout() {
+        long timeout = parseLongWithDefault(RegistrationConstants.CAPTURE_TIMEOUT);
+        int defaultTimeout = Integer.parseInt(RegistrationConstants.DEFAULT_CAPTURE_TIMEOUT);
+        return  (timeout <= 0L || timeout > Integer.MAX_VALUE) ? defaultTimeout : (int) timeout;
+    }
 
     /**
      * Refresh configuration cache by merging global params with local preferences
@@ -187,17 +306,47 @@ public class GlobalParamRepository {
             globalParamMap.clear();
             globalParamMap.putAll(freshGlobalParams);
             globalParamMap.putAll(localConfigs); // Local preferences take precedence
+            bioSdkProviderConfigCache = null;
         } catch (Exception e) {
             Log.e(TAG, "Error refreshing configuration cache", e);
         }
 
     }
 
+    public Map<String, Map<String, Map<String, String>>> getBiometricProviderConfig() {
+        if (bioSdkProviderConfigCache == null) {
+            bioSdkProviderConfigCache = resolveBiometricProviderConfig();
+        }
+        return bioSdkProviderConfigCache;
+    }
+
+    private Map<String, Map<String, Map<String, String>>> resolveBiometricProviderConfig() {
+        String prefix = BIOMETRIC_SDK_PROVIDERS_PREFIX + ".";
+        Map<String, Object> providerKeyValues = getGlobalParamsByPattern(BIOMETRIC_SDK_PROVIDERS_PREFIX + ".%");
+
+        Map<String, Map<String, Map<String, String>>> result = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> e : providerKeyValues.entrySet()) {
+            String key = e.getKey();
+            if (key == null || !key.startsWith(prefix) || key.length() <= prefix.length()) continue;
+            String[] parts = key.substring(prefix.length()).split("\\.", -1);
+            if (parts.length < 3) continue;
+            String value = e.getValue() != null ? String.valueOf(e.getValue()).trim() : "";
+            result.computeIfAbsent(parts[0], k -> new LinkedHashMap<>())
+                    .computeIfAbsent(parts[1], k -> new LinkedHashMap<>())
+                    .put(parts.length > 3 ? String.join(".", Arrays.copyOfRange(parts, 2, parts.length)) : parts[2], value);
+        }
+        return result;
+    }
+
     private long parseLongWithDefault(String key) {
         String value = globalParamMap.get(key);
-        if (value == null || value.trim().isEmpty()) {
+        if (value == null || value.trim().isEmpty()) return 0L;
+        try {
+            return Long.parseLong(value.trim());
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Failed to parse long for key: " + key + ", value: " + value, e);
             return 0L;
         }
-        return Long.parseLong(value.trim());
     }
+
 }

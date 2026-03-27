@@ -7,8 +7,6 @@ abstract class CommonDetailsApi {
   @async
   String getPreviewTemplateContent(String templateTypeCode, String langCode);
   @async
-  List<String> getDocumentTypes(String categoryCode, String applicantType, String langCode);
-  @async
   List<String> getFieldValues(String fieldName, String langCode);
   @async
   String saveVersionToGlobalParam(String id, String value);
@@ -16,4 +14,16 @@ abstract class CommonDetailsApi {
   String getVersionFromGlobalParam(String id);
   @async
   String saveScreenHeaderToGlobalParam(String id, String value);
+  @async
+  String getOnboardYourselfUrl();
+  @async
+  String getRegisteringIndividualUrl();
+  @async
+  String getSyncDataUrl();
+  @async
+  String getMappingDevicesUrl();
+  @async
+  String getUploadingDataUrl();
+  @async
+  String getUpdatingBiometricsUrl();
 }

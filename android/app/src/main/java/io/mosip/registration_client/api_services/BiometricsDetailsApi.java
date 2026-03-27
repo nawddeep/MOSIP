@@ -86,7 +86,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     private final List<Bitmap> listBitmaps1 = new ArrayList<>();
     private byte[] byteArrayTester;
     private List<byte[]> listByteArrayTester1 = new ArrayList<>();
-    BiometricsPigeon.Result<String> result1;
+    BiometricsPigeon.Result<String> biometricResult;
 
     public List<String> OPERATOR_EXCEPTIONS=new ArrayList<>();
 
@@ -137,7 +137,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
         currentModality = getModality(modality);
         this.fieldId = fieldId;
         discoverSBI();
-        result1 = result;
+        biometricResult = result;
     }
 
     @Override
@@ -518,6 +518,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
 
     @Override
     public void startOperatorOnboarding(@NonNull BiometricsPigeon.Result<String> result) {
+        auditManagerService.audit(AuditEvent.NAV_ON_BOARD_USER, Components.REGISTRATION);
         try {
             OPERATOR_EXCEPTIONS.clear();
             userOnboardService.getOperatorBiometrics().clear();
@@ -560,6 +561,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     public void addBioException(@NonNull String fieldId, @NonNull String modality, @NonNull String attribute,
             @NonNull BiometricsPigeon.Result<String> result) {
         try {
+            auditManagerService.audit(AuditEvent.REG_BIO_EXCEPTION_MARKING, Components.REGISTRATION);
             if(fieldId.equals(OPERATOR_BIOMETRICS)){
 
 
@@ -588,6 +590,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     public void removeBioException(@NonNull String fieldId, @NonNull String modality, @NonNull String attribute,
             @NonNull BiometricsPigeon.Result<String> result) {
         try {
+            auditManagerService.audit(AuditEvent.REG_BIO_EXCEPTION_REMOVING, Components.REGISTRATION);
             if(fieldId.equals(OPERATOR_BIOMETRICS)){
                 OPERATOR_EXCEPTIONS.remove(attribute);
              
@@ -684,6 +687,18 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             Log.e(TAG, "Error starting device discovery", e);
             result.success(new ArrayList<>());
         }
+    }
+
+    @Override
+    public void getOperatorOnboardingBioattributes(@NonNull BiometricsPigeon.Result<String> result) {
+        String response = globalParamRepository.getCachedStringOperatorOnboardingBioAttributes();
+        result.success(response == null ? "" : response);
+    }
+
+    @Override
+    public void getCaptureTimeout(@NonNull BiometricsPigeon.Result<Long> result) {
+        int timeout = globalParamRepository.getCachedIntCaptureTimeout();
+        result.success(Long.valueOf(timeout));
     }
 
     public void handleDeviceInfoResponseForList(Bundle bundle) {
@@ -933,6 +948,12 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
         }
 
         try {
+            auditManagerService.auditWithArguments(
+                    AuditEvent.REG_BIO_SCAN,
+                    Components.REGISTRATION.getId(),
+                    Components.REGISTRATION.getName(),
+                    String.valueOf(currentModality)
+            );
             Intent intent = new Intent();
             // callbackId = callbackId.replace("\\.info","");
             intent.setAction(callbackId + RegistrationConstants.R_CAPTURE_INTENT_ACTION);
@@ -1042,8 +1063,9 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
 
             Uri uri = bundle.getParcelable(RegistrationConstants.SBI_INTENT_RESPONSE_KEY);
             InputStream respData = activity.getContentResolver().openInputStream(uri);
+            boolean isOperatorOnboarding = fieldId.equals(OPERATOR_BIOMETRICS);
             List<BiometricsDto> biometricsDtoList = biometricsService.handleRCaptureResponse(currentModality, respData,
-                    getExceptionAttributes());
+                    getExceptionAttributes(), isOperatorOnboarding);
             // if attempts is zero, there is no need to maintain the counter
             if (fieldId.equals(OPERATOR_BIOMETRICS)) {
                 removeDuplicatesFromOperatorBiometricList(currentModality);
@@ -1066,30 +1088,41 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
                 }
 
 
-                result1.success("Ok");
+                biometricResult.success("Ok");
             } else {
                 currentAttempt = this.registrationService.getRegistrationDto().getBioAttempt(fieldId, currentModality);
 
-                if(!biometricsDtoList.isEmpty()){
-                    biometricsDtoList.forEach(dto -> {
-                        try {
-                            this.registrationService.getRegistrationDto().addBiometric(fieldId,
-                                    (currentModality == Modality.EXCEPTION_PHOTO) || (currentModality == Modality.FACE)
-                                            ? currentModality.getAttributes().get(0)
-                                            : Modality.getBioAttribute(dto.getBioSubType()),
-                                    currentAttempt, dto);
-
-                            result1.success("Ok");
-                        } catch (Exception ex) {
-                            Log.e(TAG, ex.getMessage(), ex);
-                        }
-                    });
-                } else {
-                    Toast.makeText(activity.getApplicationContext(),
-                            "Biometrics Matched With Operator Biometrics, Please Try Again",Toast.LENGTH_SHORT).show();
+                if (biometricsDtoList.isEmpty()) {
+                    Toast.makeText(
+                            activity.getApplicationContext(),
+                            "No biometrics captured. Please try again.",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                    return;
                 }
+
+                biometricsDtoList.forEach(dto -> {
+                    try {
+                        this.registrationService.getRegistrationDto().addBiometric(
+                                fieldId,
+                                (currentModality == Modality.EXCEPTION_PHOTO) || (currentModality == Modality.FACE)
+                                        ? currentModality.getAttributes().get(0)
+                                        : Modality.getBioAttribute(dto.getBioSubType()),
+                                currentAttempt,
+                                dto
+                        );
+                    } catch (Exception ex) {
+                        Log.e(TAG, ex.getMessage(), ex);
+                    }
+                });
+                biometricResult.success("Ok");
             }
 
+        } catch (BiometricsServiceException e) {
+            auditManagerService.audit(AuditEvent.R_CAPTURE_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
+            Log.e(TAG, "R-Capture failed: " + e.getErrorCode(), e);
+            String message = e.getMessage() != null ? e.getMessage() : "Biometric capture failed";
+            Toast.makeText(activity.getApplicationContext(), message, Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             auditManagerService.audit(AuditEvent.R_CAPTURE_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
             Log.e(TAG, "Failed to parse rcapture response", e);

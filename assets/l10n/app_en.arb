@@ -37,7 +37,6 @@
   "login_failed": "Login Failed. Try Again!",
   "password_incorrect": "Password incorrect!",
   "machine_not_found": "Machine not found!",
-  "network_error": "Login failed. Check network connection!",
   "cred_expired": "Credentials not found or are expired. Please try online login!",
   "not_initialized": "Machine could not be initialized!",
   "invalid_user": "Username invalid!",
@@ -211,8 +210,6 @@
   "language_selector_note": "Please note that the language might be based on data entered during Pre-registration.",
   "cancel": "CANCEL",
   "submit": "SUBMIT",
-  "go_back": "GO BACK",
-  "informed": "INFORMED",
   "logo_text": "Powered by MOSIP",
   "get_onboard": "GET ONBOARDED",
   "skip_to_home": "SKIP TO HOME",
@@ -305,7 +302,7 @@
   "logout_success": "You have been successfully logged out!",
   "logout_failure": "Something went wrong, please try again after some time",
   "go_to_home": "Go To Home",
-  "errors": "{messages, select, REG_TRY_AGAIN{Login Failed. Try Again!} REG_INVALID_REQUEST{Password incorrect!} REG_MACHINE_NOT_FOUND{Machine not found!} REG_NETWORK_ERROR{Login failed. Check network connection!} REG_CRED_EXPIRED{Credentials not found or are expired. Please try online login!} REG_MACHINE_INACTIVE{Machine is not active!} REG_CENTER_INACTIVE{Center is not active!} other{'Some error occurred!'}}",
+  "errors": "{messages, select, REG_TRY_AGAIN{Login Failed. Try Again!} REG_INVALID_REQUEST{Password incorrect!} REG_MACHINE_NOT_FOUND{This device has not been onboarded yet. Please reach out to your administrator for assistance!} REG_NETWORK_ERROR{Login failed. Check network connection!} REG_CRED_EXPIRED{Credentials not found or are expired. Please try online login!} REG_MACHINE_INACTIVE{Machine is not active!} REG_CENTER_INACTIVE{Center is not active!} REG_LOGIN_LOCKED{Maximum login attempt limit reached. Try again later!} KER_SYN_AUTH_001{Unable to get Authentication Token!} PAK_APPRVL_MAX_TIME{Action required: Pending registered packets have exceeded the allowed approval time. Please clear the backlog to continue.} PAK_UPLOAD_MAX_TIME{Action required: Upload or export the packets to the server before proceeding with registration.} PAK_UPLOAD_MAX_COUNT{Action required: Packet limit reached. Please export or upload existing packets before creating new registrations.} PAK_DISK_SPACE_LOW{Minimum required space is not available to create the packet.} REG_PKT_APPRVL_CNT_EXCEED{Maximum number of registration packets pending approval on client reached. Please approve or reject packets before proceeding with this registration.} OPT_TO_REG_TIME_SYNC_EXCEED{Time since last sync exceeded maximum limit. Please sync from server before proceeding with this registration.} OPT_TO_REG_OUTSIDE_LOCATION{Your client machine location is outside the registration center. Please note that registration can be done only from within the registration centre} other{'Some error occurred!'}}",
   "@errors": {
     "description": "Error messages",
     "placeholders": {
@@ -318,6 +315,14 @@
   "application_id_not_exist": "Application ID does not exist!",
   "correct_application_id": "Please check the entered Application ID or enter a correct ID and try to fetch it again.",
   "enter_application_id": "Please Enter Application ID",
+  "prid_length_greater": "Application ID must be exactly {length} digits.",
+  "@prid_length_greater": {
+    "placeholders": {
+      "length": {
+        "type": "int"
+      }
+    }
+  },
   "okay": "OKAY",
   "no_internet_connection": "No Internet Connection!",
   "connect_and_retry": "Please connect with internet and retry.",
@@ -332,5 +337,36 @@
   "enter_additional_info_req_id": "Enter Additional Info Request ID",
   "additional_info_req_id": "Additional Info Request ID",
   "scheduled_job_settings": "Scheduled Job Settings",
-  "no_access_to_this_page": "You don't have access to this page"
+  "no_access_to_this_page": "You don't have access to this page",
+  "doc_size_exceeded": "File size exceeds limit {size}",
+  "@doc_size_exceeded": {
+     "placeholders": {
+       "size": {
+         "type": "String"
+       }
+     }
+  },
+  "age_should_not_be_greater": "Age should not be greater than {age} years",
+  "@age_should_not_be_greater": {
+     "placeholders": {
+          "age": {
+          "type": "int"
+          }
+     }
+  },
+  "onboard_officer_biometric": "Officer's Biometric Onboarding",
+  "update_officer_biometric": "Officer's Biometric Update",
+  "submit_changes": "Submit Changes",
+  "local_preferences_saved_msg": "Local Preferences have been saved successfully. Application restart is needed to see the changes. Do you want to quit now?",
+  "search_for_key": "Search for Key",
+  "no_devices_found": "No devices found",
+  "connect_devices_and_scan": "Please connect your devices and tap 'Scan' to detect them",
+  "search_for_key": "Search for Key",
+  "sync_restart_dialog_message": "The app will restart once you click Restart, and you will be redirected to the login page.",
+  "sync_restart_button": "Restart",
+  "app_restart_message": "Configuration saved successfully. Restarting app...",
+  "select_option": "Select Option",
+  "cron_expression": "Cron Expression",
+  "id": "ID",
+  "name": "Name"
 }

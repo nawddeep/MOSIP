@@ -36,6 +36,7 @@ import 'package:colorful_progress_indicators/colorful_progress_indicators.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../utils/life_cycle_event_handler.dart';
+import '../utils/location_service.dart';
 
 class LoginPage extends StatefulWidget {
   static const route = "/login-page";
@@ -107,6 +108,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   _initializeAppData() async {
     await globalProvider.setMachineDetails();
     await globalProvider.initializeLanguageDataList(false);
+    await authProvider.getPasswordLength();
     await globalProvider.initializeLocationHierarchyMap();
     await globalProvider.setGitHeadAttributes();
     await globalProvider.getAudit("REG-LOAD-001", "REG-MOD-101");
@@ -246,7 +248,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       _showInSnackBar(appLocalizations.username_incorrect);
       return;
     }
-
+    globalProvider.getAudit("REG-AUTH-001","REG-MOD-101");
     final User user = authProvider.currentUser;
     globalProvider.setCenterId(user.centerId!);
     globalProvider.setName(user.name!);
@@ -277,7 +279,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       _showInSnackBar(appLocalizations.password_required);
       return;
     }
-    if (password.length > 50) {
+    if (password.length > (int.tryParse(authProvider.passwordLength) ?? 50)) {
       _showInSnackBar(appLocalizations.password_exceed);
       return;
     }
@@ -341,7 +343,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       await _autoSyncHandler();
     } else {
       authProvider.setIsSyncing(false);
-      _navigateToHomePage();
+      await _navigateToHomePage();
     }
     setState(() {
       isLoggingIn = false;
@@ -361,8 +363,12 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     _showInSnackBar(snackbarText);
   }
 
-  _navigateToHomePage() {
+  _navigateToHomePage() async {
     if (authProvider.isLoggedIn == true) {
+      // Start new location session so permission is re-requested if user chose "Only this time" previously
+      await LocationService.instance.startNewSession();
+
+      if (!context.mounted) return;
       Navigator.popUntil(context, ModalRoute.withName('/login-page'));
 
       if (authProvider.isOnboarded || authProvider.isDefault) {
@@ -371,6 +377,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
         globalProvider.setCurrentIndex(0);
       }
 
+      if (!context.mounted) return;
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => Responsive(
@@ -513,7 +520,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           context.watch<AuthProvider>().isValidUser &&
                   !context.watch<AuthProvider>().isNetworkPresent
               ? PasswordComponent(
-                  isDisabled: password.isEmpty || password.length > 50,
+                  isDisabled: password.isEmpty || password.length > (int.tryParse(context.watch<AuthProvider>().passwordLength) ?? 50),
                   onTapLogin: () async {
                     await _getLoginAction();
                     await globalProvider.getThresholdValues();

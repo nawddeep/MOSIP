@@ -222,15 +222,16 @@ public class RegistrationDto extends Observable {
         this.consentDto = new ConsentDto(consentText, LocalDateTime.now(ZoneOffset.UTC));
     }
 
-    public void addDocument(String fieldId, String docType, String format,String reference, byte[] bytes) {
+    public void addDocument(String fieldId, String docType, String value, String format,String reference, byte[] bytes) {
         if( docType != null && bytes != null ) {
             DocumentDto documentDto = this.documents.getOrDefault(fieldId, new DocumentDto());
             documentDto.setType(docType);
             if(format != null) {
-                documentDto.setFormat(format);
+                documentDto.setFormat(format.toLowerCase());
             }else{
                 documentDto.setFormat("pdf");
             }
+            documentDto.setValue(value);
             documentDto.setRefNumber(reference);
             documentDto.getContent().add(bytes);
             this.documents.put(fieldId, documentDto);
@@ -400,6 +401,30 @@ public class RegistrationDto extends Observable {
 
     public OperatorDto getMaker() { return maker; }
 
+    public void retainConfiguredFields(String config) {
+        List<String> keysToRetain = config == null ? Collections.EMPTY_LIST : List.of(config.split(RegistrationConstants.COMMA));
+
+        // If no fields are configured to retain, clear all fields
+        if (keysToRetain.isEmpty()) {
+            this.demographics.clear();
+            this.documents.clear();
+            this.biometrics.clear();
+            return;
+        }
+
+        // Remove fields that are NOT in the configured list to retain
+        Set<String> allKeys = new HashSet<>();
+        allKeys.addAll(this.demographics.keySet());
+        allKeys.addAll(this.documents.keySet());
+
+        for (String key : allKeys) {
+            if (!keysToRetain.contains(key)) {
+                this.demographics.remove(key);
+                this.documents.remove(key);
+            }
+        }
+    }
+
     public void cleanup() {
         this.demographics.clear();
         this.documents.clear();
@@ -484,7 +509,7 @@ public class RegistrationDto extends Observable {
         }
     }
 
-    public void setGeoLocation(double  longitude, double latitude) {
+    public void setGeoLocation(Double longitude, Double latitude) {
         this.geoLocationDto = new GeoLocationDto(longitude, latitude);
     }
 }

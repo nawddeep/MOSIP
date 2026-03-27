@@ -48,11 +48,13 @@ import io.mosip.registration.clientmanager.service.PacketServiceImpl;
 import io.mosip.registration.clientmanager.service.PreRegistrationDataSyncDaoImpl;
 import io.mosip.registration.clientmanager.service.PreRegistrationDataSyncServiceImpl;
 import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
+import io.mosip.registration.clientmanager.service.PreCheckValidatorServiceImpl;
 import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.service.UserOnboardService;
 import io.mosip.registration.clientmanager.service.external.PreRegZipHandlingService;
 import io.mosip.registration.clientmanager.service.external.impl.PreRegZipHandlingServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.LocalConfigService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.LocationValidationService;
@@ -61,6 +63,8 @@ import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
+import io.mosip.registration.clientmanager.spi.PreCheckValidatorService;
+import io.mosip.registration.clientmanager.util.BioSdkProviderFactory;
 import io.mosip.registration.clientmanager.util.DateUtil;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
@@ -169,13 +173,13 @@ public class AppModule {
                                                       LanguageRepository languageRepository,
                                                       JobManagerService jobManagerService,
                                                       FileSignatureDao fileSignatureDao, JobTransactionService jobTransactionService, PermittedLocalConfigRepository permittedLocalConfigRepository,
-                                                      LocalConfigDAO localConfigDAO) {
+                                                      LocalConfigDAO localConfigDAO, AuditManagerService auditManagerService) {
 
         return new MasterDataServiceImpl(appContext, objectMapper, syncRestService, clientCryptoManagerService,
                 machineRepository, reasonListRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, locationRepository,
                 globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
-                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, jobTransactionService, permittedLocalConfigRepository, localConfigDAO);
+                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, jobTransactionService, permittedLocalConfigRepository, localConfigDAO, auditManagerService);
 
     }
 
@@ -205,10 +209,12 @@ public class AppModule {
                                                    RegistrationCenterRepository registrationCenterRepository,
                                                    LocationValidationService locationValidationService,
                                                    Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider,
-                                                   Biometrics095Service biometricService) {
+                                                   Biometrics095Service biometricService,
+                                                   PacketService packetService,
+                                                   PreCheckValidatorService preCheckValidatorService) {
         return new RegistrationServiceImpl(appContext, packetWriterService, registrationRepository,
                 masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService, registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService);
+                keyStoreRepository, globalParamRepository, auditManagerService, registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService, packetService, preCheckValidatorService);
     }
 
     @Provides
@@ -221,9 +227,10 @@ public class AppModule {
     @Singleton
     PacketService providePacketService(RegistrationRepository registrationRepository,
                                        IPacketCryptoService packetCryptoService, SyncRestService syncRestService,
-                                       MasterDataService masterDataService, GlobalParamRepository globalParamRepository) {
+                                       MasterDataService masterDataService, GlobalParamRepository globalParamRepository,
+                                       AuditManagerService auditManagerService) {
         return new PacketServiceImpl(appContext, registrationRepository, packetCryptoService, syncRestService,
-                masterDataService, globalParamRepository);
+                masterDataService, globalParamRepository, auditManagerService);
     }
 
     @Provides
@@ -258,25 +265,32 @@ public class AppModule {
 
     @Provides
     @Singleton
-    JobManagerService provideJobManagerService(SyncJobDefRepository syncJobDefRepository, JobTransactionService jobTransactionService, DateUtil dateUtil) {
-        return new JobManagerServiceImpl(appContext, syncJobDefRepository, jobTransactionService, dateUtil);
+    JobManagerService provideJobManagerService(SyncJobDefRepository syncJobDefRepository, JobTransactionService jobTransactionService, DateUtil dateUtil, LocalConfigService localConfigService) {
+        return new JobManagerServiceImpl(appContext, syncJobDefRepository, jobTransactionService, dateUtil, localConfigService);
+    }
+
+    @Provides
+    @Singleton
+    BioSdkProviderFactory provideBioSdkProviderFactory(GlobalParamRepository globalParamRepository,
+                                                        AuditManagerService auditManagerService) {
+        return new BioSdkProviderFactory(appContext, globalParamRepository, auditManagerService);
     }
 
     @Provides
     @Singleton
     Biometrics095Service provideBiometrics095Service(ObjectMapper objectMapper, AuditManagerService auditManagerService,
                                                      GlobalParamRepository globalParamRepository, ClientCryptoManagerService clientCryptoManagerService,
-                                                     UserBiometricRepository userBiometricRepository) {
-        return new Biometrics095Service(appContext, objectMapper, auditManagerService, globalParamRepository, clientCryptoManagerService, userBiometricRepository);
+                                                     UserBiometricRepository userBiometricRepository, BioSdkProviderFactory bioSdkProviderFactory) {
+        return new Biometrics095Service(appContext, objectMapper, auditManagerService, globalParamRepository, clientCryptoManagerService, userBiometricRepository, bioSdkProviderFactory);
     }
 
     @Provides
     @Singleton
     UserOnboardService provideUserOnboardService(ObjectMapper objectMapper, AuditManagerService auditManagerService,
                                                  CertificateManagerService certificateManagerService,
-                                                 SyncRestService syncRestService, CryptoManagerService cryptoManagerService, RegistrationService registrationService, UserBiometricRepository userBiometricRepository, ClientCryptoManagerService clientCryptoManagerService, UserDetailRepository userDetailRepository) {
+                                                 SyncRestService syncRestService, CryptoManagerService cryptoManagerService, RegistrationService registrationService, UserBiometricRepository userBiometricRepository, ClientCryptoManagerService clientCryptoManagerService, UserDetailRepository userDetailRepository, GlobalParamRepository globalParamRepository) {
         return new UserOnboardService(appContext, objectMapper, auditManagerService, certificateManagerService, syncRestService,
-                cryptoManagerService, registrationService, userBiometricRepository, clientCryptoManagerService, userDetailRepository);
+                cryptoManagerService, registrationService, userBiometricRepository, clientCryptoManagerService, userDetailRepository, globalParamRepository);
     }
 
     @Provides
@@ -307,5 +321,20 @@ public class AppModule {
     @Singleton
     PreRegistrationList PreRegistrationList() {
         return new PreRegistrationList();
+    }
+
+    @Provides
+    @Singleton
+    PreCheckValidatorService providePreCheckValidatorService(SyncJobDefRepository syncJobDefRepository,
+                                                                 GlobalParamRepository globalParamRepository,
+                                                                 JobManagerService jobManagerService,
+                                                                 JobTransactionService jobTransactionService,
+                                                                 LocationValidationService locationValidationService,
+                                                                 MasterDataService masterDataService,
+                                                                 RegistrationCenterRepository registrationCenterRepository,
+                                                                 AuditManagerService auditManagerService) {
+        return new PreCheckValidatorServiceImpl(appContext, syncJobDefRepository, globalParamRepository,
+                jobManagerService, jobTransactionService, locationValidationService, masterDataService,
+                registrationCenterRepository, auditManagerService);
     }
 }

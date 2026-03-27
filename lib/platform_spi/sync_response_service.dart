@@ -13,7 +13,7 @@ abstract class SyncResponseService {
   Future<Sync> getPolicyKeySync(bool isManualSync, String jobId);
   Future<Sync> getGlobalParamsSync(bool isManualSync, String jobId);
   Future<Sync> getUserDetailsSync(bool isManualSync, String jobId);
-  Future<Sync> getIDSchemaSync(bool isManualSync);
+  Future<Sync> getIDSchemaSync(bool isManualSync, String jobId);
   Future<Sync> getMasterDataSync(bool isManualSync, String jobId);
   Future<Sync> getCaCertsSync(bool isManualSync, String jobId);
   Future<String> batchJob();
@@ -25,10 +25,17 @@ abstract class SyncResponseService {
   Future<bool> getSyncAndUploadInProgressStatus();
   Future<bool> deleteAuditLogs(String jobId);
   Future<bool> deletePreRegRecords(String jobId);
+  Future<bool> deleteRegistrationPackets(String jobId);
+  Future<bool> syncPacketStatus(String jobId);
 
   Future<List<String?>> getActiveSyncJobs();
   Future<String> getLastSyncTimeByJobId(String jobId);
   Future<String> getNextSyncTimeByJobId(String jobId);
+
+  Future<List<String?>> getPermittedJobs();
+  Future<bool> isValidCronExpression(String cronExpression);
+  Future<bool> modifyJobCronExpression(String jobId, String cronExpression);
+  Future<String?> getValue(String name);
 
   factory SyncResponseService() => getSyncResponseServiceImpl();
 }

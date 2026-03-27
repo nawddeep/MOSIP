@@ -17,7 +17,10 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
@@ -30,17 +33,20 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     AuditManagerService auditManagerService;
     private static final String GET_FIELD_FAILED_MESSAGE = "Get field failed!";
 
+    GlobalParamRepository globalParamRepository;
+
     @Inject
-    public DemographicsDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService) {
+    public DemographicsDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository) {
         this.registrationService = registrationService;
         this.auditManagerService = auditManagerService;
-
+        this.globalParamRepository = globalParamRepository;
     }
 
 
     @Override
     public void addDemographicField(@NonNull String fieldId, @NonNull String value, @NonNull DemographicsDataPigeon.Result<String> result) {
         try {
+            auditManagerService.audit(AuditEvent.SAVE_DETAIL_TO_DTO, Components.REGISTRATION);
             this.registrationService.getRegistrationDto().addDemographicField(fieldId, value);
             result.success("Ok");
         } catch (Exception e) {
@@ -78,6 +84,7 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     @Override
     public void addSimpleTypeDemographicField(@NonNull String fieldId, @NonNull String value, @NonNull String language, @NonNull DemographicsDataPigeon.Result<Void> result) {
         try {
+            auditManagerService.audit(AuditEvent.SAVE_DETAIL_TO_DTO, Components.REGISTRATION);
             this.registrationService.getRegistrationDto().addDemographicField(fieldId, value, language);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add simple type field failed!" + Arrays.toString(e.getStackTrace()));
@@ -113,6 +120,7 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     @Override
     public void setDateField(@NonNull String fieldId, @NonNull String subType, @NonNull String day, @NonNull String month, @NonNull String year, @NonNull DemographicsDataPigeon.Result<Void> result) {
         try {
+            auditManagerService.audit(AuditEvent.SAVE_DETAIL_TO_DTO, Components.REGISTRATION);
             this.registrationService.getRegistrationDto().setDateField(fieldId, subType, day, month, year);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add date field failed!" + Arrays.toString(e.getStackTrace()));
@@ -131,6 +139,7 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     @Override
     public void setConsentField(@NonNull String consentData, @NonNull DemographicsDataPigeon.Result<Void> result) {
         try {
+            auditManagerService.audit(AuditEvent.SAVE_DETAIL_TO_DTO, Components.REGISTRATION);
             this.registrationService.getRegistrationDto().setConsent(consentData);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add consent dto failed!" + Arrays.toString(e.getStackTrace()));
@@ -194,5 +203,19 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add selected data field failed!" + Arrays.toString(e.getStackTrace()));
         }
+    }
+
+    @Override
+    public void getDOBMaxAge(@NonNull DemographicsDataPigeon.Result<String> result) {
+        String dobMaxAge = "";
+        try {
+            String value = this.globalParamRepository.getCachedStringDOBAgeLimit();
+            if (value != null) {
+                dobMaxAge = value;
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Get DOB max age failed!" + Arrays.toString(e.getStackTrace()));
+        }
+        result.success(dobMaxAge);
     }
 }

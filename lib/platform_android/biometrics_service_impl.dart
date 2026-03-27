@@ -180,6 +180,32 @@ class BiometricsServiceImpl implements BiometricsService {
     return deviceList;
   }
 
+  @override
+  Future<String> getOperatorOnboardingBioattributes() async {
+    String response = '';
+    try {
+      response = await BiometricsApi().getOperatorOnboardingBioattributes();
+    } on PlatformException {
+      debugPrint('Operator Onboarding Bioattributes call failed!');
+    } catch (e) {
+      debugPrint('Fetch List of Operator Onboarding Bioattributes failed: ${e.toString()}');
+    }
+    return response;
+  }
+
+  @override
+  Future<int> getCaptureTimeout() async {
+    int response = 10000;
+    try {
+      response = await BiometricsApi().getCaptureTimeout();
+    } on PlatformException {
+      debugPrint('Get Capture Timeout call failed!');
+    } catch (e) {
+      debugPrint('Fetch Capture Timeout failed: ${e.toString()}');
+    }
+    return response;
+  }
+
 }
 
 BiometricsService getBiometricsServiceImpl() => BiometricsServiceImpl();

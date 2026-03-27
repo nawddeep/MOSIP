@@ -24,6 +24,7 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:registration_client/utils/app_config.dart';
+import 'package:registration_client/utils/biometrics_utils.dart';
 
 class BiometricCaptureScanBlockPortrait extends StatefulWidget {
   const BiometricCaptureScanBlockPortrait({super.key, required this.field});
@@ -398,6 +399,45 @@ class _BiometricCaptureScanBlockPortraitState
               SizedBox(
                 height: 21.h,
               ),
+              // MDS Quality and SDK Quality display
+              if (biometricAttributeData.isScanned)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      // MDS Quality
+                      Text(
+                        "MDS Quality ${biometricAttributeData.qualityPercentage.toInt()}%",
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontSize: 18,
+                          fontWeight: semiBold,
+                          color: (biometricAttributeData.qualityPercentage.toInt() >=
+                                  int.parse(biometricAttributeData.thresholdPercentage))
+                              ? secondaryColors.elementAt(11)
+                              : secondaryColors.elementAt(26),
+                        ),
+                      ),
+                      // SDK Quality
+                      if (biometricAttributeData.sdkQualityPercentage > 0)
+                        Text(
+                          "SDK Quality ${biometricAttributeData.sdkQualityPercentage.toInt()}%",
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontSize: 18,
+                            fontWeight: semiBold,
+                            color: (biometricAttributeData.sdkQualityPercentage.toInt() >=
+                                    int.parse(biometricAttributeData.thresholdPercentage))
+                                ? secondaryColors.elementAt(11)
+                                : secondaryColors.elementAt(26),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              if (biometricAttributeData.isScanned)
+                SizedBox(
+                  height: 15.h,
+                ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -487,11 +527,11 @@ class _BiometricCaptureScanBlockPortraitState
 
                                 setState(() {
                                   biometricAttributeData.qualityPercentage =
-                                      context
-                                          .read<
-                                          BiometricCaptureControlProvider>()
-                                          .avgScore(biometricAttributeData
-                                          .listOfBiometricsDto);
+                                      biometricAttributeData
+                                          .listOfBiometricsDto.avgScore();
+                                  biometricAttributeData.sdkQualityPercentage =
+                                      biometricAttributeData
+                                          .listOfBiometricsDto.avgSDKScore();
                                 });
                                 await BiometricsApi()
                                     .extractImageValuesByAttempt(
@@ -589,8 +629,9 @@ class _BiometricCaptureScanBlockPortraitState
                   }
                 });
                 biometricAttributeData.qualityPercentage =
-                    biometricCaptureControlProvider
-                        .avgScore(biometricAttributeData.listOfBiometricsDto);
+                    biometricAttributeData.listOfBiometricsDto.avgScore();
+                biometricAttributeData.sdkQualityPercentage =
+                    biometricAttributeData.listOfBiometricsDto.avgSDKScore();
                 await BiometricsApi()
                     .extractImageValues(widget.field.id!,
                     biometricAttributeData.title.replaceAll(" ", ""))
@@ -1941,16 +1982,21 @@ class _BiometricCaptureScanBlockPortraitState
                   ),
                 );
               },
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(1000),
-                    color: solidPrimary),
-                height: 75,
-                width: 75,
-                child: Icon(
-                  Icons.zoom_in,
-                  color: pureWhite,
-                  size: 35,
+              child: Semantics(
+                label: "zoom_in_button",
+                container: true,
+                excludeSemantics: true,
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(1000),
+                      color: solidPrimary),
+                  height: 75,
+                  width: 75,
+                  child: Icon(
+                    Icons.zoom_in,
+                    color: pureWhite,
+                    size: 35,
+                  ),
                 ),
               ),
             ),
@@ -2669,17 +2715,22 @@ class _BiometricCaptureScanBlockPortraitState
                       ),
                     );
                   },
-                  child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(1000),
-                          color: solidPrimary),
-                      height: 75,
-                      width: 75,
-                      child: Icon(
-                        Icons.zoom_in,
-                        color: pureWhite,
-                        size: 35,
-                      )))),
+                  child: Semantics(
+                    label: "zoom_in_button",
+                    container: true,
+                    excludeSemantics: true,
+                    child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(1000),
+                            color: solidPrimary),
+                        height: 75,
+                        width: 75,
+                        child: Icon(
+                          Icons.zoom_in,
+                          color: pureWhite,
+                          size: 35,
+                        )),
+                  ))),
         ],
       );
     }
@@ -2977,26 +3028,33 @@ class _BiometricCaptureScanBlockPortraitState
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const Spacer(),
-              ElevatedButton(
-                style: ButtonStyle(
-                  maximumSize:
-                  MaterialStateProperty.all<Size>(const Size(200, 68)),
-                  minimumSize:
-                  MaterialStateProperty.all<Size>(const Size(200, 68)),
-                ),
-                onPressed: canProceedToNext()
-                    ? () {
-                        List<String> bioAttributes = (widget
-                                    .field.conditionalBioAttributes!.first!.ageGroup!
-                                    .compareTo(
-                                        context.read<GlobalProvider>().ageGroup) ==
-                                0)
-                            ? _returnBiometricList(
-                                widget.field.conditionalBioAttributes!.first!
-                                    .bioAttributes!,
-                                widget.field.id!)
-                            : _returnBiometricList(
-                                widget.field.bioAttributes!, widget.field.id!);
+              // Don't show next button when on Mark Exception tab or Exception step
+              if (context.watch<BiometricCaptureControlProvider>().biometricCaptureScanBlockTabIndex != 2)
+                ElevatedButton(
+                  style: ButtonStyle(
+                    maximumSize:
+                    MaterialStateProperty.all<Size>(const Size(200, 68)),
+                    minimumSize:
+                    MaterialStateProperty.all<Size>(const Size(200, 68)),
+                  ),
+                  onPressed: canProceedToNext()
+                      ? () async {
+
+                        // Log audit event for moving to next biometric after exceptions
+                        context.read<GlobalProvider>().getAudit(
+                            "REG_BIO_NEXT", "REG-MOD-103");
+
+                          List<String> bioAttributes = (widget
+                                      .field.conditionalBioAttributes!.first!.ageGroup!
+                                      .compareTo(
+                                          context.read<GlobalProvider>().ageGroup) ==
+                                  0)
+                              ? _returnBiometricList(
+                                  widget.field.conditionalBioAttributes!.first!
+                                      .bioAttributes!,
+                                  widget.field.id!)
+                              : _returnBiometricList(
+                                  widget.field.bioAttributes!, widget.field.id!);
 
                         var nextElement = _getNextElement(
                             bioAttributes,
@@ -3079,15 +3137,20 @@ class _BiometricCaptureScanBlockPortraitState
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 30),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Image.asset(
-                            "assets/images/Group 57951.png",
-                            height: (isMobileSize) ? 30.h : 52.h,
+                      Semantics(
+                        label: "menu_back_button",
+                        container: true,
+                        excludeSemantics: true,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 30),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Image.asset(
+                              "assets/images/Menu_Grid.png",
+                              height: (isMobileSize) ? 30.h : 52.h,
+                            ),
                           ),
                         ),
                       )

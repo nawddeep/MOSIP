@@ -59,6 +59,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
     public static final String IS_OPERATOR = "is_operator";
     public static final String PREFERRED_USERNAME = "preferred_username";
     public static final String USER_EMAIL = "user_email";
+    private static final String LOCKOUT_ERROR_CODE = "REG_LOGIN_LOCKED";
 
 
     @Inject
@@ -104,6 +105,8 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                         try {
                             loginService.saveAuthToken(wrapper.getResponse(), username);
                             loginService.setPasswordHash(username, password);
+                            loginService.resetFailedLoginAttempts(username);
+                            auditManagerService.audit(AuditEvent.NAV_HOME, Components.REGISTRATION);
                             String preferredUsername = sharedPreferences.getString(PREFERRED_USERNAME, username);
                             String fullName = sharedPreferences.getString(USER_NAME, preferredUsername);
                             AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
@@ -125,17 +128,18 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                             error = new ServiceError("", e.getMessage());
                             Log.e(getClass().getSimpleName(), "Failed to save auth token", e);
                         }
-                    }
-
+                    }   
+                    
                     String errorCode = "";
                     if (error == null) {
                         errorCode = "REG_TRY_AGAIN";
-                    } else if (error.getMessage().equals("Invalid Request")) {
-                        errorCode = "REG_INVALID_REQUEST";
-                    } else if (error.getMessage().equals("Machine not found")) {
+                        loginService.recordFailedLoginAttempt(username);
+                    } else if ("KER-SNC-155".equals(error.getErrorCode())) {
                         errorCode = "REG_MACHINE_NOT_FOUND";
+                    } else if ("KER-SYN-AUTH-001".equals(error.getErrorCode())) {
+                        errorCode = "KER_SYN_AUTH_001";                       
                     } else {
-                        errorCode = error.getMessage();
+                        errorCode = "REG_TRY_AGAIN";
                     }
                     AuthResponsePigeon.AuthResponse authResponse = getAuthErrorResponse(errorCode);
                     result.success(authResponse);
@@ -162,6 +166,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
         }
 
         if(!loginService.validatePassword(username, password)) {
+            loginService.recordFailedLoginAttempt(username);
             AuthResponsePigeon.AuthResponse authResponse = getAuthErrorResponse("REG_INVALID_REQUEST");
             result.success(authResponse);
             return;
@@ -171,6 +176,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
             String token = loginService.saveUserAuthTokenOffline(username);
             String preferredUsername = sharedPreferences.getString(PREFERRED_USERNAME, username);
             String fullName = sharedPreferences.getString(USER_NAME, preferredUsername);
+            auditManagerService.audit(AuditEvent.NAV_HOME, Components.REGISTRATION);
             AuthResponsePigeon.AuthResponse authResponse = new AuthResponsePigeon.AuthResponse.Builder()
                     .setResponse(token)
                     .setUserId(username)
@@ -181,6 +187,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                     .setIsOperator(sharedPreferences.getBoolean(IS_OPERATOR, false))
                     .setIsSupervisor(sharedPreferences.getBoolean(IS_SUPERVISOR, false))
                     .build();
+            loginService.resetFailedLoginAttempts(username);
             result.success(authResponse);
         } catch (Exception ex) {
             AuthResponsePigeon.AuthResponse authResponse = getAuthErrorResponse("REG_CRED_EXPIRED");
@@ -192,6 +199,10 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
     @Override
     public void login(@NonNull String username, @NonNull String password, @NonNull Boolean isConnected, @NonNull AuthResponsePigeon.Result<AuthResponsePigeon.AuthResponse> result) {
         auditManagerService.audit(AuditEvent.LOGIN_WITH_PASSWORD, Components.LOGIN);
+        if(loginService.isUserLocked(username)) {
+            result.success(getAuthErrorResponse(LOCKOUT_ERROR_CODE));
+            return;
+        }
         if(!isConnected) {
             offlineLogin(username, password, result);
             return;
@@ -203,6 +214,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
     @Override
     public void logout(@NonNull AuthResponsePigeon.Result<String> result) {
         loginService.clearAuthToken(this.context);
+        auditManagerService.audit(AuditEvent.LOGOUT_USER, Components.LOGIN);
         result.success("Logout Success");
     }
 
@@ -258,11 +270,22 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
 
     @Override
     public void getRolesByUserId(@NonNull String userId, @NonNull AuthResponsePigeon.Result<List<String>> result) {
+        auditManagerService.audit(AuditEvent.FETCH_USR_ROLE, Components.LOGIN);
         try {
             List<String> roles = loginService.getRolesByUserId(userId);
             result.success(roles);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Getting user role failed!" + Arrays.toString(e.getStackTrace()));
+        }
+    }
+
+    @Override
+    public void getPasswordLength(@NonNull AuthResponsePigeon.Result<String> result) {
+        try {
+            String passwordLength = this.globalParamRepository.getCachedStringPasswordLength();
+            result.success(passwordLength);
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Getting password Length failed!" + Arrays.toString(e.getStackTrace()));
         }
     }
 }

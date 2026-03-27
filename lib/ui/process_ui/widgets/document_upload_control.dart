@@ -22,6 +22,7 @@ import 'package:registration_client/ui/scanner/preview_screen.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 import '../../../model/field.dart';
+import '../../../pigeon/document_category_pigeon.dart';
 import '../../../provider/global_provider.dart';
 import 'custom_label.dart';
 
@@ -37,7 +38,7 @@ class DocumentUploadControl extends StatefulWidget {
 }
 
 class _DocumentUploadControlState extends State<DocumentUploadControl> {
-  late Future<List<String?>> myGetDocumentCategoryFuture;
+  late Future<List<DocumentType?>> myGetDocumentCategoryFuture;
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
   Map<String, String> transliterationLangMapper = {};
@@ -46,6 +47,55 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     if (bytes < 1024) return "$bytes B";
     if (bytes < 1024 * 1024) return "${(bytes / 1024).toStringAsFixed(2)} KB";
     return "${(bytes / (1024 * 1024)).toStringAsFixed(2)} MB";
+  }
+
+  int maxFileSize = 2 * 1024 * 1024; // Default 2MB
+
+  Future<void> _documentAudit(String action) async {
+    String event = "";
+
+    switch (action) {
+      case "SCAN":
+        event = "REG_DOC_SCAN";
+        break;
+      case "VIEW":
+        event = "REG_DOC_VIEW";
+        break;
+      case "DELETE":
+        event = "REG_DOC_DELETE";
+        break;
+      default:
+        event = "";
+    }
+
+    if (event.isNotEmpty) {
+      // Use the document category code (e.g. POA / POI) as the placeholder argument
+      final String docType = widget.field.subType ?? "";
+      await context
+          .read<GlobalProvider>()
+          .getAudit(event, "REG-MOD-103", docType);
+    }
+  }
+
+  _fetchMaxFileSize() async {
+    try {
+      String sizeStr = await registrationTaskProvider.documentCategory.getDocumentSize();
+      if (sizeStr.isNotEmpty) {
+        int? size = int.tryParse(sizeStr);
+        if (size != null && size > 0) {
+          setState(() {
+            maxFileSize = size;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Failed to fetch document size limit: $e");
+    }
+  }
+
+  _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: Colors.red));
   }
 
 
@@ -61,7 +111,15 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
       _removeExceptionData(widget.field);
       getScannedDocuments(widget.field);
       myGetDocumentCategoryFuture =
-          _getDocumentType(widget.field.subType!, "eng");
+          _getDocumentType(
+              widget.field.subType!,
+              globalProvider.chosenLang.isNotEmpty
+                  ? globalProvider.langToCode(globalProvider.chosenLang.first)
+                  : "eng",
+              globalProvider.chosenLang
+                  .map<String>((value) => globalProvider.langToCode(value))
+                  .toList());
+      _fetchMaxFileSize();
     }
 
     if (context
@@ -74,9 +132,20 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
           .title!;
       doc.title =
           context.read<GlobalProvider>().fieldInputValue[widget.field.id].title;
-      initialSelectedData = context.read<GlobalProvider>().fieldInputValue[widget.field.id].title;
     }
     super.initState();
+
+    myGetDocumentCategoryFuture.then((List<DocumentType?> list) {
+      if (!mounted) return;
+      final label = documentController.text;
+      if (label.isEmpty) return;
+      for (final docType in list) {
+        if (docType != null && docType.label == label) {
+          setState(() => _selectedDocCode = docType.code);
+          break;
+        }
+      }
+    });
   }
 
   @override
@@ -160,18 +229,19 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   _getAddDocumentProvider(Field e, Uint8List myBytes, String referenceNumber) {
     context
         .read<RegistrationTaskProvider>()
-        .addDocument(e.id!, documentController.text, referenceNumber, myBytes);
+        .addDocument(e.id!, _selectedDocCode,documentController.text, referenceNumber, myBytes);
   }
 
   Future<void> addDocument(var item, Field e, String referenceNumber) async {
-    // final bytes = await getImageBytes(item);
-
-    debugPrint(
-        "The selected value for dropdown for ${e.id!} is ${documentController.text}");
-    // Uint8List myBytes = Uint8List.fromList(bytes);
-    // context
-    //     .read<RegistrationTaskProvider>()
-    //     .addDocument(e.id!, selected!, "reference", myBytes);
+    if (item == null) return;
+    if (item is Uint8List) {
+      if (item.lengthInBytes > maxFileSize) {
+        final msg = AppLocalizations.of(context)!
+            .doc_size_exceeded(getReadableFileSize(item.lengthInBytes));
+        _showError(msg);
+        return;
+      }
+    }
     _getAddDocumentProvider(e, item, referenceNumber);
   }
 
@@ -219,23 +289,38 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
 
   Future<void> getScannedDocuments(Field e) async {
     try {
-      imageBytesList.clear();
+      // First check if we have preserved scanned pages (e.g., after PRID fetch)
+      List<Uint8List?> preservedPages = [];
+      if (globalProvider.scannedPages.containsKey(e.id!)) {
+        preservedPages = globalProvider.scannedPages[e.id!]!;
+      }
+      
       final listOfScannedDoc = await DocumentApi().getScannedPages(e.id!);
       String refNumber = "";
       List<Uint8List?> scannedDoc = List.empty(growable: true);
       for (var element in listOfScannedDoc) {
-        setState(() {
-          scannedDoc.addAll(element!.doc);
-          refNumber = element.referenceNumber;
-        });
+        scannedDoc.addAll(element!.doc);
+        refNumber = element.referenceNumber;
       }
-      _setScannedPages(e, scannedDoc);
+      
+      // Use native API data if available, otherwise use preserved pages
+      List<Uint8List?> pagesToUse = scannedDoc.isNotEmpty ? scannedDoc : preservedPages;
+      
       setState(() {
-        imageBytesList.addAll(scannedDoc);
+        imageBytesList.clear();
+        imageBytesList.addAll(pagesToUse);
         doc.listofImages = imageBytesList;
-        doc.referenceNumber = refNumber;
-        referenceNumber = refNumber;
+        if (scannedDoc.isNotEmpty) {
+          doc.referenceNumber = refNumber;
+          referenceNumber = refNumber;
+        }
       });
+      
+      // Update scannedPages cache
+      if (pagesToUse.isNotEmpty) {
+        _setScannedPages(e, pagesToUse);
+      }
+      
       if (doc.title.isNotEmpty) {
         _setValueInMap();
       }
@@ -244,8 +329,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     }
   }
 
-  _documentScanClickedAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-EVT-004", "REG-MOD-103");
+  _documentScanClickedAudit()  {
+    _documentAudit("SCAN");
   }
 
   Future<List<int>> getImageBytes(String imagePath) async {
@@ -263,7 +348,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   );
   String? selected;
   String referenceNumber = "";
-  String initialSelectedData = "";
+  String _selectedDocCode = "";
 
   final TextEditingController documentController =
       TextEditingController(text: "");
@@ -282,11 +367,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     }
   }
 
-  Future<List<String?>> _getDocumentType(
-      String categoryCode, String langCode) async {
+  Future<List<DocumentType?>> _getDocumentType(
+      String categoryCode, String langCode, List<String> languages) async {
     return await context
         .read<RegistrationTaskProvider>()
-        .getDocumentType(categoryCode, langCode);
+        .getDocumentType(categoryCode, langCode, languages);
   }
 
   void _deleteImage(Field e, Uint8List? item) async {
@@ -332,7 +417,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     FutureBuilder(
                         future: myGetDocumentCategoryFuture,
                         builder: (BuildContext context,
-                            AsyncSnapshot<List<String?>> snapshot) {
+                            AsyncSnapshot<List<DocumentType?>> snapshot) {
                           return Card(
                             elevation: 0,
                             margin: EdgeInsets.symmetric(horizontal: 12.w),
@@ -474,19 +559,19 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                 onPressed: (documentController.text == "")
                                     ? null
                                     : () async {
-                                        _documentScanClickedAudit();
-                                        var doc = await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CustomScanner(
-                                                      field: widget.field)),
-                                        );
+                                  _documentScanClickedAudit();
+                                  var doc = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            CustomScanner(
+                                                field: widget.field)),
+                                  );
 
-                                        await addDocument(
-                                            doc, widget.field, referenceNumber);
-                                        await getScannedDocuments(widget.field);
-                                      },
+                                  await addDocument(
+                                      doc, widget.field, referenceNumber);
+                                  await getScannedDocuments(widget.field);
+                                },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -523,6 +608,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     children: [
                                       InkWell(
                                         onTap: () {
+                                          _documentAudit("VIEW");
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -543,7 +629,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                       ),
                                       SizedBox(height: 2.h),
                                       GestureDetector(
-                                        onTap: () {
+                                        onTap: ()  {
+                                          _documentAudit("DELETE");
                                           _deleteImage(widget.field, item);
                                           _removeFieldValue(widget.field, item);
                                           _setRemoveScannedPages(widget.field,
@@ -587,7 +674,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                             child: FutureBuilder(
                                 future: myGetDocumentCategoryFuture,
                                 builder: (BuildContext context,
-                                    AsyncSnapshot<List<String?>> snapshot) {
+                                    AsyncSnapshot<List<DocumentType?>> snapshot) {
                                   return Card(
                                     elevation: 0,
                                     margin: EdgeInsets.symmetric(
@@ -743,18 +830,18 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               onPressed: (documentController.text == "")
                                   ? null
                                   : () async {
-                                      _documentScanClickedAudit();
-                                      var doc = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => CustomScanner(
-                                                field: widget.field)),
-                                      );
-                                      await addDocument(
-                                          doc, widget.field, referenceNumber);
+                                _documentScanClickedAudit();
+                                var doc = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CustomScanner(
+                                          field: widget.field)),
+                                );
+                                await addDocument(
+                                    doc, widget.field, referenceNumber);
 
-                                      await getScannedDocuments(widget.field);
-                                    },
+                                await getScannedDocuments(widget.field);
+                              },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -789,7 +876,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                   child: Column(
                                     children: [
                                       InkWell(
-                                        onTap: () {
+                                        onTap: ()  {
+                                          _documentAudit("VIEW");
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -810,7 +898,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                       ),
                                       SizedBox(height: 10.h),
                                       GestureDetector(
-                                        onTap: () {
+                                        onTap: ()  {
+                                          _documentAudit("DELETE");
                                           _deleteImage(widget.field, item);
                                           _removeFieldValue(widget.field, item);
                                           _setRemoveScannedPages(widget.field,
@@ -880,6 +969,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         setState(() {
                           documentController.clear();
                           doc.title = "";
+                          _selectedDocCode = "";
                         });
                         Navigator.of(context).pop();
                       },
@@ -948,13 +1038,15 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     fontSize: 21,
                   ),
                   initialValue: documentController.text,
-                  onSelectedItemChanged: (selectedItem)  {
-                    saveData(selectedItem);
+                  onSelectedItemChanged: (label, code) {
+                    saveData(label);
+                    final previousLabel = documentController.text;
                     setState(() {
-                      documentController.text = selectedItem;
-                      doc.title = selectedItem;
+                      documentController.text = label;
+                      doc.title = label;
+                      _selectedDocCode = code;
                     });
-                    if(initialSelectedData != documentController.text) {
+                    if (previousLabel != label) {
                       _removeDropDownChangeData(field.id!);
                     }
                   },

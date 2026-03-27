@@ -45,9 +45,10 @@ import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
-import io.mosip.registration.packetmanager.dto.PacketWriter.DocumentType;
 import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration_client.model.DynamicResponsePigeon;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 
 @Singleton
 public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseApi {
@@ -154,19 +155,6 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
     }
 
     @Override
-    public void getDocumentValues(@NonNull String categoryCode, String applicantType, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<String>> result) {
-
-        List<String> documentResponse = new ArrayList<>();
-        try {
-            documentResponse = this.masterDataService.getDocumentTypes(categoryCode, applicantType, langCode);
-        } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Fetch document values: " + Arrays.toString(e.getStackTrace()));
-        }
-        result.success(documentResponse);
-
-    }
-
-    @Override
     public void getLocationValuesBasedOnParent(@Nullable String parentCode, @NonNull String hierarchyLevelName, @NonNull String langCode, @NonNull List<String> languages, @NonNull DynamicResponsePigeon.Result<List<DynamicResponsePigeon.GenericData>> result) {
         List<DynamicResponsePigeon.GenericData> locationList = new ArrayList<>();
         int numberOfLanguages = languages.size();
@@ -231,6 +219,7 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
 
     @Override
     public void fetchPreRegistrationDetails(@NonNull String preRegId, @NonNull DynamicResponsePigeon.Result<Map<String, Object>> result) {
+        auditManagerService.audit(AuditEvent.REG_DEMO_PRE_REG_DATA_FETCH, Components.REGISTRATION);
         Map<String, Object> preRegistrationData = new HashMap<>();
         try {
             this.preRegistrationData.getPreRegistration(preRegId,false);

@@ -3,20 +3,26 @@
 <suite name="Suite">
 	<test name="Test" thread-count="5">
 		<classes>
-			<class name="regclient.androidTestCases.logintest">
+			<class name="regclient.androidTestCases.LoginTest">
 				<methods>
-					<include name="ALoginTest" />
-					<include name="OnBoardTest" />
+					<include name="userloginTest" />
+					<include name="onboardingTest" />
 					<include name="updateOperatorBiometrics" />
 				</methods>
 			</class>
 			<class name="regclient.androidTestCases.NewRegistrationAdult">
 				<methods>
 					<include name="newRegistrationAdult" />
+				</methods>
+			</class>
+			<class
+				name="regclient.androidTestCases.NewRegistrationAdultUploadMultipleDoccuments">
+				<methods>
 					<include name="newRegistrationAdultUploadMultipleDoccuments" />
 				</methods>
 			</class>
-			<class name="regclient.androidTestCases.NewRegistrationAdultException">
+			<class
+				name="regclient.androidTestCases.NewRegistrationAdultException">
 				<methods>
 					<include name="newRegistrationAdultException" />
 				</methods>
@@ -31,7 +37,8 @@
 					<include name="newRegistrationMinor" />
 				</methods>
 			</class>
-			<class name="regclient.androidTestCases.NewRegistrationMinorException">
+			<class
+				name="regclient.androidTestCases.NewRegistrationMinorException">
 				<methods>
 					<include name="newRegistrationMinorException" />
 				</methods>
@@ -46,20 +53,59 @@
 					<include name="updateMyUinMinor" />
 				</methods>
 			</class>
-			<class name="regclient.androidTestCases.UpdateMyUINUpdateDemographicDetails">
+			<class
+				name="regclient.androidTestCases.UpdateMyUinUpdateDemographicDetails">
 				<methods>
-					<include name="updateMyUINUpdateDemographicDetails" />
+					<include name="updateMyUinUpdateDemographicDetails" />
 				</methods>
 			</class>
 			<class name="regclient.androidTestCases.UpdateMyUinUpdateBiometrics">
 				<methods>
-					<include name="updateMyUINUpdatebiometrics" />
+					<include name="updateMyUinUpdateBiometrics" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.UpdateMyUinUpdateDocuments">
+				<methods>
+					<include name="updateMyUinUpdateDocuments" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.LostUin">
+				<methods>
+					<include name="lostUinAdult" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.PreRegFetchingPacket">
+				<methods>
+					<include name="adultPreRegFetching" />
+					<include name="minorPreRegFetching" />
+					<include name="infantPreRegFetching" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.ResetPassword">
+				<methods>
+					<include name="resetPassword" />
+					<include name="resetToDefaultPassword" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.Settings">
+				<methods>
+					<include name="Settings" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.ExportPacket">
+				<methods>
+					<include name="exportPacket" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.BiometricCorrection">
+				<methods>
+					<include name="adultBiometricCorrection" />
+					<include name="minorBiometricCorrection" />
 				</methods>
 			</class>
 		</classes>
 	</test>
 	<listeners>
-		<listener
-			  class-name="regclient.utils.EmailableReport" />		
+		<listener class-name="regclient.utils.EmailableReport" />
 	</listeners>
 </suite>

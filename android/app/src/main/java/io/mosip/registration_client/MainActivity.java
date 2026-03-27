@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
+
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -24,8 +25,10 @@ import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +45,7 @@ import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
@@ -80,6 +84,7 @@ import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.MasterDataSyncApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
 import io.mosip.registration_client.api_services.RegistrationApi;
+import io.mosip.registration_client.api_services.SecureScreenApi;
 import io.mosip.registration_client.api_services.TransliterationApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
 import io.mosip.registration_client.model.AuditResponsePigeon;
@@ -96,6 +101,7 @@ import io.mosip.registration_client.model.PacketAuthPigeon;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
 import io.mosip.registration_client.model.ProcessSpecPigeon;
 import io.mosip.registration_client.model.RegistrationDataPigeon;
+import io.mosip.registration_client.model.SecureScreenPigeon;
 import io.mosip.registration_client.model.TransliterationPigeon;
 import io.mosip.registration_client.model.UserPigeon;
 import io.mosip.registration_client.model.DocumentDataPigeon;
@@ -196,6 +202,9 @@ public class MainActivity extends FlutterActivity {
     @Inject
     GlobalConfigSettingsApi globalConfigSettingsApi;
 
+    @Inject
+    SecureScreenApi secureScreenApi;
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -214,12 +223,27 @@ public class MainActivity extends FlutterActivity {
         }
     };
 
+    private BroadcastReceiver rescheduleReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String jobApiName = intent.getStringExtra(UploadBackgroundService.EXTRA_JOB_API_NAME);
+            if (jobApiName != null) {
+                Log.d(getClass().getSimpleName(), "Rescheduling job due to cron change: " + jobApiName);
+                createBackgroundTask(jobApiName);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        createBackgroundTask("registrationPacketUploadJob");
         IntentFilter intentFilterUpload = new IntentFilter("SYNC_JOB_TRIGGER");
         registerReceiver(broadcastReceiver, intentFilterUpload);
+        
+        // Register receiver for rescheduling jobs when cron expression changes
+        IntentFilter rescheduleFilter = new IntentFilter("RESCHEDULE_JOB");
+        registerReceiver(rescheduleReceiver, rescheduleFilter);
     }
 
     private void initializeAutoSync() {
@@ -242,8 +266,15 @@ public class MainActivity extends FlutterActivity {
             try {
                 List<SyncJobDef> activeJobs = syncJobDefRepository.getAllSyncJobDefList();
                 int scheduledCount = 0;
-
+                Set<String> excludedJobIds = getExcludedJobIds();
                 for (SyncJobDef job : activeJobs) {
+                    if (job.getId() == null) {
+                        continue;
+                    }
+                    if (excludedJobIds.contains(job.getId())) {
+                        Log.d(getClass().getSimpleName(), "Skipping excluded job: " + job.getId());
+                        continue;
+                    }
                     if (job.getIsActive() != null && job.getIsActive() && job.getApiName() != null) {
                         Log.d(getClass().getSimpleName(), "Scheduling job: " + job.getApiName() +
                                 " (ID: " + job.getId() + ", Cron: " + job.getSyncFreq() + ")");
@@ -260,10 +291,34 @@ public class MainActivity extends FlutterActivity {
         }).start();
     }
 
+    private Set<String> getExcludedJobIds() {
+        Set<String> excluded = new HashSet<>();
+        addJobIdsFromString(excluded, globalParamRepository.getCachedStringJobsOffline());
+        addJobIdsFromString(excluded, globalParamRepository.getCachedStringJobsUntagged());
+        return excluded;
+    }
+
+    private void addJobIdsFromString(Set<String> target, String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return;
+        }
+        for (String jobId : value.split(RegistrationConstants.COMMA)) {
+            String trimmed = jobId.trim();
+            if (!trimmed.isEmpty()) {
+                target.add(trimmed);
+            }
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(broadcastReceiver);
+        try {
+            unregisterReceiver(rescheduleReceiver);
+        } catch (Exception e) {
+            // Receiver might not be registered, ignore
+        }
     }
 
     public void createBackgroundTask(String api){
@@ -340,6 +395,7 @@ public class MainActivity extends FlutterActivity {
         super.configureFlutterEngine(flutterEngine);
         GeneratedPluginRegistrant.registerWith(flutterEngine);
         initializeAppComponent();
+        auditManagerService.audit(AuditEvent.NAV_REDIRECT_HOME, Components.REGISTRATION);
         MachinePigeon.MachineApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), machineDetailsApi);
         UserPigeon.UserApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), userDetailsApi);
         CommonDetailsPigeon.CommonDetailsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),commonDetailsApi);
@@ -359,9 +415,11 @@ public class MainActivity extends FlutterActivity {
         DynamicResponsePigeon.DynamicResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), dynamicDetailsApi);
         batchJob.setCallbackActivity(this);
         MasterDataSyncPigeon.SyncApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), masterDataSyncApi);
-        masterDataSyncApi.setCallbackActivity(this, batchJob);
+        masterDataSyncApi.setCallbackActivity(this, batchJob, flutterEngine.getDartExecutor().getBinaryMessenger());
         AuditResponsePigeon.AuditResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), auditDetailsApi);
         GlobalConfigSettingsPigeon.GlobalConfigSettingsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), globalConfigSettingsApi);
+        SecureScreenPigeon.SecureScreenApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), secureScreenApi);
+        secureScreenApi.setCallbackActivity(this);
     }
 
     @Override

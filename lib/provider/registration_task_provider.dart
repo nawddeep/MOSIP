@@ -9,8 +9,8 @@ import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
+import 'package:registration_client/utils/secure_storage.dart';
 import 'package:registration_client/pigeon/dash_board_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
@@ -22,6 +22,7 @@ import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 import 'package:registration_client/platform_spi/process_spec_service.dart';
 import 'package:registration_client/platform_spi/registration_service.dart';
 
+import '../pigeon/document_category_pigeon.dart';
 import '../platform_android/packet_service_impl.dart';
 
 class RegistrationTaskProvider with ChangeNotifier {
@@ -32,11 +33,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   final DashBoard dashBoard = DashBoard();
   DynamicResponseService dynamicResponseService = DynamicResponseService();
   final DocumentCategory documentCategory = DocumentCategory();
-  static const storage = FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
-  );
+  static const storage = appSecureStorage;
 
   List<Object?> _listOfProcesses = List.empty(growable: true);
   List<String?> _listOfSettings = List.empty(growable: true);
@@ -134,10 +131,10 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  startRegistration(
-      List<String> languages, String flowType, String process) async {
+  startRegistration(List<String> languages, String flowType, String process,
+      {double? latitude, double? longitude}) async {
     _registrationStartError = await registrationService.startRegistration(
-        languages, flowType, process);
+        languages, flowType, process, latitude, longitude);
     notifyListeners();
   }
 
@@ -248,12 +245,6 @@ class RegistrationTaskProvider with ChangeNotifier {
         fieldName, langCode,languages);
   }
 
-  Future<List<String?>> getDocumentValues(
-      String fieldName, String langCode, String? applicantType) async {
-    return await dynamicResponseService.fetchDocumentValues(
-        fieldName, applicantType, langCode);
-  }
-
   Future<List<GenericData?>> getLocationValuesBasedOnParent(String? parentCode,
       String fieldName, String langCode, List<String> languages) async {
     return await dynamicResponseService.fetchLocationValuesBasedOnParent(
@@ -261,8 +252,8 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   addDocument(
-      String fieldId, String docType, String reference, Uint8List bytes) async {
-    await document.addDocument(fieldId, docType, reference, bytes);
+      String fieldId, String docType, String value, String reference, Uint8List bytes) async {
+    await document.addDocument(fieldId, docType, value, reference, bytes);
   }
 
   getScannedDocument(String fieldId) async {
@@ -273,9 +264,9 @@ class RegistrationTaskProvider with ChangeNotifier {
     await document.removeDocument(fieldId, pageIndex);
   }
 
-  Future<List<String?>> getDocumentType(
-      String categoryCode, String langCode) async {
-    return await documentCategory.getDocumentCategories(categoryCode, langCode);
+  Future<List<DocumentType?>> getDocumentType(
+      String categoryCode, String langCode, List<String> languages) async {
+    return await documentCategory.getDocumentCategories(categoryCode, langCode, languages);
   }
 
   removeDocumentField(String fieldId) async {

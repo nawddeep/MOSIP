@@ -5,6 +5,7 @@
  *
 */
 
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/services.dart';
@@ -24,6 +25,7 @@ import 'package:registration_client/platform_spi/network_service.dart';
 import 'package:registration_client/platform_spi/packet_service.dart';
 import 'package:registration_client/platform_spi/process_spec_service.dart';
 import 'package:registration_client/utils/constants.dart';
+import 'package:registration_client/utils/location_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GlobalProvider with ChangeNotifier {
@@ -122,6 +124,10 @@ class GlobalProvider with ChangeNotifier {
     _checkAgeGroupChange = value;
   }
 
+  int? _pridLength;
+  int? _uinLength;
+  int? _vidLength;
+
   //GettersSetters
   setScannedPages(String field, List<Uint8List?> value) {
     _scannedPages[field] = value;
@@ -140,11 +146,32 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Clears scanned pages but preserves given keys (usually document field IDs).
+  /// This preserves document preview images when re-fetching PRID.
+  void clearScannedPagesPreservingKeys(List<String> keysToPreserve) {
+    if (keysToPreserve.isEmpty) {
+      clearScannedPages();
+      return;
+    }
+    final preserved = <String, List<Uint8List?>>{};
+    for (final key in keysToPreserve) {
+      if (_scannedPages.containsKey(key)) {
+        preserved[key] = _scannedPages[key]!;
+      }
+    }
+    _scannedPages = preserved;
+    notifyListeners();
+  }
+
   Map<String, List<Uint8List?>> get scannedPages {
     return _scannedPages;
   }
 
   String get ageGroup => _ageGroup;
+
+  int? get pridLength => _pridLength;
+  int? get uinLength => _uinLength;
+  int? get vidLength => _vidLength;
 
   set scannedPages(Map<String, List<Uint8List?>> value) {
     _scannedPages = value;
@@ -222,6 +249,50 @@ class GlobalProvider with ChangeNotifier {
   String get commitIdApp => _commitIdApp;
   set commitIdApp(String value) {
     _commitIdApp = value;
+    notifyListeners();
+  }
+
+  // Help / guide URLs fetched from global params
+  String _onboardYourselfUrl = "";
+  String _registeringIndividualUrl = "";
+  String _syncDataUrl = "";
+  String _mappingDevicesUrl = "";
+  String _uploadingDataUrl = "";
+  String _updatingBiometricsUrl = "";
+
+  String get onboardYourselfUrl => _onboardYourselfUrl;
+  set onboardYourselfUrl(String value) {
+    _onboardYourselfUrl = value;
+    notifyListeners();
+  }
+
+  String get registeringIndividualUrl => _registeringIndividualUrl;
+  set registeringIndividualUrl(String value) {
+    _registeringIndividualUrl = value;
+    notifyListeners();
+  }
+
+  String get syncDataUrl => _syncDataUrl;
+  set syncDataUrl(String value) {
+    _syncDataUrl = value;
+    notifyListeners();
+  }
+
+  String get mappingDevicesUrl => _mappingDevicesUrl;
+  set mappingDevicesUrl(String value) {
+    _mappingDevicesUrl = value;
+    notifyListeners();
+  }
+
+  String get uploadingDataUrl => _uploadingDataUrl;
+  set uploadingDataUrl(String value) {
+    _uploadingDataUrl = value;
+    notifyListeners();
+  }
+
+  String get updatingBiometricsUrl => _updatingBiometricsUrl;
+  set updatingBiometricsUrl(String value) {
+    _updatingBiometricsUrl = value;
     notifyListeners();
   }
 
@@ -456,6 +527,24 @@ class GlobalProvider with ChangeNotifier {
     }
   }
 
+  getPRIDLength() async {
+    int length = await globalConfigService.getPRIDLength();
+    _pridLength = length == 0 ? 14 : length;
+    notifyListeners();
+  }
+
+  getUINLength() async {
+    int length = await globalConfigService.getUINLength();
+    _uinLength = length == 0 ? 10 : length;
+    notifyListeners();
+  }
+
+  getVIDLength() async {
+    int length = await globalConfigService.getVIDLength();
+    _vidLength = length == 0 ? 16 : length;
+    notifyListeners();
+  }
+
   chooseLanguage(Map<String, String> label) {
     String x = '';
     for (var i in chosenLang) {
@@ -527,6 +616,27 @@ class GlobalProvider with ChangeNotifier {
     _mvelRequiredFields = {};
     _mvelVisibleFields = {};
     log("input value $_fieldInputValue");
+    notifyListeners();
+  }
+
+  /// Clears demographic and MVEL state but preserves given keys in
+  /// [fieldInputValue] (e.g. biometric and document field IDs) so that
+  /// re-fetching PRID does not force re-upload of already captured data.
+  void clearMapPreservingKeys(List<String> keysToPreserve) {
+    if (keysToPreserve.isEmpty) {
+      clearMap();
+      return;
+    }
+    final preserved = <String, dynamic>{};
+    for (final key in keysToPreserve) {
+      if (_fieldInputValue.containsKey(key)) {
+        preserved[key] = _fieldInputValue[key];
+      }
+    }
+    _fieldInputValue = preserved;
+    _mvelRequiredFields = {};
+    _mvelVisibleFields = {};
+    log("input value $_fieldInputValue (preserved ${preserved.length} keys)");
     notifyListeners();
   }
 
@@ -741,8 +851,15 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getAudit(String id, String componentId) async {
-    await audit.performAudit(id, componentId);
+  getAudit(String id, String componentId, [dynamic arguments]) async {
+    // Arguments are always String or List<String>. Convert to List<String?> for Pigeon API.
+    List<String?>? convertedArguments;
+    if (arguments is String) {
+      convertedArguments = [arguments];
+    } else if (arguments is List<String>) {
+      convertedArguments = arguments.map((e) => e as String?).toList();
+    }
+    await audit.performAudit(id, componentId, convertedArguments);
   }
 
   Map<String?, String?> _locationHierarchyMap = {};
@@ -856,23 +973,26 @@ class GlobalProvider with ChangeNotifier {
       return null;
     }
 
-    // Check and request permission
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions still denied
-        return null;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
+    // Session-aware permission: re-request if user had chosen "Only this time" in a previous session
+    bool hasPermission =
+        await LocationService.instance.checkLocationPermissionForSession();
+    await audit.performAudit(
+      "NAV_GEO_LOCATION",
+      "REG-MOD-102",
+    );
+    if (!hasPermission) {
       return null;
     }
 
     // Fetch location if permission is granted
-    return await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
+    // Add timeout to prevent indefinite hanging
+    try {
+      return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 10),
+      );
+    } on TimeoutException {
+      return null;
+    }
   }
 }

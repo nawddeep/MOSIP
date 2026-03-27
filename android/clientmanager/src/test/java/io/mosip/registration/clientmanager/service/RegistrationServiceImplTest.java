@@ -17,8 +17,10 @@ import io.mosip.registration.clientmanager.dto.ResponseDto;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
+import io.mosip.registration.clientmanager.spi.PreCheckValidatorService;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
@@ -60,6 +62,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -99,6 +102,10 @@ public class RegistrationServiceImplTest {
     private Biometrics095Service biometricService;
     @Mock
     private PreRegistrationDataSyncService preRegistrationDataSyncService;
+    @Mock
+    private PacketService packetService;
+    @Mock
+    private PreCheckValidatorService preCheckValidatorService;
 
     @Before
     public void setUp() {
@@ -110,7 +117,7 @@ public class RegistrationServiceImplTest {
         when(preRegistrationDataSyncServiceProvider.get()).thenReturn(preRegistrationDataSyncService);
         registrationService = new RegistrationServiceImpl(mockApplicationContext, packetWriterService,
                 registrationRepository, masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService);
+                keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService, packetService, preCheckValidatorService);
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -135,7 +142,7 @@ public class RegistrationServiceImplTest {
         File mockFile = mock(File.class);
         when(mockFile.getUsableSpace()).thenReturn(100l*(1024 * 1024));
         when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
-        RegistrationDto registrationDto = registrationService.startRegistration(Arrays.asList("eng"), "NEW", "NEW");
+        RegistrationDto registrationDto = registrationService.startRegistration(Arrays.asList("eng"), "NEW", "NEW", null, null);
         RegistrationDto result = registrationService.getRegistrationDto();
 
         Assert.assertNotNull(registrationDto);
@@ -169,14 +176,14 @@ public class RegistrationServiceImplTest {
         when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
         List<String> selectedLanguages = new ArrayList<>();
         selectedLanguages.add("eng");
-        RegistrationDto registrationDto = registrationService.startRegistration(selectedLanguages, "NEW", "NEW");
+        RegistrationDto registrationDto = registrationService.startRegistration(selectedLanguages, "NEW", "NEW", null, null);
         RegistrationDto result = registrationService.getRegistrationDto();
 
         Assert.assertNotNull(registrationDto);
         Assert.assertNotNull(result);
         Assert.assertEquals(registrationDto.getRId(), result.getRId());
         // Fix: Set BIO_DEVICES field on biometricService mock
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
         // Mock additional required dependencies for submitRegistrationDto
@@ -197,7 +204,7 @@ public class RegistrationServiceImplTest {
     public void startRegistrationWithoutMasterSync_throwException() throws Exception {
         List<String> selectedLanguages = new ArrayList<>();
         selectedLanguages.add("eng");
-        registrationService.startRegistration(selectedLanguages, "NEW", "NEW");
+        registrationService.startRegistration(selectedLanguages, "NEW", "NEW", null, null);
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -212,7 +219,7 @@ public class RegistrationServiceImplTest {
         centerMachineDto.setMachineStatus(true);
         centerMachineDto.setMachineRefId("10001_110001");
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
-        registrationService.startRegistration(selectedLanguages, "NEW", "NEW");
+        registrationService.startRegistration(selectedLanguages, "NEW", "NEW", null, null);
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -229,7 +236,7 @@ public class RegistrationServiceImplTest {
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.4);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn(null);
-        registrationService.startRegistration(selectedLanguages, "NEW", "NEW");
+        registrationService.startRegistration(selectedLanguages, "NEW", "NEW", null, null);
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -246,7 +253,7 @@ public class RegistrationServiceImplTest {
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.4);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn(null);
-        registrationService.startRegistration(selectedLanguages, "NEW", "NEW");
+        registrationService.startRegistration(selectedLanguages, "NEW", "NEW", null, null);
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -263,7 +270,7 @@ public class RegistrationServiceImplTest {
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.4);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn(null);
-        registrationService.startRegistration(selectedLanguages, "NEW", "NEW");
+        registrationService.startRegistration(selectedLanguages, "NEW", "NEW", null, null);
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -284,7 +291,7 @@ public class RegistrationServiceImplTest {
         when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
         List<String> languages = new ArrayList<>();
         languages.add("eng");
-        RegistrationDto registrationDto = registrationService.startRegistration(languages, "NEW", "NEW");
+        RegistrationDto registrationDto = registrationService.startRegistration(languages, "NEW", "NEW", null, null);
         RegistrationDto result = registrationService.getRegistrationDto();
 
         Assert.assertNotNull(registrationDto);
@@ -343,7 +350,7 @@ public class RegistrationServiceImplTest {
         when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
         when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
 
-        registrationService.startRegistration(new ArrayList<>(Collections.singletonList("eng")), "NEW", "NEW");
+        registrationService.startRegistration(new ArrayList<>(Collections.singletonList("eng")), "NEW", "NEW", null, null);
         Method setRegistrationDto = registrationService.getClass().getDeclaredMethod("getRegistrationDto");
         setRegistrationDto.setAccessible(true);
 
@@ -388,7 +395,7 @@ public class RegistrationServiceImplTest {
 
         when(clientCryptoManagerService.getClientKeyIndex()).thenReturn("1");
         // Fix: Set BIO_DEVICES field on biometricService mock
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
         // Should not throw
@@ -739,7 +746,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         // Fix: Set BIO_DEVICES field on biometricService mock
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
 
@@ -795,7 +802,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         // Fix: Set BIO_DEVICES field on biometricService mock
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
 
@@ -851,7 +858,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         // Fix: Set BIO_DEVICES field on biometricService mock
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
 
@@ -907,7 +914,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         // Fix: Set BIO_DEVICES field on biometricService mock
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
 
@@ -963,7 +970,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("");
         // Fix: Set BIO_DEVICES field on biometricService mock
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
 
@@ -1163,7 +1170,7 @@ public class RegistrationServiceImplTest {
         when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
         when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
 
-        RegistrationDto result = registrationService.startRegistration(languages, "NEW", "NEW");
+        RegistrationDto result = registrationService.startRegistration(languages, "NEW", "NEW", null, null);
         assertNotNull(result);
         // cleanup() should have been called on dummyDto
         Mockito.verify(dummyDto).cleanup();
@@ -1221,7 +1228,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         // Fix: Set BIO_DEVICES field on biometricService mock
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
 
@@ -1739,9 +1746,7 @@ public class RegistrationServiceImplTest {
         when(globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL)).thenReturn("0");
         when(globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.INDIVIDUAL_BIOMETRICS_ID)).thenReturn("bioField");
         when(globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION)).thenReturn("2.0.0");
-        when(globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL)).thenReturn("0");
-        when(globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION)).thenReturn("2.0.0");
-        when(globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.INDIVIDUAL_BIOMETRICS_ID)).thenReturn("bioField");
+
 
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId("centerId");
@@ -1754,7 +1759,7 @@ public class RegistrationServiceImplTest {
                 Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString()))
                 .thenReturn("path/to/packet.zip");
 
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
 
@@ -1844,5 +1849,196 @@ public class RegistrationServiceImplTest {
             Throwable cause = e.getCause();
             assertTrue(cause instanceof ClientCheckedException);
         }
+    }
+
+    // ========== GPS Location Validation in startRegistration() Tests ==========
+
+    @Test
+    public void testStartRegistration_WithNullGPS_Success() throws Exception {
+        // Setup
+        CenterMachineDto centerMachineDto = new CenterMachineDto();
+        centerMachineDto.setCenterId("10001");
+        centerMachineDto.setMachineId("110001");
+        centerMachineDto.setCenterStatus(true);
+        centerMachineDto.setMachineStatus(true);
+        centerMachineDto.setMachineRefId("10001_110001");
+        when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
+        when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
+        when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
+        when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
+        File mockFile = mock(File.class);
+        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
+        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
+
+        // Execute with null GPS
+        RegistrationDto result = registrationService.startRegistration(
+                Arrays.asList("eng"), "NEW", "NEW", null, null);
+
+        // Verify: Registration succeeds, no validation called
+        assertNotNull(result);
+        assertNull(result.getGeoLocationDto());
+        verify(preCheckValidatorService, never()).validateCenterToMachineDistance(any(), any());
+    }
+
+    @Test
+    public void testStartRegistration_WithGPS_ValidationPasses_Success() throws Exception {
+        // Setup
+        CenterMachineDto centerMachineDto = new CenterMachineDto();
+        centerMachineDto.setCenterId("10001");
+        centerMachineDto.setMachineId("110001");
+        centerMachineDto.setCenterStatus(true);
+        centerMachineDto.setMachineStatus(true);
+        centerMachineDto.setMachineRefId("10001_110001");
+        when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
+        when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
+        when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
+        when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
+        File mockFile = mock(File.class);
+        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
+        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
+
+        // Setup: Validation passes (no exception thrown)
+        // Note: PreCheckValidatorService.validateCenterToMachineDistance doesn't throw when validation passes
+
+        // Execute with GPS coordinates
+        Double latitude = 12.9716;
+        Double longitude = 77.5946;
+        RegistrationDto result = registrationService.startRegistration(
+                Arrays.asList("eng"), "NEW", "NEW", latitude, longitude);
+
+        // Verify: Registration succeeds, GPS set, validation called
+        assertNotNull(result);
+        assertNotNull(result.getGeoLocationDto());
+        assertEquals(latitude, result.getGeoLocationDto().getLatitude(), 0.0001);
+        assertEquals(longitude, result.getGeoLocationDto().getLongitude(), 0.0001);
+        verify(preCheckValidatorService).validateCenterToMachineDistance(longitude, latitude);
+    }
+
+    @Test(expected = ClientCheckedException.class)
+    public void testStartRegistration_WithGPS_ValidationFails_ThrowsException() throws Exception {
+        // Setup
+        CenterMachineDto centerMachineDto = new CenterMachineDto();
+        centerMachineDto.setCenterId("10001");
+        centerMachineDto.setMachineId("110001");
+        centerMachineDto.setCenterStatus(true);
+        centerMachineDto.setMachineStatus(true);
+        centerMachineDto.setMachineRefId("10001_110001");
+        when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
+        when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
+        when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
+        when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
+        File mockFile = mock(File.class);
+        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
+        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
+
+        // Setup: Validation fails - throw exception
+        Double latitude = 13.9716;
+        Double longitude = 78.5946;
+        ClientCheckedException validationException = new ClientCheckedException(
+                mockApplicationContext, android.R.string.unknownName, "OPT_TO_REG_OUTSIDE_LOCATION");
+        Mockito.doThrow(validationException).when(preCheckValidatorService)
+                .validateCenterToMachineDistance(longitude, latitude);
+
+        // Execute - should throw exception
+        try {
+            registrationService.startRegistration(
+                    Arrays.asList("eng"), "NEW", "NEW", latitude, longitude);
+        } catch (ClientCheckedException e) {
+            // Verify: Validation was called
+            verify(preCheckValidatorService).validateCenterToMachineDistance(longitude, latitude);
+            throw e;
+        }
+    }
+
+    @Test
+    public void testStartRegistration_WithGPS_SyncValidatorNull_SkipsValidation() throws Exception {
+        // Setup: Create service without PreCheckValidatorService (null)
+        RegistrationService serviceWithoutValidator = new RegistrationServiceImpl(
+                mockApplicationContext, packetWriterService,
+                registrationRepository, masterDataService, identitySchemaRepository, 
+                clientCryptoManagerService, keyStoreRepository, globalParamRepository, 
+                auditManagerService, registrationCenterRepository, locationValidationService, 
+                preRegistrationDataSyncServiceProvider, biometricService, packetService, null);
+
+        CenterMachineDto centerMachineDto = new CenterMachineDto();
+        centerMachineDto.setCenterId("10001");
+        centerMachineDto.setMachineId("110001");
+        centerMachineDto.setCenterStatus(true);
+        centerMachineDto.setMachineStatus(true);
+        centerMachineDto.setMachineRefId("10001_110001");
+        when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
+        when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
+        when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
+        when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
+        File mockFile = mock(File.class);
+        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
+        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
+
+        // Execute with GPS but validator is null
+        Double latitude = 12.9716;
+        Double longitude = 77.5946;
+        RegistrationDto result = serviceWithoutValidator.startRegistration(
+                Arrays.asList("eng"), "NEW", "NEW", latitude, longitude);
+
+        // Verify: Registration succeeds, GPS set, no validation exception
+        assertNotNull(result);
+        assertNotNull(result.getGeoLocationDto());
+        assertEquals(latitude, result.getGeoLocationDto().getLatitude(), 0.0001);
+        assertEquals(longitude, result.getGeoLocationDto().getLongitude(), 0.0001);
+        // PreCheckValidatorService is null, so validation should be skipped
+    }
+
+    @Test
+    public void testStartRegistration_WithGPS_LatitudeNull_SkipsValidation() throws Exception {
+        // Setup
+        CenterMachineDto centerMachineDto = new CenterMachineDto();
+        centerMachineDto.setCenterId("10001");
+        centerMachineDto.setMachineId("110001");
+        centerMachineDto.setCenterStatus(true);
+        centerMachineDto.setMachineStatus(true);
+        centerMachineDto.setMachineRefId("10001_110001");
+        when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
+        when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
+        when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
+        when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
+        File mockFile = mock(File.class);
+        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
+        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
+
+        // Execute with null latitude (partial GPS)
+        RegistrationDto result = registrationService.startRegistration(
+                Arrays.asList("eng"), "NEW", "NEW", null, 77.5946);
+
+        // Verify: Registration succeeds, no GPS set, no validation called
+        assertNotNull(result);
+        assertNull(result.getGeoLocationDto());
+        verify(preCheckValidatorService, never()).validateCenterToMachineDistance(any(), any());
+    }
+
+    @Test
+    public void testStartRegistration_WithGPS_LongitudeNull_SkipsValidation() throws Exception {
+        // Setup
+        CenterMachineDto centerMachineDto = new CenterMachineDto();
+        centerMachineDto.setCenterId("10001");
+        centerMachineDto.setMachineId("110001");
+        centerMachineDto.setCenterStatus(true);
+        centerMachineDto.setMachineStatus(true);
+        centerMachineDto.setMachineRefId("10001_110001");
+        when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
+        when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
+        when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
+        when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
+        File mockFile = mock(File.class);
+        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
+        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
+
+        // Execute with null longitude (partial GPS)
+        RegistrationDto result = registrationService.startRegistration(
+                Arrays.asList("eng"), "NEW", "NEW", 12.9716, null);
+
+        // Verify: Registration succeeds, no GPS set, no validation called
+        assertNotNull(result);
+        assertNull(result.getGeoLocationDto());
+        verify(preCheckValidatorService, never()).validateCenterToMachineDistance(any(), any());
     }
 }

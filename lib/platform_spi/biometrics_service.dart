@@ -39,5 +39,9 @@ abstract class BiometricsService {
 
   Future<List<DeviceInfo?>> getListOfDevices(String modality);
 
+  Future<String> getOperatorOnboardingBioattributes();
+
+  Future<int> getCaptureTimeout();
+
   factory BiometricsService() => getBiometricsServiceImpl();
 }

@@ -5,6 +5,7 @@
  *
 */
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -34,6 +35,9 @@ class SyncProvider with ChangeNotifier {
   bool isSyncInProgress = false;
   bool _isSyncAndUploadInProgress = false;
 
+  Timer? _jobStatusPollingTimer;
+  final Map<String, JobStatus> _jobStatuses = {};
+
   String get lastSuccessfulSyncTime => _lastSuccessfulSyncTime;
   int get currentSyncProgress => _currentSyncProgress;
   String get currentProgressType => _currentProgressType;
@@ -47,6 +51,8 @@ class SyncProvider with ChangeNotifier {
   bool get masterDataSyncSuccess => _masterDataSyncSuccess;
   bool get cacertsSyncSuccess => _cacertsSyncSuccess;
   bool get kernelCertsSyncSuccess => _kernelCertsSyncSuccess;
+
+  Map<String, JobStatus> get jobStatuses => _jobStatuses;
 
   set isSyncing(bool value) {
     _isSyncing = value;
@@ -157,7 +163,7 @@ class SyncProvider with ChangeNotifier {
     });
 
     await syncResponseService
-        .getIDSchemaSync(false)
+        .getIDSchemaSync(false, findJobIdByApiName("latestIdSchemaSyncJob"))
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
@@ -231,7 +237,7 @@ class SyncProvider with ChangeNotifier {
     
     Sync syncResult = await syncResponseService.getMasterDataSync(true, findJobIdByApiName("masterSyncJob"));
     if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
-      syncResult = await syncResponseService.getIDSchemaSync(true);
+      syncResult = await syncResponseService.getIDSchemaSync(true, findJobIdByApiName("latestIdSchemaSyncJob"));
       if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
         syncResult = await syncResponseService.getUserDetailsSync(true, findJobIdByApiName("userDetailServiceJob"));
         if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
@@ -280,4 +286,56 @@ class SyncProvider with ChangeNotifier {
       return null;
     }
   }
+
+  void startJobPolling() {
+    refreshJobStatuses(); // Initial fetch
+    _jobStatusPollingTimer?.cancel();
+    _jobStatusPollingTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      refreshJobStatuses();
+    });
+  }
+
+  void stopJobPolling() {
+    _jobStatusPollingTimer?.cancel();
+    _jobStatusPollingTimer = null;
+  }
+
+  Future<void> refreshJobStatuses() async {
+    try {
+      final activeJobs = await syncResponseService.getActiveSyncJobs();
+      for (final jobJson in activeJobs) {
+         if (jobJson == null) continue;
+         try {
+           final job = SyncJobDef.fromJson(json.decode(jobJson) as Map<String, dynamic>);
+           if (job.id != null) {
+              final lastSync = await getLastSyncTimeByJobId(job.id!);
+              final nextSync = await getNextSyncTimeByJobId(job.id!);
+              
+              _jobStatuses[job.id!] = JobStatus(id: job.id!, lastSyncTime: lastSync, nextSyncTime: nextSync);
+           }
+         } catch (e) {
+           log("Error parsing job during polling: $e");
+         }
+      }
+
+      await getLastSyncTime(); // Update global last sync time (fallback for Master Sync)
+      notifyListeners();
+    } catch (e) {
+      log("Error refreshing job statuses: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    stopJobPolling();
+    super.dispose();
+  }
+}
+
+class JobStatus {
+  final String id;
+  final String? lastSyncTime;
+  final String? nextSyncTime;
+
+  JobStatus({required this.id, this.lastSyncTime, this.nextSyncTime});
 }

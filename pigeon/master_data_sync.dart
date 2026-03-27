@@ -29,7 +29,7 @@ abstract class SyncApi {
   Sync getUserDetailsSync(bool isManualSync, String jobId);
 
   @async
-  Sync getIDSchemaSync(bool isManualSync);
+  Sync getIDSchemaSync(bool isManualSync, String jobId);
 
   @async
   Sync getMasterDataSync(bool isManualSync, String jobId);
@@ -54,9 +54,21 @@ abstract class SyncApi {
   @async
   bool deletePreRegRecords(String jobId);
   @async
+  bool deleteRegistrationPackets(String jobId);
+  @async
+  bool syncPacketStatus(String jobId);
+  @async
   String getLastSyncTimeByJobId(String jobId);
   @async
   String getNextSyncTimeByJobId(String jobId);
   @async
   List<String> getActiveSyncJobs();
+  @async
+  List<String> getPermittedJobs();
+  @async
+  bool isValidCronExpression(String cronExpression);
+  @async
+  bool modifyJobCronExpression(String jobId, String cronExpression);
+  @async
+  String? getValue(String name);
 }

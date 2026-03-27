@@ -26,6 +26,7 @@ public class RegistrationConstants {
     public static final List<String> EXCEPTION_PHOTO_ATTR = Arrays.asList("unknown");
 
     public static String DEDUPLICATION_ENABLE_FLAG = "mosip.registration.mds.deduplication.enable.flag";
+    public static String QUALITY_CHECK_WITH_SDK = "mosip.registration.quality_check_with_sdk";
     public static final String ENABLE = "Y";
     public static final String DISABLE = "N";
 
@@ -111,12 +112,58 @@ public class RegistrationConstants {
     public static final String RIGHT_THUMB = "Right Thumb";
     public static final String RIGHT = "Right";
     public static final String LEFT = "Left";
+    public static final String DEFAULT_CAPTURE_TIMEOUT = "10000";
     public static final String PRE_REG_DELETION_CONFIGURED_DAYS = "mosip.registration.pre_reg_deletion_configured_days";
+    public static final String REG_DELETION_CONFIGURED_DAYS = "mosip.registration.reg_deletion_configured_days";
     public static final String PRE_REG_DELETE_SUCCESS = "PRE_REG_DELETE_SUCCESS";
     public static final String PRE_REG_DELETE_FAILURE = "PRE_REG_DELETE_FAILURE";
     public static final String JOB_TRIGGER_POINT_USER = "User";
     public static final String GPS_DEVICE_ENABLE_FLAG = "mosip.registration.gps_device_enable_flag";
     public static final String DIST_FRM_MACHINE_TO_CENTER = "mosip.registration.distance.from.machine.to.center";
+    public static final String GEO_CAP_FREQ = "mosip.registration.geo.capture.frequency";
+    public static final String OPT_TO_REG_OUTSIDE_LOCATION = "OPT_TO_REG_OUTSIDE_LOCATION";
+    public static final String OPT_TO_REG_LAST_CAPTURED_TIME = "OPT_TO_REG_LAST_CAPTURED_TIME";
+    public static final String OPERATOR_ONBOARDING_BIO_ATTRIBUTES = "mosip.registration.operator.onboarding.bioattributes";
+    public static final String SERVER_ACTIVE_PROFILE = "mosip.registration.server_profile";
+    public static final String ONBOARD_YOURSELF_URL = "mosip.registration.onboard_yourself_url";
+    public static final String REGISTERING_INDIVIDUAL_URL = "mosip.registration.registering_individual_url";
+    public static final String SYNC_DATA_URL = "mosip.registration.sync_data_url";
+    public static final String MAPPING_DEVICES_URL = "mosip.registration.mapping_devices_url";
+    public static final String UPLOADING_DATA_URL = "mosip.registration.uploading_data_url";
+    public static final String UPDATING_BIOMETRICS_URL = "mosip.registration.updating_biometrics_url";
+    public static final String PWORD_LENGTH = "mosip.registration.username_pwd_length";
+    public static final String DOC_SIZE = "mosip.registration.document_size";
+    public static final String MAX_AGE = "mosip.registration.max_age";
+    public static final String FIELDS_TO_RETAIN_ON_PRID_FETCH = "mosip.registration.fields.to.retain.post.prid.fetch";
     public static final String HTTP_API_READ_TIMEOUT = "mosip.registration.HTTP_API_READ_TIMEOUT";
     public static final String HTTP_API_WRITE_TIMEOUT = "mosip.registration.HTTP_API_WRITE_TIMEOUT";
+    public static final String CAPTURE_TIMEOUT = "mosip.registration.capture_time_out";
+
+    public static final String REG_PAK_MAX_TIME_APPRV_LIMIT = "mosip.registration.reg_pak_max_time_apprv_limit";
+    public static final String OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME = "mosip.registration.last_export_registration_config_time";
+    public static final String REG_PAK_MAX_CNT_OFFLINE_FREQ = "mosip.registration.packet.maximum.count.offline.frequency";
+    public static final String INVALID_LOGIN_COUNT = "mosip.registration.invalid_login_count";
+    public static final String INVALID_LOGIN_TIME = "mosip.registration.invalid_login_time";
+    public static final String DISK_SPACE = "mosip.registration.disk_space_size";
+    public static final String PRID_LENGTH = "mosip.kernel.prid.length";
+    public static final String UIN_LENGTH = "mosip.kernel.uin.length";
+    public static final String VID_LENGTH = "mosip.kernel.vid.length";
+    public static final String SUPERVISOR_APPROVAL_CONFIG_FLAG = "mosip.registration.supervisor_approval_config_flag";
+    public static final String DOC_TYPE = "mosip.registration.document_scanner_doctype";
+    public static final String APP_NAME = "mosip.registration.audit_application_name";
+    public static final String APP_ID = "mosip.registration.audit_application_id";
+    public static final String DEFAULT_HOST_IP = "mosip.registration.audit_default_host_ip";
+    public static final String DEFAULT_HOST_NAME = "mosip.registration.audit_default_host_name";
+    public static final String REG_PAK_MAX_CNT_APPRV_LIMIT = "mosip.registration.reg_pak_max_cnt_apprv_limit";
+    public static final String PACKET_STORE_LOCATION = "mosip.registration.registration_packet_store_location";
+
+    public static final String JOBS_OFFLINE = "mosip.registration.jobs.offline";
+    public static final String JOBS_UNTAGGED = "mosip.registration.jobs.unTagged";
+    public static final String JOBS_RESTART = "mosip.registration.jobs.restart";
+
+    // Sync status validation constants
+    public static final String MOSIP_REGISTRATION = "mosip.registration.";
+    public static final String DOT = ".";
+    public static final String FREQUENCY = "frequency";
+    public static final String OPT_TO_REG_TIME_SYNC_EXCEED = "OPT_TO_REG_TIME_SYNC_EXCEED";
 }

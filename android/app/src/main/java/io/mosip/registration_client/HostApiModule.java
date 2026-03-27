@@ -71,7 +71,9 @@ import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.MasterDataSyncApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
 import io.mosip.registration_client.api_services.RegistrationApi;
+import io.mosip.registration_client.api_services.SecureScreenApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
+import io.mosip.registration.clientmanager.util.BioSdkProviderFactory;
 
 @Module
 public class HostApiModule {
@@ -166,8 +168,8 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    DemographicsDetailsApi getDemographicsDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService) {
-        return new DemographicsDetailsApi(registrationService, auditManagerService);
+    DemographicsDetailsApi getDemographicsDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository) {
+        return new DemographicsDetailsApi(registrationService, auditManagerService, globalParamRepository);
     }
 
     @Provides
@@ -178,16 +180,23 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    DocumentDetailsApi getDocumentDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService) {
-        return new DocumentDetailsApi(registrationService, auditManagerService);
+    DocumentDetailsApi getDocumentDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository) {
+        return new DocumentDetailsApi(registrationService, auditManagerService, globalParamRepository);
     }
 
     @Provides
     @Singleton
     MasterDataSyncApi getSyncResponseApi(
-            ClientCryptoManagerService clientCryptoManagerService, MachineRepository machineRepository, RegistrationCenterRepository registrationCenterRepository,
-            SyncRestService syncRestService, CertificateManagerService certificateManagerService, GlobalParamRepository globalParamRepository, ObjectMapper objectMapper, UserDetailRepository userDetailRepository,
-            IdentitySchemaRepository identitySchemaRepository, DocumentTypeRepository documentTypeRepository,
+            ClientCryptoManagerService clientCryptoManagerService,
+            MachineRepository machineRepository,
+            RegistrationCenterRepository registrationCenterRepository,
+            SyncRestService syncRestService,
+            CertificateManagerService certificateManagerService,
+            GlobalParamRepository globalParamRepository,
+            ObjectMapper objectMapper,
+            UserDetailRepository userDetailRepository,
+            IdentitySchemaRepository identitySchemaRepository,
+            DocumentTypeRepository documentTypeRepository,
             ApplicantValidDocRepository applicantValidDocRepository,
             TemplateRepository templateRepository,
             DynamicFieldRepository dynamicFieldRepository,
@@ -199,17 +208,39 @@ public class HostApiModule {
             AuditManagerService auditManagerService,
             MasterDataService masterDataService,
             PacketService packetService,
-            GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao,PreRegistrationDataSyncService preRegistrationDataSyncService) {
-        return new MasterDataSyncApi(clientCryptoManagerService,
-                machineRepository, registrationCenterRepository,
-                syncRestService, certificateManagerService,
-                globalParamRepository, objectMapper, userDetailRepository,
-                identitySchemaRepository, appContext,
-                documentTypeRepository, applicantValidDocRepository,
-                templateRepository, dynamicFieldRepository,
-                locationRepository, blocklistedWordRepository,
-                syncJobDefRepository, languageRepository, jobManagerService,
-                auditManagerService, masterDataService, packetService, globalParamDao, fileSignatureDao, preRegistrationDataSyncService
+            GlobalParamDao globalParamDao,
+            FileSignatureDao fileSignatureDao,
+            PreRegistrationDataSyncService preRegistrationDataSyncService,
+            LocalConfigService localConfigService,
+            BioSdkProviderFactory bioSdkProviderFactory) {
+        return new MasterDataSyncApi(
+                clientCryptoManagerService,
+                machineRepository,
+                registrationCenterRepository,
+                syncRestService,
+                certificateManagerService,
+                globalParamRepository,
+                objectMapper,
+                userDetailRepository,
+                identitySchemaRepository,
+                appContext,
+                documentTypeRepository,
+                applicantValidDocRepository,
+                templateRepository,
+                dynamicFieldRepository,
+                locationRepository,
+                blocklistedWordRepository,
+                syncJobDefRepository,
+                languageRepository,
+                jobManagerService,
+                auditManagerService,
+                masterDataService,
+                packetService,
+                globalParamDao,
+                fileSignatureDao,
+                preRegistrationDataSyncService,
+                localConfigService,
+                bioSdkProviderFactory
         );
     }
 
@@ -248,6 +279,12 @@ public class HostApiModule {
     @Singleton
     LocationValidationService provideLocationValidationService() {
         return new LocationValidationServiceImpl();
+    }
+
+    @Provides
+    @Singleton
+    SecureScreenApi getSecureScreenApi() {
+        return new SecureScreenApi();
     }
 }
 

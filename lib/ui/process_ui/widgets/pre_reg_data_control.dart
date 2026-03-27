@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
@@ -37,10 +40,33 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
     if(globalProvider.preRegId!=""){
       preRegIdController.text = globalProvider.preRegId;
     }
+    globalProvider.getPRIDLength();
     super.initState();
   }
 
-
+  /// Collects field IDs for biometric and document fields based on their controlType
+  /// so we can preserve them when clearing the map on PRID fetch (avoids re-upload prompt).
+  List<String> _getBiometricAndDocumentFieldIds() {
+    final ids = <String>[];
+    try {
+      for (final item in registrationTaskProvider.listOfProcesses) {
+        if (item == null) continue;
+        final json = jsonDecode(item.toString()) as Map<String, Object?>;
+        final process = Process.fromJson(json);
+        for (final screen in process.screens ?? []) {
+          for (final field in screen?.fields ?? []) {
+            // Identify by controlType rather than screen name for schema flexibility
+            if (field?.controlType == 'biometrics' || field?.controlType == 'fileupload') {
+              if (field?.id != null) ids.add(field!.id!);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error collecting biometric/document field IDs: $e');
+    }
+    return ids;
+  }
 
   widgetValue(Screen screen,Map<String?, Object?> value) async {
 
@@ -199,6 +225,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
   Widget build(BuildContext context) {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+    GlobalProvider globalProvider = Provider.of<GlobalProvider>(context);
     return Card(
       elevation: 5,
       color: pureWhite,
@@ -222,32 +249,37 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
             ),
             Row(
               children: [
-                Expanded(
-                  flex: 3,
-                  child: TextFormField(
-                    key: _formFieldKey,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    textCapitalization: TextCapitalization.words,
-                    controller: preRegIdController,
-                    onChanged: (value) {
-                      //preRegIdController.text = value;
-                      globalProvider.setPreRegistrationId(value);
-                    },
-                    textAlign: TextAlign.left,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            const BorderSide(color: appGreyShade, width: 1),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16,vertical: 14),
-                      hintText: AppLocalizations.of(context)!.enter_application_id,
-                      hintStyle:
-                          const TextStyle(color: appBlackShade3, fontSize: 14),
-                    ),
+              Expanded(
+              flex: 3,
+              child: TextFormField(
+                key: _formFieldKey,
+                controller: preRegIdController,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                textCapitalization: TextCapitalization.words,
+                onChanged: (value) {
+                  globalProvider.setPreRegistrationId(value);
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) return null;
+                  if (globalProvider.pridLength != null &&
+                      value.length > globalProvider.pridLength!) {
+                    return AppLocalizations.of(context)!
+                        .prid_length_greater(globalProvider.pridLength!);
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
+                  contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  hintText:
+                  AppLocalizations.of(context)!.enter_application_id,
                 ),
-                SizedBox(width: 8.w),
+              ),
+            ),
+          SizedBox(width: 8.w),
         OutlinedButton(
           style: OutlinedButton.styleFrom(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
@@ -258,7 +290,12 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
             ),
           ),
                       onPressed: () async {
+                        globalProvider.getAudit("REG-SYNC-007", "REG-MOD-102");
                         widget.onFetched();
+                        // Validate form field first
+                        if (!_formFieldKey.currentState!.validate()) {
+                          return;
+                        }
                         if(preRegIdController.text.isEmpty){
                           globalProvider.preRegControllerRefresh = true;
                           showDialog(
@@ -266,36 +303,56 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                             builder: (BuildContext context) => ValidatorAlert(errorMessage: AppLocalizations.of(context)!.enter_application_id),
                           );
                           globalProvider.preRegControllerRefresh = false;
-                        } else if(!RegExp(r'^\d{14}$').hasMatch(preRegIdController.text)){
-                          globalProvider.preRegControllerRefresh = true;
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) => ValidatorAlert(errorMessage: AppLocalizations.of(context)!.application_id_not_exist,subError: AppLocalizations.of(context)!.correct_application_id),
-                          );
-                          await context.read<
-                              RegistrationTaskProvider>()
-                              .fetchPreRegistrationDetail(
-                              preRegIdController.text);
-
-                          globalProvider.clearMap();
-                          globalProvider.clearScannedPages();
-                          globalProvider.preRegControllerRefresh = false;
                         } else {
+                          // Validate length using config value
+                          bool isValidLength = true;
+                          if (globalProvider.pridLength != null) {
+                            String input = preRegIdController.text;
+                            if (input.length != globalProvider.pridLength! || !RegExp(r'^\d+$').hasMatch(input)) {
+                              isValidLength = false;
+                            }
+                          }
+                          
+                          if (!isValidLength) {
+                            globalProvider.preRegControllerRefresh = true;
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) => ValidatorAlert(
+                                errorMessage: AppLocalizations.of(context)!.application_id_not_exist,
+                                subError: AppLocalizations.of(context)!.correct_application_id
+                              ),
+                            );
+                            await context.read<
+                                RegistrationTaskProvider>()
+                                .fetchPreRegistrationDetail(
+                                preRegIdController.text);
+
+                            globalProvider.clearMapPreservingKeys(
+                                _getBiometricAndDocumentFieldIds());
+                            globalProvider.clearScannedPagesPreservingKeys(
+                                _getBiometricAndDocumentFieldIds());
+                            globalProvider.preRegControllerRefresh = false;
+                          } else {
                           globalProvider.preRegControllerRefresh = true;
                             Map<String?, Object?> value = await context.read<
                                 RegistrationTaskProvider>()
                                 .fetchPreRegistrationDetail(
                                 preRegIdController.text);
                             if (value.isNotEmpty) {
-                              globalProvider.clearMap();
-                              globalProvider.clearScannedPages();
+                              globalProvider.clearMapPreservingKeys(
+                                  _getBiometricAndDocumentFieldIds());
+                              globalProvider.clearScannedPagesPreservingKeys(
+                                  _getBiometricAndDocumentFieldIds());
                               widgetValue(widget.screen, value);
                               registrationTaskProvider.setApplicationId(preRegIdController.text);
                             } else {
-                              globalProvider.clearMap();
-                              globalProvider.clearScannedPages();
+                              globalProvider.clearMapPreservingKeys(
+                                  _getBiometricAndDocumentFieldIds());
+                              globalProvider.clearScannedPagesPreservingKeys(
+                                  _getBiometricAndDocumentFieldIds());
                               globalProvider.preRegControllerRefresh = false;
                             }
+                          }
                         }
                       },
                       child: Text(
@@ -315,6 +372,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
             ),
           ),
                     onPressed: () async {
+                      globalProvider.getAudit("REG-SYNC-007", "REG-MOD-102");
                       widget.onFetched();
                       var data = await Navigator.push(
                         context,
@@ -322,14 +380,29 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                             builder: (context) =>
                                 QRCodeScannerApp()),
                       );
-                      if(data!=null && !RegExp(r'^\d{14}$').hasMatch(data)){
-                        globalProvider.preRegControllerRefresh = true;
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) =>  ValidatorAlert(errorMessage: AppLocalizations.of(context)!.application_id_not_exist,subError: AppLocalizations.of(context)!.correct_application_id),
-                        );
-                        globalProvider.preRegControllerRefresh = false;
-                      } else if(data!=null) {
+                      if(data!=null) {
+                        // Validate scanned data length
+                        bool isValidLength = true;
+                        if (globalProvider.pridLength != null) {
+                          String scannedData = data.toString();
+                          if (scannedData.length != globalProvider.pridLength! || !RegExp(r'^\d+$').hasMatch(scannedData)) {
+                            isValidLength = false;
+                          }
+                        } else {
+                          // Fallback to default validation if config not loaded
+                          if (!RegExp(r'^\d{14}$').hasMatch(data)) {
+                            isValidLength = false;
+                          }
+                        }
+
+                        if (!isValidLength) {
+                          globalProvider.preRegControllerRefresh = true;
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) =>  ValidatorAlert(errorMessage: AppLocalizations.of(context)!.application_id_not_exist,subError: AppLocalizations.of(context)!.correct_application_id),
+                          );
+                          globalProvider.preRegControllerRefresh = false;
+                        } else {
                         globalProvider.preRegControllerRefresh = true;
                         setState(() {
                           preRegIdController.text = data.toString();
@@ -340,20 +413,24 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                             .fetchPreRegistrationDetail(
                             preRegIdController.text);
                         if (value.isNotEmpty) {
-                          globalProvider.clearMap();
-                          globalProvider.clearScannedPages();
+                          globalProvider.clearMapPreservingKeys(
+                              _getBiometricAndDocumentFieldIds());
+                          globalProvider.clearScannedPagesPreservingKeys(
+                              _getBiometricAndDocumentFieldIds());
                           widgetValue(widget.screen, value);
                           registrationTaskProvider.setApplicationId(preRegIdController.text);
                         } else {
-                          globalProvider.clearMap();
-                          globalProvider.clearScannedPages();
+                          globalProvider.clearMapPreservingKeys(
+                              _getBiometricAndDocumentFieldIds());
+                          globalProvider.clearScannedPagesPreservingKeys(
+                              _getBiometricAndDocumentFieldIds());
                           globalProvider.preRegControllerRefresh = false;
+                        }
                         }
                       }
                     },
                     child: Icon(Icons.crop_free,size: 32.6,color: solidPrimary),
                   ),
-
                 //const Spacer(),
               ],
             )
