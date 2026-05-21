@@ -167,24 +167,39 @@ subprojects {
     }
 }
 
-// AGP 8 fixes (separate block)
 subprojects {
-
     plugins.withId("com.android.library") {
-        def androidExt = project.extensions.findByName("android")
-        if (androidExt != null) {
-            if (androidExt.namespace == null) {
-                androidExt.namespace = "com.auto.${project.name}"
+        def androidExtension = project.extensions.findByName("android")
+        if (androidExtension == null) return
+
+        def existingNamespace = null
+        try { existingNamespace = androidExtension.namespace } catch (ignored) {}
+        if (existingNamespace != null && !existingNamespace.isEmpty()) return
+
+        def resolvedNamespace = null
+
+        def manifestFile = new File(project.projectDir, "src/main/AndroidManifest.xml")
+        if (manifestFile.exists()) {
+            def m = (manifestFile.text =~ /package="([^"]+)"/)
+            if (m.find()) resolvedNamespace = m.group(1)
+        }
+
+        if (resolvedNamespace == null) {
+            ['src/main/kotlin', 'src/main/java'].each { srcPath ->
+                if (resolvedNamespace != null) return
+                def srcDir = new File(project.projectDir, srcPath)
+                if (!srcDir.exists()) return
+                srcDir.eachFileRecurse(groovy.io.FileType.FILES) { f ->
+                    if (resolvedNamespace == null && (f.name.endsWith('.kt') || f.name.endsWith('.java'))) {
+                        def m = (f.text =~ /(?m)^\s*package\s+([\w.]+)/)
+                        if (m.find()) resolvedNamespace = m[0][1]
+                    }
+                }
             }
         }
-    }
 
-    plugins.withId("com.android.application") {
-        def androidExt = project.extensions.findByName("android")
-        if (androidExt != null) {
-            if (androidExt.namespace == null) {
-                androidExt.namespace = "com.auto.${project.name}"
-            }
+        if (resolvedNamespace != null) {
+            androidExtension.namespace = resolvedNamespace
         }
     }
 }
