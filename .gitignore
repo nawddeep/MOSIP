@@ -1,0 +1,25 @@
+# Python env / caches
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Face data must never be committed
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.jpg
+*.jpeg
+*.png
+*.bmp
+eval/data/
+minifasnet/eval/data/
+minifasnet/eval/out/
+
+# Upstream study clone (read-only reference; has its own git history)
+minifasnet-study/
+
+# Java build output
+minifasnet/java/target/
+minifasnet/java/build/
