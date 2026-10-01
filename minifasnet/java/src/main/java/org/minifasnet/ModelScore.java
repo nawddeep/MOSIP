@@ -4,10 +4,13 @@ package org.minifasnet;
 public final class ModelScore {
     public final String name;
     public final double scale;
-    public final double[] probs;
     public final double realProb;
+    private final double[] probs;
 
     ModelScore(String name, double scale, double[] probs, double realProb) {
-        this.name = name; this.scale = scale; this.probs = probs; this.realProb = realProb;
+        this.name = name; this.scale = scale; this.probs = probs.clone(); this.realProb = realProb;
     }
+
+    /** Softmax over the 3 classes (a copy; index 1 = real). */
+    public double[] getProbs() { return probs.clone(); }
 }

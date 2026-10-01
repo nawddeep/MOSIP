@@ -1,72 +1,71 @@
-# architecture.md — Target design + build plan
+# architecture.md — How the module is built
 
-Last updated: 2026-10-02
-Status: the passive pipeline below is BUILT as `minifasnet/` (Steps 1–6; see report.md and minifasnet/README.md, which hold the
-verified details — preprocessing items marked UNVERIFIED below were resolved there). The C1–C9 table is superseded by build Steps 1–6.
-Resize is a canonical integer bilinear (not cv2.resize) — see README "Preprocessing spec".
+Last updated: 2026-10-02. Status: BUILT and verified (details and numbers: minifasnet/README.md, report.md).
 
-## 1. Target runtime pipeline (what we are studying toward)
-
+## 1. Runtime pipeline (passive stage only)
 ```
-L0/L1 device frame (BGR/RGB, WxH)
+caller: frame (BGR uint8 HxWx3) + face box (x,y,w,h) from its own detector (MediaPipe in production)
         │
         ▼
-Face detector  (production: MediaPipe;  repo: UNVERIFIED — see spec H4)
-        │ face box
+validate ── frame uint8 HxWx3 >= 2x2; box 4 finite numbers, w,h > 0, center in frame, min(w,h) >= min_face_size
+        │   (typed errors: INVALID_FRAME / INVALID_BOX / FACE_TOO_SMALL)
         ▼
-Box → square crop with SCALE factor around the box   (scale per model: UNVERIFIED, spec H1)
-        │ crop resized to 80x80 (interpolation: UNVERIFIED)
-        ▼
-Preprocess: color order, dtype, normalization          (UNVERIFIED, spec H3)  ← parity-critical
-        │ tensor [1,3,80,80]
-        ▼
-MiniFASNet (ONNX Runtime) × 1..2 models
-        │ logits (3 classes — UNVERIFIED H2)
-        ▼
-softmax → fuse models (sum/avg — UNVERIFIED) → real score
+for each model (sorted by file name):   2.7_80x80_MiniFASNetV2.onnx   4_0_0_80x80_MiniFASNetV1SE.onnx
+   crop window = box x scale (2.7 | 4.0) around its center, shrunk to fit, shifted inside frame, int() truncation
+   canonical bilinear resize -> 80x80   (integer algorithm, identical in Python and Java)
+   tensor = BGR, float32 0..255, NCHW [1,3,80,80]  (no /255, no mean/std)
+   ONNX Runtime -> logits [1,3] -> softmax          (INFERENCE error on failure / bad output)
         │
         ▼
-score vs configurable threshold → { real | spoof | needs-active-challenge }
+fuse: sum softmax over models -> real_score = sum[1]/n ; label = argmax (1 = real) ; label_confidence = sum[label]/n
+        │
+        ▼
+caller's policy layer (NOT in this module): real_score >= threshold ? accept : trigger active challenge / retry
 ```
 
-Position in the hybrid design: this is the **passive stage only**. "Below threshold" → hand off to the (separate, deferred) active challenge stage.
-
-## 2. Study workspace layout (planned)
-
+## 2. Code map
 ```
-face detection mosip/
-├── CLAUDE.md  spec.md  architecture.md  report.md      ← living docs (this dir)
-└── minifasnet-study/                                    ← created at checkpoint C1
-    ├── Silent-Face-Anti-Spoofing/   (cloned repo, read-only)   [exact layout UNVERIFIED]
-    ├── NOTES.md                     (cheat sheet, C8)
-    ├── onnx/                        (exported models, C4)
-    └── scripts/                     (onnx test script, C5)
+pyproject.toml                    pytest (warnings=error), ruff, pyright/Pylance config
+minifasnet/
+  models/      *.onnx, MODEL_CARD.md
+  python/      minifasnet_pad.py  MiniFASNetPAD, PADError subclasses, get_new_box, resize_bilinear_u8, to_tensor
+               dev_box.py         DEV-ONLY Haar box (also used by eval --box-source haar)
+               export_onnx.py     upstream .pth -> ONNX (deterministic), sanity check vs PyTorch
+  java/        org.minifasnet.MiniFasNetPad (API), ImageOps (crop/resize/tensor), PadResult, ModelScore,
+               PadException(Code), Cli (predict | batch | bench | resize); src/test = JUnit
+  tests/       test_unit.py, test_eval.py, test_parity.py (+ out/parity_report.md)
+  eval/        evaluate.py (APCER/BPCER/sweep), bench_latency.py
+minifasnet-study/Silent-Face-Anti-Spoofing   upstream clone (read-only reference, gitignored)
 ```
 
-## 3. Checkpoints (do in order; each = verify → record in report.md → sync docs → commit)
+## 3. Cross-language parity design
+- The Python module is the reference; Java ports each step line by line (`ImageOps` mirrors `get_new_box`, `_axis_coefs`,
+  `resize_bilinear_u8`, `to_tensor`).
+- Resize uses only integer math + float32 coefficient steps reproduced exactly in both languages -> bit-identical patches.
+- Java CLI reads raw `.bgr` frames so both sides see identical pixels (no JPEG-decoder differences).
+- `tests/test_parity.py` runs 17 valid + 3 error cases through upstream PyTorch, Python ONNX and Java (batch mode, one JVM),
+  plus a pixel-level resize comparison on 14 patch sizes. Targets: < 1e-3 vs upstream, < 1e-6 Python vs Java.
 
-| ID | Checkpoint | Type | Output / proof of done |
-|----|-----------|------|------------------------|
-| C0 | Bootstrap docs (CLAUDE/spec/architecture/report) | docs | files exist, user reviewed |
-| C1 | Clone repo into ./minifasnet-study; map files; read-only | explore | file map + entry points recorded in report.md |
-| C2 | License & data audit (code, weights, training data) | analysis | verdict table; **GO / NO-GO gate** with user |
-| C3 | Theory A–B: big picture, architectures (V1/V2/V1SE/V2SE), I/O spec, fusion | explain | code-excerpted explanation; H1–H3,H7 resolved |
-| C4 | Theory C–D: training ideas, data, repo pipeline, detector replacement | explain | H4,H5 resolved; step-by-step flow w/ file+function names |
-| C5 | ONNX export + parity vs PyTorch on sample images | build | onnx files; input/output names+shapes; max abs diff recorded |
-| C6 | Python onnxruntime+OpenCV script on image/frame; CPU latency | build | script run output shown; latency (desktop-only) noted |
-| C7 | Java/Android preprocessing spec + golden test vectors; MediaPipe box→crop rule | spec | exact reproducible steps; vectors saved |
-| C8 | Risks + ISO/IEC 30107-3 measurement plan (APCER/BPCER, threshold tuning) | analysis | plan doc section |
-| C9 | NOTES.md cheat sheet + 10-question quiz (answers at bottom) | docs | file written, UNVERIFIED list honest |
+## 4. Error model
+| Condition | Python | Java |
+|---|---|---|
+| bad frame | InvalidFrameError | PadException(INVALID_FRAME) |
+| bad box | InvalidBoxError | PadException(INVALID_BOX) |
+| face too small | FaceTooSmallError | PadException(FACE_TOO_SMALL) |
+| model dir/file/name/graph wrong | ModelLoadError | PadException(MODEL_LOAD) |
+| ORT failure / bad output | InferenceError | PadException(INFERENCE) |
+| bad constructor argument | ValueError | IllegalArgumentException |
+| use after close | — | IllegalStateException |
 
-Rationale for order: license gate (C2) runs BEFORE export work, so we don't invest in a model we can't legally use.
-Theory-only phase = C0–C4 (+ C8 as pure analysis). Build phase = C5–C7. C1 is read-only exploration but needs network (clone) — only on user's go.
+## 5. Evaluation design (eval/evaluate.py)
+files (`real_*`, `attack_<species>_*`) -> sample frames (rate or CSV frame list) -> boxes (CSV from caller's detector | dev Haar)
+-> `predict` per frame -> presentation score = mean/median/min -> APCER per species (reported = max), BPCER, sweep, threshold for
+target BPCER. Failures to process are excluded and counted separately.
 
-## 4. Cross-platform parity design (applies to C7)
-- ONE written preprocessing spec is the source of truth; Python script is the reference implementation.
-- Golden vectors: (input image) → (crop) → (tensor checksum) → (logits) stored; Java/Android must match within tolerance.
-- Parity-critical items: color order, resize interpolation, crop rounding/padding at borders, dtype, normalization, layout NCHW.
-- MediaPipe box ≠ repo detector box: define a conversion rule and measure score drift on the same images.
+## 6. Quality gates
+pytest (warnings = errors) · ruff · pyright standard (0 errors) · javac `-Xlint:all` + failOnWarning · JUnit · parity report.
+Pinned versions: minifasnet/requirements*.txt, pom.xml.
 
-## 5. Integration contract (future, informational)
-Liveness engine interface sketch (not implemented): `assess(frame, faceBox) → {realScore, attackFlag, modelVersion}`;
-threshold comparison and active-challenge decision live OUTSIDE the model wrapper (policy layer).
+## 7. Integration contract for the Registration Client (future, informational)
+`assess(frame, faceBox) -> {realScore, label, modelVersion}`. Threshold comparison, retries, active challenges, audit logging and
+configuration belong to the caller's policy layer, not to this module.

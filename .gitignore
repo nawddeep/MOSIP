@@ -3,6 +3,9 @@
 __pycache__/
 *.pyc
 .pytest_cache/
+.ruff_cache/
+.DS_Store
+*.bgr
 
 # Face data must never be committed
 *.mp4

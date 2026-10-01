@@ -1,6 +1,6 @@
 # Parity report (Step 4)
 
-Target: max |real_score diff| < 0.001. Cases: 17 valid + 3 error.
+Targets: |PyTorch - ours| < 0.001; |Python ONNX - Java| < 1e-06. Cases: 17 valid + 3 error.
 
 - PyTorch vs Python ONNX: **5.484e-04**
 - Python ONNX vs Java: **4.273e-13**
@@ -50,6 +50,6 @@ Python and Java, so Python-vs-Java is exact on every platform.
 | F1_fractional | (150.5, 200.25, 180.5, 190.75) | 0.168217 | 0.168217 | 0.168217 | 3.11e-07 |
 | T1_min_face_33 | (180.0, 200.0, 33.0, 33.0) | 0.996163 | 0.995847 | 0.995847 | 3.17e-04 |
 | gray_frame | (150.0, 200.0, 150.0, 180.0) | 0.420989 | 0.420990 | 0.420990 | 1.37e-06 |
-| err_tiny_face | (10, 10, 10, 10) | (no validation) | FaceTooSmallError | FACE_TOO_SMALL | - |
-| err_outside | (5000, 5000, 60, 60) | (no validation) | InvalidBoxError | INVALID_BOX | - |
-| err_zero_size | (10, 10, 0, 50) | (no validation) | InvalidBoxError | INVALID_BOX | - |
+| err_tiny_face | (10.0, 10.0, 10.0, 10.0) | (no validation) | FaceTooSmallError | FACE_TOO_SMALL | - |
+| err_outside | (5000.0, 5000.0, 60.0, 60.0) | (no validation) | InvalidBoxError | INVALID_BOX | - |
+| err_zero_size | (10.0, 10.0, 0.0, 50.0) | (no validation) | InvalidBoxError | INVALID_BOX | - |

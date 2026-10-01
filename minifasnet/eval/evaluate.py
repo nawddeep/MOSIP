@@ -18,33 +18,57 @@ Metric definitions used (see README "Evaluation" for the full statement):
   * One presentation = one file. Its score = aggregate (--aggregate, default mean) of its frame real_scores.
   * Decision: bona fide if score >= threshold, else attack.
   * APCER(species) = fraction of that species' attack presentations classified as bona fide.
-  * APCER (reported)  = MAX over species (worst case), per ISO/IEC 30107-3. Pooled APCER also shown for info.
+  * APCER (reported)  = MAX over species (worst case). Pooled APCER also shown for info.
   * BPCER = fraction of bona fide presentations classified as attack.
   * Files with zero scorable frames (no face / error) are "failures to process": excluded from APCER/BPCER and
     reported separately (FTP counts).
 """
 import argparse
 import csv
+import math
 import os
 import re
 import sys
 from collections import defaultdict
+from dataclasses import dataclass, field
+from typing import Dict, Iterator, List, Optional, Set, Tuple
 
 import cv2
 import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "python"))
+from dev_box import dev_get_box  # noqa: E402
 from minifasnet_pad import MiniFASNetPAD, PADError  # noqa: E402
 
 VIDEO_EXT = {".mp4", ".mov", ".avi", ".mkv", ".webm"}
 IMAGE_EXT = {".jpg", ".jpeg", ".png", ".bmp"}
+Box = Tuple[float, float, float, float]
 
 
-def parse_label(fname):
-    """-> ('bonafide', None) | ('attack', species) | None if the name does not follow the convention."""
+@dataclass
+class Presentation:
+    file: str
+    label: str  # "bonafide" | "attack"
+    species: str  # attack species ("" for bona fide)
+    frames_seen: int = 0
+    frames_ok: int = 0
+    score: Optional[float] = None  # None = failure to process
+
+
+@dataclass
+class Metrics:
+    threshold: float
+    bpcer: float
+    apcer_max: float
+    apcer_pooled: float
+    per_species: Dict[str, float] = field(default_factory=dict)
+
+
+def parse_label(fname: str) -> Optional[Tuple[str, str]]:
+    """-> ('bonafide', '') | ('attack', species) | None if the name does not follow the convention."""
     stem = os.path.splitext(fname)[0].lower()
     if stem.startswith("real_") or stem == "real":
-        return "bonafide", None
+        return "bonafide", ""
     m = re.match(r"^attack_([a-z0-9]+)_.+$", stem)
     if m:
         return "attack", m.group(1)
@@ -53,68 +77,92 @@ def parse_label(fname):
     return None
 
 
-def iter_frames(path, sample_fps, max_frames, wanted=None):
-    """Yield (frame_index, bgr). wanted=set of indices -> only those (csv box mode)."""
+def iter_frames(path: str, sample_fps: float, max_frames: int,
+                wanted: Optional[Set[int]] = None) -> Iterator[Tuple[int, np.ndarray]]:
+    """Yield (frame_index, bgr). wanted = set of indices -> only those (csv box mode)."""
     if os.path.splitext(path)[1].lower() in IMAGE_EXT:
         img = cv2.imread(path)
-        if img is not None and (wanted is None or 0 in wanted):
+        if img is None:
+            print(f"WARNING: cannot read image {path}", file=sys.stderr)
+        elif wanted is None or 0 in wanted:
             yield 0, img
         return
-    cap = cv2.VideoCapture(path)  # OpenCV >=4.5 applies the rotation metadata of phone videos automatically
-    fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
+    cap = cv2.VideoCapture(path)  # OpenCV >= 4.5 applies the rotation metadata of phone videos automatically
+    if not cap.isOpened():
+        print(f"WARNING: cannot open video {path}", file=sys.stderr)
+        return
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    if not math.isfinite(fps) or fps <= 0:
+        fps = 30.0  # unknown frame rate -> assume 30
     step = max(1, int(round(fps / sample_fps)))
     idx, n = 0, 0
-    while n < max_frames:
-        ok, frame = cap.read()
-        if not ok:
-            break
-        if (wanted is not None and idx in wanted) or (wanted is None and idx % step == 0):
-            yield idx, frame
-            n += 1
-        idx += 1
-    cap.release()
+    try:
+        while n < max_frames:
+            ok, frame = cap.read()
+            if not ok or frame is None:
+                break
+            if (wanted is not None and idx in wanted) or (wanted is None and idx % step == 0):
+                yield idx, frame
+                n += 1
+            idx += 1
+    finally:
+        cap.release()
 
 
 class HaarBoxes:
-    """DEV ONLY -- not for production. Largest Haar face per frame."""
+    """DEV ONLY -- not for production. Largest Haar face per frame (python/dev_box.py)."""
 
-    def __init__(self):
-        self.c = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+    def frames_for(self, fname: str) -> Optional[Set[int]]:
+        return None  # sample frames by rate
 
-    def get(self, fname, idx, frame):
-        f = self.c.detectMultiScale(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), 1.1, 5, minSize=(40, 40))
-        return None if len(f) == 0 else tuple(float(v) for v in max(f, key=lambda b: b[2] * b[3]))
+    def get(self, fname: str, idx: int, frame: np.ndarray) -> Optional[Box]:
+        return dev_get_box(frame)
 
 
 class CsvBoxes:
-    def __init__(self, path):
-        self.b = defaultdict(dict)
-        with open(path, newline="") as fh:
-            for r in csv.DictReader(fh):
-                self.b[r["file"]][int(r["frame"])] = tuple(float(r[k]) for k in ("x", "y", "w", "h"))
+    """Boxes from your own detector: CSV columns file,frame,x,y,w,h."""
 
-    def frames_for(self, fname):
+    def __init__(self, path: str):
+        self.b: Dict[str, Dict[int, Box]] = defaultdict(dict)
+        with open(path, newline="") as fh:
+            reader = csv.DictReader(fh)
+            missing = {"file", "frame", "x", "y", "w", "h"} - set(reader.fieldnames or [])
+            if missing:
+                raise ValueError(f"{path}: missing columns {sorted(missing)}")
+            for line_no, r in enumerate(reader, start=2):
+                try:
+                    box = (float(r["x"]), float(r["y"]), float(r["w"]), float(r["h"]))
+                    self.b[r["file"]][int(r["frame"])] = box
+                except (TypeError, ValueError):
+                    raise ValueError(f"{path}:{line_no}: bad row {r}") from None
+
+    def frames_for(self, fname: str) -> Optional[Set[int]]:
         return set(self.b.get(fname, {}).keys())
 
-    def get(self, fname, idx, frame):
+    def get(self, fname: str, idx: int, frame: np.ndarray) -> Optional[Box]:
         return self.b.get(fname, {}).get(idx)
 
 
-def metrics_at(videos, t):
-    """videos: list of dicts with label, species, score (None = failure to process)."""
-    bf = [v for v in videos if v["label"] == "bonafide" and v["score"] is not None]
-    at = [v for v in videos if v["label"] == "attack" and v["score"] is not None]
-    bpcer = (sum(v["score"] < t for v in bf) / len(bf)) if bf else float("nan")
-    per = {}
-    for s in sorted({v["species"] for v in at}):
-        xs = [v for v in at if v["species"] == s]
-        per[s] = sum(v["score"] >= t for v in xs) / len(xs)
+def metrics_at(presentations: List[Presentation], t: float) -> Metrics:
+    """APCER/BPCER at threshold t over presentations with a score (failures to process are excluded)."""
+    bona = [p.score for p in presentations if p.label == "bonafide" and p.score is not None]
+    attacks = [(p.species, p.score) for p in presentations if p.label == "attack" and p.score is not None]
+    bpcer = sum(s < t for s in bona) / len(bona) if bona else float("nan")
+    per: Dict[str, float] = {}
+    for sp in sorted({sp for sp, _ in attacks}):
+        xs = [s for k, s in attacks if k == sp]
+        per[sp] = sum(s >= t for s in xs) / len(xs)
     apcer_max = max(per.values()) if per else float("nan")
-    apcer_pooled = (sum(v["score"] >= t for v in at) / len(at)) if at else float("nan")
-    return dict(threshold=t, bpcer=bpcer, apcer_max=apcer_max, apcer_pooled=apcer_pooled, per_species=per)
+    apcer_pooled = sum(s >= t for _, s in attacks) / len(attacks) if attacks else float("nan")
+    return Metrics(t, bpcer, apcer_max, apcer_pooled, per)
 
 
-def main(argv=None):
+def fmt_metrics(m: Metrics) -> str:
+    return (f"BPCER={m.bpcer:.4f}  APCER(max over species)={m.apcer_max:.4f}  APCER(pooled)={m.apcer_pooled:.4f}  "
+            "per species: " + ", ".join(f"{s}={x:.4f}" for s, x in m.per_species.items()))
+
+
+def parse_args(argv: Optional[List[str]]) -> argparse.Namespace:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--data", required=True, help="folder of real_*/attack_* files")
     ap.add_argument("--out", required=True)
@@ -130,47 +178,67 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if a.box_source == "csv" and not a.box_csv:
         ap.error("--box-source csv needs --box-csv")
-    os.makedirs(a.out, exist_ok=True)
+    if not os.path.isdir(a.data):
+        ap.error(f"--data is not a folder: {a.data}")
+    if a.sample_fps <= 0:
+        ap.error("--sample-fps must be > 0")
+    if a.max_frames < 1:
+        ap.error("--max-frames must be >= 1")
+    if not 0 <= a.threshold <= 1 or not 0 <= a.target_bpcer <= 1:
+        ap.error("--threshold and --target-bpcer must be within [0, 1]")
+    if a.min_face_size < 0:
+        ap.error("--min-face-size must be >= 0")
+    return a
 
+
+def main(argv: Optional[List[str]] = None) -> int:
+    a = parse_args(argv)
+    os.makedirs(a.out, exist_ok=True)
     pad = MiniFASNetPAD(a.model_dir, min_face_size=a.min_face_size) if a.model_dir else \
         MiniFASNetPAD(min_face_size=a.min_face_size)
     boxes = HaarBoxes() if a.box_source == "haar" else CsvBoxes(a.box_csv)
     agg = {"mean": np.mean, "median": np.median, "min": np.min}[a.aggregate]
 
-    files, skipped = [], []
+    files: List[Tuple[str, str, str]] = []
+    skipped: List[str] = []
     for f in sorted(os.listdir(a.data)):
-        ext = os.path.splitext(f)[1].lower()
-        if ext not in VIDEO_EXT | IMAGE_EXT:
+        if os.path.splitext(f)[1].lower() not in VIDEO_EXT | IMAGE_EXT:
             continue
         lab = parse_label(f)
-        (files if lab else skipped).append((f, lab))
+        if lab is None:
+            skipped.append(f)
+        else:
+            files.append((f, lab[0], lab[1]))
     if skipped:
         print(f"WARNING: {len(skipped)} file(s) ignored (name must start with real_ or attack_): "
-              + ", ".join(s for s, _ in skipped[:5]))
+              + ", ".join(skipped[:5]), file=sys.stderr)
     if not files:
-        sys.exit("no labelled files found")
+        print("no labelled files found", file=sys.stderr)
+        return 1
 
-    frame_rows, videos = [], []
-    for f, (label, species) in files:
-        wanted = boxes.frames_for(f) if isinstance(boxes, CsvBoxes) else None
-        scores, n_seen = [], 0
-        for idx, frame in iter_frames(os.path.join(a.data, f), a.sample_fps, a.max_frames, wanted):
-            n_seen += 1
+    frame_rows: List[list] = []
+    presentations: List[Presentation] = []
+    for f, label, species in files:
+        p = Presentation(f, label, species)
+        scores: List[float] = []
+        for idx, frame in iter_frames(os.path.join(a.data, f), a.sample_fps, a.max_frames, boxes.frames_for(f)):
+            p.frames_seen += 1
             box = boxes.get(f, idx, frame)
             if box is None:
-                frame_rows.append([f, label, species or "", idx, "NO_FACE", "", ""])
+                frame_rows.append([f, label, species, idx, "NO_FACE", "", ""])
                 continue
             try:
                 r = pad.predict(frame, box)
-                scores.append(r.real_score)
-                frame_rows.append([f, label, species or "", idx, "OK", f"{r.real_score:.6f}", r.label])
             except PADError as e:
-                frame_rows.append([f, label, species or "", idx, type(e).__name__, "", ""])
-        score = float(agg(scores)) if scores else None
-        videos.append(dict(file=f, label=label, species=species or "", frames_seen=n_seen, frames_ok=len(scores),
-                           score=score))
-        print(f"{f}: {len(scores)}/{n_seen} frames scored, {a.aggregate} real_score="
-              + (f"{score:.4f}" if score is not None else "n/a (failure to process)"))
+                frame_rows.append([f, label, species, idx, type(e).__name__, "", ""])
+                continue
+            scores.append(r.real_score)
+            frame_rows.append([f, label, species, idx, "OK", f"{r.real_score:.6f}", r.label])
+        p.frames_ok = len(scores)
+        p.score = float(agg(scores)) if scores else None
+        presentations.append(p)
+        print(f"{f}: {p.frames_ok}/{p.frames_seen} frames scored, {a.aggregate} real_score="
+              + (f"{p.score:.4f}" if p.score is not None else "n/a (failure to process)"))
 
     with open(os.path.join(a.out, "frames.csv"), "w", newline="") as fh:
         w = csv.writer(fh)
@@ -180,57 +248,59 @@ def main(argv=None):
         w = csv.writer(fh)
         w.writerow(["file", "label", "species", "frames_seen", "frames_ok", f"{a.aggregate}_real_score",
                     f"decision@{a.threshold}"])
-        for v in videos:
-            dec = "" if v["score"] is None else ("bonafide" if v["score"] >= a.threshold else "attack")
-            w.writerow([v["file"], v["label"], v["species"], v["frames_seen"], v["frames_ok"],
-                        "" if v["score"] is None else f"{v['score']:.6f}", dec])
+        for p in presentations:
+            if p.score is None:
+                w.writerow([p.file, p.label, p.species, p.frames_seen, p.frames_ok, "", ""])
+            else:
+                dec = "bonafide" if p.score >= a.threshold else "attack"
+                w.writerow([p.file, p.label, p.species, p.frames_seen, p.frames_ok, f"{p.score:.6f}", dec])
 
     # Threshold sweep: a fixed grid plus every observed score (exact operating points).
-    obs = [v["score"] for v in videos if v["score"] is not None]
-    grid = sorted(set(np.round(np.linspace(0, 1, 101), 4).tolist()) | set(obs) | {a.threshold})
-    species = sorted({v["species"] for v in videos if v["label"] == "attack" and v["score"] is not None})
-    sweep = [metrics_at(videos, t) for t in grid]
+    observed = [p.score for p in presentations if p.score is not None]
+    grid = sorted(set(np.round(np.linspace(0, 1, 101), 4).tolist()) | set(observed) | {a.threshold})
+    species = sorted({p.species for p in presentations if p.label == "attack" and p.score is not None})
+    sweep = [metrics_at(presentations, t) for t in grid]
     with open(os.path.join(a.out, "sweep.csv"), "w", newline="") as fh:
         w = csv.writer(fh)
         w.writerow(["threshold", "BPCER", "APCER_max", "APCER_pooled"] + [f"APCER_{s}" for s in species])
         for m in sweep:
-            w.writerow([f"{m['threshold']:.6f}", f"{m['bpcer']:.4f}", f"{m['apcer_max']:.4f}",
-                        f"{m['apcer_pooled']:.4f}"] + [f"{m['per_species'].get(s, float('nan')):.4f}" for s in species])
+            w.writerow([f"{m.threshold:.6f}", f"{m.bpcer:.4f}", f"{m.apcer_max:.4f}", f"{m.apcer_pooled:.4f}"]
+                       + [f"{m.per_species.get(s, float('nan')):.4f}" for s in species])
 
     # Highest threshold with BPCER <= target (BPCER only grows with the threshold; highest => lowest APCER).
-    ok = [m for m in sweep if m["bpcer"] <= a.target_bpcer]
-    best = max(ok, key=lambda m: m["threshold"]) if ok else None
-    at_t = metrics_at(videos, a.threshold)
-    n = lambda lab: sum(v["label"] == lab and v["score"] is not None for v in videos)
-    ftp = lambda lab: sum(v["label"] == lab and v["score"] is None for v in videos)
+    ok = [m for m in sweep if m.bpcer <= a.target_bpcer]
+    best = max(ok, key=lambda m: m.threshold) if ok else None
+    at_t = metrics_at(presentations, a.threshold)
+    n_bf = sum(p.label == "bonafide" and p.score is not None for p in presentations)
+    n_at = sum(p.label == "attack" and p.score is not None for p in presentations)
+    ftp_bf = sum(p.label == "bonafide" and p.score is None for p in presentations)
+    ftp_at = sum(p.label == "attack" and p.score is None for p in presentations)
 
-    fmt = lambda m: (f"BPCER={m['bpcer']:.4f}  APCER(max over species)={m['apcer_max']:.4f}  "
-                     f"APCER(pooled)={m['apcer_pooled']:.4f}  per species: "
-                     + ", ".join(f"{s}={x:.4f}" for s, x in m["per_species"].items()))
     lines = ["# MiniFASNet evaluation summary", "",
              f"- data: `{a.data}`  box source: **{a.box_source}**" + (" (DEV ONLY)" if a.box_source == "haar" else ""),
-             f"- presentations scored: bona fide {n('bonafide')}, attack {n('attack')} "
-             f"(species: {', '.join(species) or '-'})",
-             f"- failures to process (no scorable frame, excluded): bona fide {ftp('bonafide')}, attack {ftp('attack')}",
+             f"- presentations scored: bona fide {n_bf}, attack {n_at} (species: {', '.join(species) or '-'})",
+             f"- failures to process (no scorable frame, excluded): bona fide {ftp_bf}, attack {ftp_at}",
              f"- per-presentation score = {a.aggregate} of frame real_scores; sample_fps={a.sample_fps}, "
              f"max_frames={a.max_frames}", "",
-             f"## At threshold {a.threshold}", "", fmt(at_t), "",
-             f"## Threshold for BPCER <= {a.target_bpcer}", ""]
-    lines.append((f"threshold = **{best['threshold']:.6f}** -> " + fmt(best)) if best else
-                 "no threshold reaches the target BPCER")
-    lines += ["", "## Sweep (excerpt; full table in sweep.csv)", "",
-              "| threshold | BPCER | APCER_max | " + " | ".join(f"APCER_{s}" for s in species) + " |",
-              "|---|---|---|" + "---|" * len(species)]
+             f"## At threshold {a.threshold}", "", fmt_metrics(at_t), "",
+             f"## Threshold for BPCER <= {a.target_bpcer}", "",
+             (f"threshold = **{best.threshold:.6f}** -> " + fmt_metrics(best)) if best else
+             "no threshold reaches the target BPCER",
+             "", "## Sweep (excerpt; full table in sweep.csv)", "",
+             "| threshold | BPCER | APCER_max | " + " | ".join(f"APCER_{s}" for s in species) + " |",
+             "|---|---|---|" + "---|" * len(species)]
     for m in sweep:
-        if abs(m["threshold"] * 10 - round(m["threshold"] * 10)) < 1e-9:  # every 0.1
-            lines.append(f"| {m['threshold']:.1f} | {m['bpcer']:.4f} | {m['apcer_max']:.4f} | "
-                         + " | ".join(f"{m['per_species'].get(s, float('nan')):.4f}" for s in species) + " |")
-    if n("bonafide") + n("attack") < 50:
-        lines += ["", f"NOTE: only {n('bonafide') + n('attack')} presentations -- far too few for meaningful error "
-                      "rates. Collect many subjects, sessions, devices and attack instruments."]
-    open(os.path.join(a.out, "summary.md"), "w").write("\n".join(lines) + "\n")
+        if abs(m.threshold * 10 - round(m.threshold * 10)) < 1e-9:  # every 0.1
+            lines.append(f"| {m.threshold:.1f} | {m.bpcer:.4f} | {m.apcer_max:.4f} | "
+                         + " | ".join(f"{m.per_species.get(s, float('nan')):.4f}" for s in species) + " |")
+    if n_bf + n_at < 50:
+        lines += ["", f"NOTE: only {n_bf + n_at} presentations -- far too few for meaningful error rates. "
+                      "Collect many subjects, sessions, devices and attack instruments."]
+    with open(os.path.join(a.out, "summary.md"), "w") as fh:
+        fh.write("\n".join(lines) + "\n")
     print("\n".join(lines))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

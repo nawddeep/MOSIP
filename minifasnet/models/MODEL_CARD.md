@@ -18,6 +18,9 @@ Source weights (upstream `.pth`, for provenance):
 - `2.7_80x80_MiniFASNetV2.pth` — `a5eb02e1843f19b5386b953cc4c9f011c3f985d0ee2bb9819eea9a142099bec0`
 - `4_0_0_80x80_MiniFASNetV1SE.pth` — `84ee1d37d96894d5e82de5a57df044ef80a58be2b218b5ed7cdfd875ec2f5990`
 
+Export is deterministic: re-running `export_onnx.py` (2026-10-02, same torch/onnx versions) reproduced both SHA-256 values exactly.
+On load, both the Python and Java wrappers check each graph against its file name (input `input` [N,3,H,W], output `logits` [N,3]).
+
 Scale and input size are encoded in the file name and parsed by `src/utility.py:parse_model_name`.
 
 ## Input spec (from `test.py`, `generate_patches.py`, `data_io/functional.py`)
@@ -50,6 +53,15 @@ Scale and input size are encoded in the file name and parsed by `src/utility.py:
 
 Other facts: README says the repo "open sources the model with training architecture" and a closed "High precision model" exists (private) —
 the open models are the weaker ones. README warns results depend on camera model and scene.
+
+## Training (read from upstream code; NOT reproduced here)
+- `src/train_main.py` + `src/default_config.py`: SGD lr 0.1, momentum 0.9, 25 epochs, lr x0.1 at epochs 10/15/22, batch 1024, 3 classes.
+- Loss `0.5 * CrossEntropy + 0.5 * MSE(Fourier map)`: `MultiFTNet` adds a small conv head (`FTGenerator`) on the features after `conv_4`
+  that must predict the log-magnitude FFT of the grayscale input (min-max normalised, resized to 10x10; `data_io/dataset_folder.py:generate_FT`).
+  The head runs only in training (`if self.training`), so it is not part of the exported ONNX graph and costs nothing at inference.
+- Augmentation: RandomResizedCrop, ColorJitter, RandomRotation(10), RandomHorizontalFlip. Data layout: `<scale>_80x80/{0,1,2}/*.png` patches.
+- **Mismatch:** the training script always builds `MiniFASNetV2SE`, but the shipped weights are V2 and V1SE — the exact recipe that produced
+  the shipped models is not in the repo (**UNVERIFIED** how they were trained). Training data is not released.
 
 ## Known limits (from upstream README + design)
 - RGB single-frame passive model; trained/tested for camera-captured images (README: images must come from a camera).
