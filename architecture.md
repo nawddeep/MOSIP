@@ -1,7 +1,9 @@
 # architecture.md — Target design + build plan
 
 Last updated: 2026-10-02
-Status of everything below: PLANNED (nothing built, nothing verified yet).
+Status: the passive pipeline below is BUILT as `minifasnet/` (Steps 1–6; see report.md and minifasnet/README.md, which hold the
+verified details — preprocessing items marked UNVERIFIED below were resolved there). The C1–C9 table is superseded by build Steps 1–6.
+Resize is a canonical integer bilinear (not cv2.resize) — see README "Preprocessing spec".
 
 ## 1. Target runtime pipeline (what we are studying toward)
 

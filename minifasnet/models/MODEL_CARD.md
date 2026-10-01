@@ -25,7 +25,8 @@ Scale and input size are encoded in the file name and parsed by `src/utility.py:
 - **Channel order BGR** (OpenCV `imread` order; no conversion anywhere in upstream).
 - **No normalization, no /255**: values stay in 0..255 (`to_tensor` returns `img.float()`; the `div(255)` is commented out).
 - Crop: face box scaled around its center by the per-model scale (see `CropImage._get_new_box`), shifted (not padded) to stay inside
-  the frame, resized with `cv2.resize` default interpolation (bilinear) to 80x80.
+  the frame, resized to 80x80. Upstream uses `cv2.resize` (bilinear); this module uses a canonical integer bilinear (OpenCV's generic
+  fixed-point algorithm) because cv2.resize output is platform-dependent (+-1 px). Measured effect vs upstream: <= 5.5e-4 in real_score.
 
 ## Output spec
 - Tensor name `logits`, shape `[batch, 3]`, raw logits. Softmax (over the 3 classes) is applied outside the graph.
@@ -35,7 +36,9 @@ Scale and input size are encoded in the file name and parsed by `src/utility.py:
   (= averaged class-1 probability) separately.
 
 ## Verified in this repo
-- ONNX vs PyTorch, 5 random inputs per model: max |logit diff| 2.62e-06 (V2), 1.43e-06 (V1SE). Real-image parity is Step 4.
+- ONNX vs PyTorch, 5 random inputs per model: max |logit diff| 2.62e-06 (V2), 1.43e-06 (V1SE).
+- Full pipeline parity (17 real/edge-case frames): upstream PyTorch vs this module 5.5e-4; Python vs Java 4.3e-13
+  (`minifasnet/tests/out/parity_report.md`).
 
 ## License verdict (OSI-approved only rule)
 | Item | Finding | Verdict |

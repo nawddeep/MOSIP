@@ -118,10 +118,12 @@ def resize_bilinear_u8(patch: np.ndarray, out_w: int, out_h: int) -> np.ndarray:
     h, w = patch.shape[:2]
     x0, x1, a0, a1 = _axis_coefs(w, out_w)
     y0, y1, b0, b1 = _axis_coefs(h, out_h)
-    p = patch.astype(np.int64)
-    rows = p[:, x0, :] * a0[None, :, None] + p[:, x1, :] * a1[None, :, None]  # horizontal pass
-    r = ((((rows[y0] >> 4) * b0[:, None, None]) >> 16)
-         + (((rows[y1] >> 4) * b1[:, None, None]) >> 16) + 2) >> 2              # vertical pass
+    def hpass(src_rows):  # horizontal pass, only on the source rows actually sampled (keeps big frames cheap)
+        p = patch[src_rows].astype(np.int64)
+        return p[:, x0, :] * a0[None, :, None] + p[:, x1, :] * a1[None, :, None]
+
+    r = ((((hpass(y0) >> 4) * b0[:, None, None]) >> 16)
+         + (((hpass(y1) >> 4) * b1[:, None, None]) >> 16) + 2) >> 2            # vertical pass
     return np.clip(r, 0, 255).astype(np.uint8)
 
 
@@ -149,8 +151,11 @@ def _softmax(logits: np.ndarray) -> np.ndarray:
 
 class MiniFASNetPAD:
     def __init__(self, model_dir: str = DEFAULT_MODEL_DIR, min_face_size: int = 32,
-                 providers: Optional[List[str]] = None):
-        """min_face_size: min(box w, box h) in pixels; my own guard (upstream has none), tune with data."""
+                 providers: Optional[List[str]] = None, intra_op_threads: int = 0):
+        """min_face_size: min(box w, box h) in pixels; my own guard (upstream has none), tune with data.
+        intra_op_threads: ONNX Runtime threads per model (0 = ORT default; 1-2 is sensible on low-end devices)."""
+        opts = ort.SessionOptions()
+        opts.intra_op_num_threads = intra_op_threads
         if not os.path.isdir(model_dir):
             raise ModelLoadError(f"model dir not found: {model_dir}")
         names = sorted(f for f in os.listdir(model_dir) if f.endswith(".onnx"))
@@ -161,7 +166,7 @@ class MiniFASNetPAD:
         for n in names:
             h, w, scale = _parse_model_name(n)
             try:
-                sess = ort.InferenceSession(os.path.join(model_dir, n),
+                sess = ort.InferenceSession(os.path.join(model_dir, n), opts,
                                             providers=providers or ["CPUExecutionProvider"])
             except Exception as e:
                 raise ModelLoadError(f"failed to load {n}: {e}") from e
