@@ -90,13 +90,51 @@ def get_new_box(src_w: int, src_h: int, bbox: Sequence[float], scale: float):
     return int(x1), int(y1), int(x2), int(y2)  # int() truncates toward zero, like upstream
 
 
-def crop_patch(image_bgr: np.ndarray, bbox, scale: float, out_w: int, out_h: int) -> np.ndarray:
+def _axis_coefs(src: int, dst: int):
+    """Source index + 11-bit fixed-point weights per output pixel (OpenCV INTER_LINEAR, half-pixel centers).
+    float32 steps on purpose: they mirror OpenCV's (and our Java port's) float math exactly."""
+    d = np.arange(dst, dtype=np.float64)
+    f = ((d + 0.5) * (src / dst) - 0.5).astype(np.float32)
+    s = np.floor(f).astype(np.int64)
+    f = (f - s.astype(np.float32)).astype(np.float32)
+    f[s < 0] = 0
+    s[s < 0] = 0
+    f[s >= src - 1] = 0
+    s[s >= src - 1] = src - 1
+    w0 = np.rint((np.float32(1) - f) * np.float32(2048)).astype(np.int64)  # round-half-even like cvRound
+    w1 = np.rint(f * np.float32(2048)).astype(np.int64)
+    return s, np.minimum(s + 1, src - 1), w0, w1
+
+
+def resize_bilinear_u8(patch: np.ndarray, out_w: int, out_h: int) -> np.ndarray:
+    """CANONICAL resize used by this module (Python and Java implement it identically, integer math only).
+
+    Why not cv2.resize? cv2.resize output differs by +-1 pixel between OpenCV builds/CPUs because builds may route
+    it through vendor HALs (this Mac's arm64 build uses Carotene/KleidiCV). That makes "match cv2" impossible to
+    guarantee on Android/x86/ARM. This function is OpenCV's generic fixed-point INTER_LINEAR: 11-bit weights,
+    horizontal pass in ints, vertical pass with the SIMD rounding ((b0*(r0>>4))>>16 + (b1*(r1>>4))>>16 + 2) >> 2.
+    Difference vs upstream's cv2.resize is +-1 pixel on a fraction of pixels (measured in tests/parity report).
+    """
+    h, w = patch.shape[:2]
+    x0, x1, a0, a1 = _axis_coefs(w, out_w)
+    y0, y1, b0, b1 = _axis_coefs(h, out_h)
+    p = patch.astype(np.int64)
+    rows = p[:, x0, :] * a0[None, :, None] + p[:, x1, :] * a1[None, :, None]  # horizontal pass
+    r = ((((rows[y0] >> 4) * b0[:, None, None]) >> 16)
+         + (((rows[y1] >> 4) * b1[:, None, None]) >> 16) + 2) >> 2              # vertical pass
+    return np.clip(r, 0, 255).astype(np.uint8)
+
+
+def crop_patch(image_bgr: np.ndarray, bbox, scale: float, out_w: int, out_h: int,
+               use_cv2_resize: bool = False) -> np.ndarray:
     h, w = image_bgr.shape[:2]
     x1, y1, x2, y2 = get_new_box(w, h, bbox, scale)
     patch = image_bgr[y1:y2 + 1, x1:x2 + 1]  # +1: upstream slice end is inclusive
     if patch.size == 0:
         raise InvalidBoxError(f"crop window is empty for box={tuple(bbox)} frame={w}x{h}")
-    return cv2.resize(patch, (out_w, out_h))  # default interpolation = bilinear (same as upstream)
+    if use_cv2_resize:  # diagnostics only: platform-dependent, see resize_bilinear_u8
+        return cv2.resize(patch, (out_w, out_h))
+    return resize_bilinear_u8(patch, out_w, out_h)
 
 
 def to_tensor(patch_bgr: np.ndarray) -> np.ndarray:

@@ -3,7 +3,11 @@ package org.minifasnet;
 /**
  * Preprocessing, ported from the upstream repo / OpenCV so the Java output matches Python:
  *  - getNewBox : src/generate_patches.py CropImage._get_new_box
- *  - resize    : cv2.resize(..., INTER_LINEAR) for 8-bit images (OpenCV fixed-point bilinear)
+ *  - cropResize: the CANONICAL resize of this module = OpenCV's generic fixed-point INTER_LINEAR.
+ *                Bit-identical to python/minifasnet_pad.py:resize_bilinear_u8 (verified in tests/test_parity.py).
+ *                NOT bit-identical to every cv2.resize build: some OpenCV builds route resize through vendor HALs
+ *                (e.g. Carotene/KleidiCV on arm64) that differ by +-1 pixel. That noise is measured in the parity
+ *                report. Do not replace this with a platform resizer (Android Bitmap scaling etc.).
  */
 final class ImageOps {
     private ImageOps() {}
@@ -72,7 +76,7 @@ final class ImageOps {
             hresize(src, srcW, x1, y1 + sy0, pw, xofs, xa0, xa1, outW, rowA);
             hresize(src, srcW, x1, y1 + sy1, pw, xofs, xa0, xa1, outW, rowB);
             for (int i = 0; i < outW * cn; i++) {
-                // OpenCV's SIMD vertical pass (VResizeLinearVec_32s8u), which is what cv2.resize runs in practice:
+                // OpenCV's generic SIMD vertical pass (VResizeLinearVec_32s8u):
                 // each row value is pre-shifted >>4 and multiplied by beta with a 16-bit "mulhi" (>>16),
                 // then summed, +2, >>2. It is NOT the same rounding as the scalar (v + 2^21) >> 22 path
                 // (that one differs by 1 on ~10% of pixels, which the model amplifies to ~5e-3 in the score).
