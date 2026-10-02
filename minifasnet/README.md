@@ -100,8 +100,11 @@ If the upstream clone or the Java build is missing, the 4 parity tests are **ski
 
 ## Dashboard (dev-only) — "is the model working?"
 ```
-.venv/bin/python minifasnet/dashboard/server.py        # then open http://127.0.0.1:8765  (localhost only; Ctrl+C stops it)
+minifasnet/dashboard/run.sh          # starts it with the venv Python and opens http://127.0.0.1:8765 (Ctrl+C stops it)
+# equivalent: .venv/bin/python minifasnet/dashboard/server.py   -> open http://127.0.0.1:8765
 ```
+- **Do not start it with plain `python3`:** on this Mac the system `python3` prints nothing and exits 0, so it looks like
+  "not running". `run.sh` always uses `.venv`, checks the packages, and moves to the next port if 8765 is busy.
 - **Model health panel** runs 8 self-checks: models load; ONNX files match the SHA-256 in `MODEL_CARD.md` (a modified model
   turns the banner red); golden score on a gray frame (0.420990 +- 0.001); deterministic output; invalid box rejected; and the three
   upstream sample images give the expected labels (T1 real, F1/F2 fake — skipped if the `minifasnet-study/` clone is absent).

@@ -1,7 +1,7 @@
 """DEV-ONLY dashboard: check that the MiniFASNet module works, and try it on images / webcam.
 
-    .venv/bin/python minifasnet/dashboard/server.py [--port 8765] [--model-dir DIR]
-    open http://127.0.0.1:8765
+    minifasnet/dashboard/run.sh [port]        (recommended: uses the venv, opens the browser)
+    .venv/bin/python minifasnet/dashboard/server.py [--port 8765] [--model-dir DIR]   then open http://127.0.0.1:8765
 
 Not for production: it uses the Haar dev face box when you do not draw one, listens on localhost only,
 and keeps every uploaded image in memory only (nothing is written to disk). Standard library + the module's own deps.
@@ -200,7 +200,7 @@ def main() -> int:
     a = ap.parse_args()
     pad = MiniFASNetPAD(a.model_dir, min_face_size=a.min_face_size)
     srv = ThreadingHTTPServer(("127.0.0.1", a.port), make_handler(pad, a.model_dir))
-    print(f"MiniFASNet dashboard (dev-only) on http://127.0.0.1:{a.port}  - Ctrl+C to stop")
+    print(f"MiniFASNet dashboard (dev-only) on http://127.0.0.1:{a.port}  - Ctrl+C to stop", flush=True)
     try:
         srv.serve_forever()
     except KeyboardInterrupt:

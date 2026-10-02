@@ -7,7 +7,7 @@
   JUnit 8 passed · parity: upstream PyTorch vs ours 5.5e-4 (target 1e-3), Python vs Java 4.3e-13, resize bit-identical.
 - Export deterministic (re-export reproduces committed SHA-256). Runtime needs only numpy + onnxruntime (verified in fresh venv).
 - Latency (Apple M4, both models): Python 1-thread 2.4 ms, Java 1-thread 1.9 ms per frame. Phone numbers UNVERIFIED.
-- Dashboard (dev-only, added on request): `.venv/bin/python minifasnet/dashboard/server.py` -> http://127.0.0.1:8765. 8 self-checks
+- Dashboard (dev-only, added on request): `minifasnet/dashboard/run.sh` -> http://127.0.0.1:8765 (never plain `python3`: silent no-op on this Mac). 8 self-checks
   (hashes, golden score, determinism, error handling, 3 known samples); try-it page for images/webcam. Page clicks not tested in a browser.
 - Git: one commit per verified step; `minifasnet-study/` (upstream clone) gitignored.
 - Env: `.venv` python3.11 (use `.venv/bin/python`; system python3 broken in this shell); opencv-python pinned < 5;
