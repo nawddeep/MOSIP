@@ -28,7 +28,7 @@ minifasnet/
 | 5 | Evaluation script | done | metric unit tests; run on a synthetic set (real-data evaluation pending) |
 | 6 | Latency | done | table below |
 | Dash | Dev dashboard (model self-check + try-it page) | done | 8 self-checks pass; `tests/test_dashboard.py`; tamper detection verified |
-| QA | Error-free codebase | done | ruff clean, pyright 0 errors, `javac -Xlint:all -Werror` clean, 36 pytest + 8 JUnit passing, warnings fail the build |
+| QA | Error-free codebase | done | ruff clean, pyright 0 errors, `javac -Xlint:all -Werror` clean, 43 pytest + 8 JUnit passing, warnings fail the build |
 
 ## Setup
 ```
@@ -90,7 +90,7 @@ covered by the parity table). Do NOT substitute Android `Bitmap.createScaledBitm
 
 ## Tests and quality checks (run from the repo root)
 ```
-.venv/bin/python -m pytest                      # 36 tests; warnings are errors (pyproject.toml)
+.venv/bin/python -m pytest                      # 43 tests; warnings are errors (pyproject.toml)
 .venv/bin/ruff check minifasnet                 # lint
 .venv/bin/pyright                               # type check (0 errors expected)
 cd minifasnet/java && mvn -q package            # compiles with -Xlint:all + failOnWarning, runs 8 JUnit tests
@@ -98,22 +98,26 @@ cd minifasnet/java && mvn -q package            # compiles with -Xlint:all + fai
 ```
 If the upstream clone or the Java build is missing, the 4 parity tests are **skipped** with the reason (`-ra` prints it).
 
-## Dashboard (dev-only) — "is the model working?"
+## Demo dashboard (dev-only) — live camera
 ```
-minifasnet/dashboard/run.sh          # starts it with the venv Python and opens http://127.0.0.1:8765 (Ctrl+C stops it)
-# equivalent: .venv/bin/python minifasnet/dashboard/server.py   -> open http://127.0.0.1:8765
+minifasnet/dashboard/run.sh              # starts the server with the venv Python and opens http://127.0.0.1:8765
+minifasnet/dashboard/e2e/run_e2e.sh      # pre-demo check: real page in headless Chrome with a fake camera (9 checks)
 ```
-- **Do not start it with plain `python3`:** on this Mac the system `python3` prints nothing and exits 0, so it looks like
-  "not running". `run.sh` always uses `.venv`, checks the packages, and moves to the next port if 8765 is busy.
-- **Model health panel** runs 8 self-checks: models load; ONNX files match the SHA-256 in `MODEL_CARD.md` (a modified model
-  turns the banner red); golden score on a gray frame (0.420990 +- 0.001); deterministic output; invalid box rejected; and the three
-  upstream sample images give the expected labels (T1 real, F1/F2 fake — skipped if the `minifasnet-study/` clone is absent).
-- **Try an image:** upload a file or use the webcam (single frame or live every second). Without a drawn box it uses the Haar dev
-  detector; drag on the image to draw your own box (this is what you will want to compare with MediaPipe boxes). The threshold
-  slider changes the real/attack decision live; per-model probabilities and latency are shown.
-- Images are processed in memory and never saved. Webcam frames are JPEG-compressed before sending, which changes pixels slightly
-  versus a raw frame. It is a dev tool, not part of the module and not for production.
-- A green banner means the code and files behave as verified here; it does **not** say the model is accurate on your cameras (use
+- **Keep the terminal open** while demoing; Ctrl+C stops it. Do not open `index.html` directly (file://) and do not start it with
+  plain `python3` (silent no-op on this Mac) — both give "Failed to fetch". The page now says exactly that if it happens.
+- **Live camera:** continuous scoring (~12–15 checks/s, model ~3 ms), face box over the mirrored video (green = live, red = spoof),
+  big verdict, score smoothed over N frames, score-over-time chart, per-model bars, frames/s. Camera picker for external webcams.
+- **Face box:** RetinaFace (the upstream detector the model was used with; default when the `minifasnet-study/` clone exists) or
+  Haar. Both are dev-only; production uses MediaPipe on the caller side.
+- **Model health:** 8 self-checks (model SHA-256 vs MODEL_CARD, golden score, determinism, invalid box rejected, 3 known samples).
+- **Proof panel:** model files + hashes, verified parity numbers (from `tests/out/parity_report.md`), runtime versions.
+- **Robustness:** server never drops a request (unexpected errors -> JSON 500 + traceback in the terminal); page shows
+  "Server not reachable" with instructions and reconnects by itself (tested by killing and restarting the server mid-demo).
+- **Privacy:** frames are processed in memory and never saved; localhost only.
+- **Verified in headless Chrome (fake camera from the upstream samples):** live person -> LIVE PERSON (0.99), printed photo ->
+  SPOOF (0.05), uploads T1/F1/F2 -> 0.995 / 0.084 / 0.181 (identical to the parity reference), file:// -> instructions.
+  NOT verified: a physical webcam, real phone-screen / print attacks in your room — rehearse once before the demo.
+- A green self-check means the code and model files behave as verified; it does **not** prove accuracy on your cameras (use
   `eval/evaluate.py` with real recordings for that).
 
 ## Evaluation (`eval/evaluate.py`)

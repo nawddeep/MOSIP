@@ -35,7 +35,8 @@ minifasnet/
                PadException(Code), Cli (predict | batch | bench | resize); src/test = JUnit
   tests/       test_unit.py, test_eval.py, test_dashboard.py, test_parity.py (+ out/parity_report.md)
   eval/        evaluate.py (APCER/BPCER/sweep), bench_latency.py
-  dashboard/   server.py (stdlib http.server, localhost) + index.html: self-check, upload/webcam try-it (DEV-ONLY)
+  dashboard/   server.py (stdlib http.server, localhost) + index.html: live camera demo, self-check, proof (DEV-ONLY)
+               run.sh launcher; e2e/run_e2e.sh headless-Chrome check with a fake camera
 minifasnet-study/Silent-Face-Anti-Spoofing   upstream clone (read-only reference, gitignored)
 ```
 

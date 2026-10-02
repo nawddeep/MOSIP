@@ -29,3 +29,4 @@ minifasnet/java/build/
 
 # graphify output (regenerable)
 graphify-out/
+*.y4m

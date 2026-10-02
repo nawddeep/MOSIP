@@ -3,178 +3,343 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MiniFASNet Check</title>
+<title>MiniFASNet Liveness Demo</title>
 <style>
-  :root { --bg:#f5f6f8; --card:#fff; --ink:#1b1f24; --muted:#667085; --line:#e3e6ea;
-          --good:#127a43; --goodbg:#e3f4ea; --bad:#b42318; --badbg:#fde9e7; --warn:#8a5a00; --warnbg:#fff3d6; --accent:#2457d6; }
+  :root { --bg:#f4f5f7; --card:#fff; --ink:#1b1f24; --muted:#667085; --line:#e3e6ea;
+          --good:#12804a; --goodbg:#e2f5ea; --bad:#c0261a; --badbg:#fde8e6; --warn:#8a5a00; --warnbg:#fff3d6; --accent:#2457d6; }
   @media (prefers-color-scheme: dark) {
-    :root { --bg:#14171b; --card:#1d2227; --ink:#e8ebef; --muted:#9aa4b0; --line:#2c333b;
-            --good:#5fd08f; --goodbg:#16301f; --bad:#ff8a80; --badbg:#3a1d1a; --warn:#f2c46b; --warnbg:#3a2f15; --accent:#7aa2ff; }
+    :root { --bg:#121519; --card:#1b2026; --ink:#e8ebef; --muted:#9aa4b0; --line:#2b323a;
+            --good:#5fd08f; --goodbg:#163020; --bad:#ff8a80; --badbg:#3a1d1a; --warn:#f2c46b; --warnbg:#3a2f15; --accent:#7aa2ff; }
   }
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 system-ui, -apple-system, Segoe UI, sans-serif; }
-  main { max-width:1080px; margin:0 auto; padding:20px 16px 40px; }
-  h1 { font-size:20px; margin:0 0 2px; } .sub { color:var(--muted); margin:0 0 16px; font-size:13px; }
-  .grid { display:grid; grid-template-columns: 340px 1fr; gap:16px; } @media (max-width:820px){ .grid{grid-template-columns:1fr;} }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
-  h2 { font-size:13px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin:0 0 10px; }
-  .pill { display:inline-block; padding:2px 9px; border-radius:99px; font-size:12px; font-weight:600; }
-  .pass { background:var(--goodbg); color:var(--good); } .fail { background:var(--badbg); color:var(--bad); } .skip { background:var(--warnbg); color:var(--warn); }
-  .check { padding:7px 0; border-top:1px solid var(--line); } .check:first-of-type { border-top:0; }
-  .check .d { color:var(--muted); font-size:12px; word-break:break-word; }
-  .banner { padding:10px 12px; border-radius:8px; font-weight:600; margin-bottom:10px; }
-  button { font:inherit; padding:7px 12px; border-radius:7px; border:1px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer; }
-  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; } button:disabled { opacity:.5; cursor:default; }
-  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px; }
-  .stage { position:relative; background:#0003; border-radius:8px; overflow:hidden; min-height:180px; display:flex; justify-content:center; }
-  canvas { max-width:100%; height:auto; display:block; cursor:crosshair; }
-  .empty { color:var(--muted); align-self:center; padding:40px 10px; text-align:center; }
-  .verdict { font-size:26px; font-weight:700; margin:12px 0 2px; } .big { font-variant-numeric: tabular-nums; }
-  .bar { height:10px; border-radius:6px; background:var(--line); position:relative; overflow:hidden; margin:3px 0 8px; }
-  .bar > i { position:absolute; left:0; top:0; bottom:0; background:var(--accent); }
-  .tick { position:absolute; top:-2px; bottom:-2px; width:2px; background:var(--ink); }
-  table { border-collapse:collapse; width:100%; font-size:13px; } td,th { text-align:left; padding:4px 6px; border-top:1px solid var(--line); }
-  .muted { color:var(--muted); font-size:12px; }
+  * { box-sizing:border-box; }
+  [hidden] { display:none !important; }  /* class rules below must not un-hide elements */
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 system-ui,-apple-system,Segoe UI,sans-serif; }
+  main { max-width:1240px; margin:0 auto; padding:18px 16px 40px; }
+  header { display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  h1 { font-size:21px; margin:0; } .sub { color:var(--muted); font-size:13px; margin:2px 0 0; }
+  .pills { display:flex; gap:8px; flex-wrap:wrap; }
+  .pill { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:99px; font-size:12.5px; font-weight:600; border:1px solid transparent; }
+  .pill::before { content:""; width:8px; height:8px; border-radius:50%; background:currentColor; }
+  .ok { background:var(--goodbg); color:var(--good); } .no { background:var(--badbg); color:var(--bad); } .wait { background:var(--warnbg); color:var(--warn); }
+  .alert { padding:12px 14px; border-radius:10px; margin-bottom:12px; font-weight:500; }
+  .alert code { background:#0002; padding:1px 6px; border-radius:5px; }
+  .grid { display:grid; grid-template-columns: minmax(0,1.55fr) minmax(300px,1fr); gap:14px; }
+  .grid3 { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:14px; margin-top:14px; }
+  @media (max-width:980px){ .grid,.grid3{ grid-template-columns:1fr; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; min-width:0; }
+  h2 { font-size:12.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:0 0 10px; }
+  .controls { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:10px; }
+  #camSel { max-width:230px; text-overflow:ellipsis; }
+  button, select { font:inherit; padding:7px 12px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; }
+  button:disabled, select:disabled { opacity:.5; cursor:default; }
+  label.inline { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); }
+  .stage { position:relative; background:#000; border-radius:10px; overflow:hidden; min-height:320px; display:flex; align-items:center; justify-content:center; }
+  /* the layer shrink-wraps the video/photo, so the overlay canvas always covers exactly the picture (any aspect ratio) */
+  .layer { position:relative; display:inline-block; max-width:100%; line-height:0; }
+  .layer.mirror { transform:scaleX(-1); }
+  .layer video, .layer canvas.base { display:block; max-width:100%; max-height:68vh; width:auto; height:auto; }
+  .layer canvas.overlay { position:absolute; inset:0; width:100%; height:100%; }
+  .placeholder { color:#cfd5dd; text-align:center; padding:20px; position:absolute; }
+  .badge { position:absolute; left:12px; top:12px; padding:6px 12px; border-radius:8px; font-weight:700; font-size:18px; background:#000a; color:#fff; }
+  .verdict { font-size:34px; font-weight:800; letter-spacing:.01em; margin:2px 0 0; }
+  .score { font-variant-numeric:tabular-nums; }
+  .meter { height:14px; border-radius:7px; background:var(--line); position:relative; overflow:hidden; margin:8px 0 4px; }
+  .meter > i { position:absolute; left:0; top:0; bottom:0; transition:width .15s; }
+  .meter .tick { position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--ink); }
+  .small { font-size:12.5px; color:var(--muted); }
+  .kv { display:grid; grid-template-columns:auto 1fr; gap:3px 12px; font-size:13px; } .kv b { font-weight:600; }
+  .check { padding:6px 0; border-top:1px solid var(--line); font-size:13.5px; } .check:first-child { border-top:0; }
+  .tag { display:inline-block; min-width:38px; text-align:center; padding:1px 6px; border-radius:6px; font-size:11px; font-weight:700; margin-right:6px; }
+  .tag.pass { background:var(--goodbg); color:var(--good); } .tag.fail { background:var(--badbg); color:var(--bad); } .tag.skip { background:var(--warnbg); color:var(--warn); }
+  canvas#chart { width:100%; height:140px; display:block; }
+  ol { margin:0; padding-left:20px; font-size:13.5px; } li { margin:4px 0; }
+  .mono { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; word-break:break-all; }
 </style>
 </head>
 <body>
 <main>
-  <h1>MiniFASNet check</h1>
-  <p class="sub">Dev-only dashboard. Images stay in memory on this computer and are never saved. Without a drawn box it uses OpenCV's Haar detector (a dev helper, not the production detector).</p>
+  <header>
+    <div>
+      <h1>MiniFASNet — face liveness (anti-spoofing) demo</h1>
+      <p class="sub">Passive liveness: is the face in front of the camera a live person or a photo / screen / replay? Dev demo — runs fully offline on this computer.</p>
+    </div>
+    <div class="pills"><span id="connPill" class="pill wait">Connecting…</span><span id="healthPill" class="pill wait">Self-check…</span></div>
+  </header>
+  <div id="alert"></div>
+
   <div class="grid">
     <section class="card">
-      <h2>Model health</h2>
-      <div id="banner" class="banner skip">Running self-check…</div>
-      <div id="checks"></div>
-      <div class="row" style="margin-top:10px"><button id="rerun">Re-run self-check</button></div>
+      <div class="controls">
+        <button id="camBtn" class="primary">Start live camera</button>
+        <select id="camSel" title="Camera" disabled><option>default camera</option></select>
+        <label class="inline">Face box
+          <select id="detSel"><option value="retinaface">RetinaFace (upstream)</option><option value="haar">Haar (OpenCV)</option></select></label>
+        <label class="inline"><input type="file" id="file" accept="image/*" hidden><button id="fileBtn" type="button">Test a photo file…</button></label>
+      </div>
+      <div class="stage" id="stage">
+        <div class="placeholder" id="placeholder">Click <b>Start live camera</b> and allow camera access.<br><span class="small">Video never leaves this computer and is never saved.</span></div>
+        <div class="layer mirror" id="layer" hidden>
+          <video id="vid" playsinline muted></video>
+          <canvas class="base" id="still" hidden></canvas>
+          <canvas class="overlay" id="overlay"></canvas>
+        </div>
+        <div class="badge" id="badge" hidden></div>
+      </div>
+      <div class="controls" style="margin-top:10px">
+        <label class="inline">Threshold <b id="thVal" class="score">0.50</b> <input type="range" id="th" min="0.05" max="0.95" step="0.01" value="0.5"></label>
+        <label class="inline">Smooth over <select id="smooth"><option value="1">1 frame</option><option value="5" selected>5 frames</option><option value="10">10 frames</option></select></label>
+        <span class="small" id="perf"></span>
+      </div>
     </section>
+
     <section class="card">
-      <h2>Try an image</h2>
-      <div class="row">
-        <input type="file" id="file" accept="image/*">
-        <button id="camBtn">Start webcam</button>
-        <button id="snapBtn" disabled>Check frame</button>
-        <label class="muted"><input type="checkbox" id="live" disabled> live (every 1 s)</label>
-      </div>
-      <div class="row">
-        <label>Threshold <b id="thVal" class="big">0.50</b>
-          <input type="range" id="th" min="0" max="1" step="0.01" value="0.5"></label>
-        <button id="clearBox">Use auto box</button>
-        <span class="muted" id="boxMode">auto box (Haar, dev-only) — or drag on the image to draw your own</span>
-      </div>
-      <div class="stage"><div class="empty" id="empty">Choose an image or start the webcam</div><canvas id="cv" hidden></canvas></div>
-      <video id="vid" playsinline muted hidden></video>
-      <div id="result"></div>
+      <h2>Live result</h2>
+      <div class="verdict" id="verdict" style="color:var(--muted)">—</div>
+      <div class="small" id="why">Waiting for the camera.</div>
+      <div class="meter"><i id="meterFill" style="width:0"></i><span class="tick" id="meterTick" style="left:50%"></span></div>
+      <div class="small">real score <b class="score" id="scoreTxt">—</b> (smoothed) · this frame <span class="score" id="rawTxt">—</span> · threshold line ▏</div>
+      <h2 style="margin-top:14px">Score over time</h2>
+      <canvas id="chart" width="600" height="140"></canvas>
+      <div class="small">green line = real score per frame, dark line = threshold. Above the line → live person.</div>
+      <h2 style="margin-top:14px">The two models (fused)</h2>
+      <div id="models" class="small">—</div>
     </section>
   </div>
-  <section class="card" style="margin-top:16px">
-    <h2>Recent results</h2>
-    <table><thead><tr><th>#</th><th>real_score</th><th>label</th><th>at threshold</th><th>box source</th><th>ms</th></tr></thead><tbody id="hist"></tbody></table>
-  </section>
+
+  <div class="grid3">
+    <section class="card">
+      <h2>Model health — automatic self-check</h2>
+      <div id="checks" class="small">Running…</div>
+      <div class="controls" style="margin:10px 0 0"><button id="rerun">Run again</button></div>
+    </section>
+    <section class="card">
+      <h2>Proof it works (verified offline)</h2>
+      <div id="proof" class="small">Loading…</div>
+    </section>
+    <section class="card">
+      <h2>How to demo (2 minutes)</h2>
+      <ol>
+        <li>Show the green <b>Self-check passed</b> pill: the exact verified model files are loaded and give the expected answers.</li>
+        <li>Start the live camera and look at it: the box turns <b style="color:var(--good)">green — LIVE PERSON</b>.</li>
+        <li>Hold up a <b>printed photo</b> or a <b>phone showing a face</b>: it should turn <b style="color:var(--bad)">red — SPOOF</b>.</li>
+        <li>Move the threshold: higher = stricter (more spoofs caught, more real people asked to retry).</li>
+        <li>Point to the chart: the decision is stable over time, not a lucky frame.</li>
+      </ol>
+      <p class="small" style="margin-top:10px">Rehearse once in the demo room: lighting, distance (face fills ~¼ of the frame) and camera quality change the scores. This is a passive model only: it does not run blink/smile challenges and is not tuned for this camera yet.</p>
+    </section>
+  </div>
 </main>
 <script>
+"use strict";
 const $ = id => document.getElementById(id);
-let img = null, lastBlob = null, manualBox = null, drag = null, lastRes = null, count = 0, busy = false, stream = null, liveTimer = null;
+const state = { running:false, stream:null, connected:null, hist:[], recent:[], lastNoFace:0, frames:0, fpsT0:performance.now(), fps:0 };
+const work = document.createElement('canvas');
 
-function esc(s){ const d=document.createElement('div'); d.textContent=String(s); return d.innerHTML; }
+function setPill(el, cls, text){ el.className = 'pill ' + cls; el.textContent = text; }
+function showAlert(html, cls){ $('alert').innerHTML = html ? `<div class="alert ${cls||'no'}">${html}</div>` : ''; }
+function txt(s){ const d=document.createElement('span'); d.textContent=String(s); return d.innerHTML; }
 
-async function selfcheck(){
-  $('banner').className='banner skip'; $('banner').textContent='Running self-check…';
-  try {
-    const r = await (await fetch('/api/selfcheck')).json();
-    const nf = r.checks.filter(c=>c.status==='fail').length, ns = r.checks.filter(c=>c.status==='skip').length;
-    $('banner').className = 'banner ' + (r.ok ? 'pass' : 'fail');
-    $('banner').textContent = r.ok ? ('Model is working' + (ns ? ` (${ns} check${ns>1?'s':''} skipped)` : '')) : `${nf} check${nf>1?'s':''} FAILED — do not trust the scores`;
-    $('checks').innerHTML = r.checks.map(c=>`<div class="check"><span class="pill ${c.status}">${c.status}</span> ${esc(c.name)}<div class="d">${esc(c.detail)}</div></div>`).join('');
-  } catch(e){ $('banner').className='banner fail'; $('banner').textContent='Cannot reach the server: '+e; }
+// ---------- connection to the local server ----------
+const FILE_HELP = 'This page only works when served by the demo server. In a terminal, in the project folder, run '
+  + '<code>minifasnet/dashboard/run.sh</code> and use the page it opens (<code>http://127.0.0.1:8765</code>). Keep that terminal open.';
+async function api(path, opts){
+  let r;
+  try { r = await fetch(path, opts); }
+  catch(e){ setConnected(false); throw new Error('server not reachable'); }
+  setConnected(true);
+  let body = null; try { body = await r.json(); } catch(e) { /* non-JSON */ }
+  if(!r.ok) throw new Error((body && body.error) || ('HTTP ' + r.status));
+  return body;
+}
+function setConnected(ok){
+  if(state.connected === ok) return;
+  state.connected = ok;
+  if(ok){ setPill($('connPill'),'ok','Server connected'); showAlert(''); }
+  else { setPill($('connPill'),'no','Server not reachable'); showAlert('Cannot reach the demo server — retrying every 2 s. ' + FILE_HELP); }
 }
 
-function draw(){
-  if(!img) return;
-  const cv=$('cv'), ctx=cv.getContext('2d');
-  cv.width=img.width; cv.height=img.height; ctx.drawImage(img,0,0);
-  const b = drag ? drag : manualBox || (lastRes && lastRes.box);
-  if(b){
-    const th = +$('th').value, ok = lastRes && lastRes.per_model && !drag && !manualBox ? lastRes.real_score >= th : null;
-    ctx.lineWidth=Math.max(2, img.width/200);
-    ctx.strokeStyle = drag || manualBox ? '#ffb020' : (ok===null ? '#ffb020' : ok ? '#22c55e' : '#ef4444');
-    ctx.strokeRect(b[0],b[1],b[2],b[3]);
+// ---------- self-check + proof ----------
+async function selfcheck(){
+  setPill($('healthPill'),'wait','Self-check…');
+  try {
+    const r = await api('/api/selfcheck');
+    const nf = r.checks.filter(c=>c.status==='fail').length, ns = r.checks.filter(c=>c.status==='skip').length;
+    setPill($('healthPill'), r.ok?'ok':'no', r.ok ? 'Self-check passed' + (ns?` (${ns} skipped)`:'') : `Self-check: ${nf} FAILED`);
+    $('checks').innerHTML = r.checks.map(c=>`<div class="check"><span class="tag ${c.status}">${c.status.toUpperCase()}</span>${txt(c.name)}<div class="small">${txt(c.detail)}</div></div>`).join('');
+  } catch(e){ setPill($('healthPill'),'no','Self-check unavailable'); $('checks').textContent = String(e.message); setTimeout(selfcheck, 2000); }
+}
+async function loadInfo(){
+  try {
+    const r = await api('/api/info');
+    const det = $('detSel');
+    for(const o of [...det.options]) o.disabled = !r.detectors.includes(o.value);
+    det.value = r.default_detector;
+    $('proof').innerHTML =
+      `<div class="kv">${r.models.map(m=>`<b>${txt(m.name)}</b><span>crop ×${m.scale}, input ${txt(m.input)}, ${(m.size_bytes/1e6).toFixed(2)} MB<br><span class="mono">sha256 ${txt(m.sha256.slice(0,16))}…</span></span>`).join('')}</div>
+       <h2 style="margin:12px 0 6px">Cross-implementation agreement</h2>
+       ${r.parity.length ? '<div class="kv">'+r.parity.map(p=>{const i=p.lastIndexOf(':'); return `<b>${txt(p.slice(0,i))}</b><span class="score">max score diff ${txt(p.slice(i+1).trim())}</span>`;}).join('')+'</div>' : 'parity report not found'}
+       <p style="margin:8px 0 0">Same frame, same box → the original PyTorch model, our Python module and our Java module give the same score (17 test frames incl. dark, blurred, odd sizes). Verified by the project's automated test suite (Python + Java) — see README.</p>
+       <p style="margin:6px 0 0">Runtime: onnxruntime ${txt(r.versions.onnxruntime)}, OpenCV ${txt(r.versions.opencv)}, Python ${txt(r.versions.python)} — CPU only, offline.</p>`;
+  } catch(e){ $('proof').textContent = String(e.message); setTimeout(loadInfo, 2000); }
+}
+
+// ---------- camera ----------
+async function listCameras(){
+  try {
+    const cams = (await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='videoinput');
+    const sel = $('camSel'), cur = sel.value;
+    sel.innerHTML = cams.map((c,i)=>`<option value="${txt(c.deviceId)}">${txt(c.label || 'Camera '+(i+1))}</option>`).join('') || '<option>default camera</option>';
+    if(cur && cams.some(c=>c.deviceId===cur)) sel.value = cur;
+    sel.disabled = cams.length < 2;
+  } catch(e){ /* listing is optional */ }
+}
+async function startCamera(){
+  if(!window.isSecureContext || !navigator.mediaDevices){ showAlert('The browser only allows the camera on <code>http://127.0.0.1</code> or <code>localhost</code>. ' + FILE_HELP); return; }
+  const deviceId = $('camSel').disabled ? undefined : $('camSel').value;
+  try {
+    state.stream = await navigator.mediaDevices.getUserMedia({ audio:false,
+      video: deviceId ? { deviceId:{exact:deviceId}, width:{ideal:1280}, height:{ideal:720} } : { width:{ideal:1280}, height:{ideal:720}, facingMode:'user' } });
+  } catch(e){
+    const msg = e.name==='NotAllowedError' ? 'Camera permission was denied. Allow it in the browser (camera icon in the address bar) and, on macOS, in System Settings → Privacy & Security → Camera for this browser. Then click Start again.'
+              : e.name==='NotFoundError' ? 'No camera found. Connect a webcam and click Start again.'
+              : e.name==='NotReadableError' ? 'The camera is in use by another app (Zoom, Teams, FaceTime…). Close it and click Start again.'
+              : 'Could not start the camera: ' + txt(e.message);
+    showAlert(msg); return;
+  }
+  const v = $('vid'); v.srcObject = state.stream; await v.play();
+  $('still').hidden = true; v.hidden = false; $('layer').classList.add('mirror');
+  $('layer').hidden = false; $('placeholder').hidden = true; $('badge').hidden = false;
+  $('camBtn').textContent = 'Stop camera'; $('camBtn').classList.remove('primary');
+  state.running = true; state.recent = []; listCameras(); loop();
+}
+function stopCamera(){
+  state.running = false;
+  if(state.stream){ state.stream.getTracks().forEach(t=>t.stop()); state.stream = null; }
+  $('camBtn').textContent = 'Start live camera'; $('camBtn').classList.add('primary');
+  $('perf').textContent = '';
+}
+
+// Capture -> send -> show -> repeat. One request at a time, so the demo never queues up stale frames.
+async function loop(){
+  const v = $('vid');
+  while(state.running){
+    if(!v.videoWidth){ await sleep(50); continue; }
+    const scale = Math.min(1, 640 / v.videoWidth);
+    work.width = Math.round(v.videoWidth*scale); work.height = Math.round(v.videoHeight*scale);
+    work.getContext('2d').drawImage(v, 0, 0, work.width, work.height);
+    const blob = await new Promise(r=>work.toBlob(r, 'image/jpeg', 0.92));
+    const t0 = performance.now();
+    let tEnd = t0;
+    try {
+      const r = await api('/api/predict?detector=' + $('detSel').value, { method:'POST', body:blob });
+      if(!state.running) break;
+      render(r, performance.now()-t0);
+      tEnd = performance.now();
+    } catch(e){
+      if(!state.running) break;
+      clearScores(); showResult('—', 'var(--muted)', 'Waiting for the demo server…'); await sleep(2000);
+    }
+    await sleep(Math.max(0, 66 - (tEnd - t0)));  // cap ~15 checks/s: smooth enough, keeps the laptop cool
   }
 }
+const sleep = ms => new Promise(r=>setTimeout(r, ms));
 
-function setImage(bitmap, blob){
-  img = bitmap; lastBlob = blob; lastRes = null; $('result').innerHTML='';
-  $('empty').hidden = true; $('cv').hidden = false; draw();
-}
-
-function pos(ev){ const cv=$('cv'), r=cv.getBoundingClientRect(); return [(ev.clientX-r.left)*cv.width/r.width, (ev.clientY-r.top)*cv.height/r.height]; }
-$('cv').addEventListener('pointerdown', ev=>{ if(!img) return; const p=pos(ev); drag=[p[0],p[1],0,0]; $('cv').setPointerCapture(ev.pointerId); });
-$('cv').addEventListener('pointermove', ev=>{ if(!drag) return; const p=pos(ev); drag[2]=p[0]-drag[0]; drag[3]=p[1]-drag[1]; draw(); });
-$('cv').addEventListener('pointerup', ()=>{
-  if(!drag) return;
-  let [x,y,w,h]=drag; if(w<0){x+=w;w=-w;} if(h<0){y+=h;h=-h;}
-  drag=null;
-  if(w>8 && h>8){ manualBox=[x,y,w,h]; $('boxMode').textContent='manual box'; check(); } else draw();
-});
-$('clearBox').onclick=()=>{ manualBox=null; $('boxMode').textContent='auto box (Haar, dev-only) — or drag on the image to draw your own'; if(img) check(); };
-
-$('file').onchange = async ev=>{
-  const f=ev.target.files[0]; if(!f) return;
-  manualBox=null; $('boxMode').textContent='auto box (Haar, dev-only) — or drag on the image to draw your own';
-  setImage(await createImageBitmap(f), f); check();
+// ---------- still photo ----------
+$('fileBtn').onclick = () => $('file').click();
+$('file').onchange = async ev => {
+  const f = ev.target.files[0]; if(!f) return; ev.target.value = '';
+  stopCamera();
+  const bmp = await createImageBitmap(f);
+  const c = $('still'); c.width = bmp.width; c.height = bmp.height; c.getContext('2d').drawImage(bmp, 0, 0);
+  $('vid').hidden = true; c.hidden = false; $('layer').classList.remove('mirror');
+  $('layer').hidden = false; $('placeholder').hidden = true; $('badge').hidden = false;
+  state.recent = [];
+  try { render(await api('/api/predict?detector=' + $('detSel').value, { method:'POST', body:f }), 0, true); }
+  catch(e){ showResult('Error', 'var(--bad)', e.message); }
 };
 
-$('camBtn').onclick = async ()=>{
-  if(stream){ stopCam(); return; }
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({video:{width:{ideal:640},height:{ideal:480}}});
-    $('vid').srcObject=stream; await $('vid').play();
-    $('camBtn').textContent='Stop webcam'; $('snapBtn').disabled=false; $('live').disabled=false;
-  } catch(e){ alert('Webcam unavailable: '+e.message); }
-};
-function stopCam(){ if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } $('camBtn').textContent='Start webcam'; $('snapBtn').disabled=true; $('live').checked=false; $('live').disabled=true; clearInterval(liveTimer); }
-async function snap(){
-  const v=$('vid'); if(!v.videoWidth) return;
-  const c=document.createElement('canvas'); c.width=v.videoWidth; c.height=v.videoHeight; c.getContext('2d').drawImage(v,0,0);
-  const blob = await new Promise(r=>c.toBlob(r,'image/jpeg',0.95));  // note: JPEG re-compression slightly changes pixels
-  setImage(await createImageBitmap(blob), blob); await check();
+// ---------- rendering ----------
+function clearScores(){
+  state.recent = []; $('scoreTxt').textContent = '—'; $('rawTxt').textContent = '—'; $('meterFill').style.width = '0';
+  $('perf').textContent = ''; $('models').textContent = '—';
+  const o = $('overlay'); o.getContext('2d').clearRect(0, 0, o.width, o.height); pushHist(null);
 }
-$('snapBtn').onclick=snap;
-$('live').onchange=()=>{ clearInterval(liveTimer); if($('live').checked) liveTimer=setInterval(()=>{ if(!busy) snap(); },1000); };
+function threshold(){ return +$('th').value; }
+function showResult(verdict, color, why){
+  $('verdict').textContent = verdict; $('verdict').style.color = color; $('why').textContent = why;
+  $('badge').textContent = verdict; $('badge').style.background = color === 'var(--muted)' ? '#000a' : color;
+}
+function drawBox(r, color){
+  const o = $('overlay'), ctx = o.getContext('2d');
+  o.width = r.frame.width; o.height = r.frame.height; ctx.clearRect(0,0,o.width,o.height);
+  if(!r.box) return;
+  ctx.lineWidth = Math.max(3, o.width/160); ctx.strokeStyle = color; ctx.strokeRect(r.box[0], r.box[1], r.box[2], r.box[3]);
+}
+function render(r, rtt, still){
+  // fps
+  state.frames++; const now = performance.now();
+  if(now - state.fpsT0 > 1000){ state.fps = state.frames*1000/(now-state.fpsT0); state.frames = 0; state.fpsT0 = now; }
+  if(!still) $('perf').textContent = `${state.fps.toFixed(1)} frames/s · model ${r.model_ms ? r.model_ms.toFixed(1) : '–'} ms · round trip ${rtt.toFixed(0)} ms`;
+  const col = { good:getComputedStyle(document.body).getPropertyValue('--good').trim(), bad:getComputedStyle(document.body).getPropertyValue('--bad').trim() };
 
-async function check(){
-  if(!lastBlob || busy) return; busy=true;
-  const q = manualBox ? `?x=${manualBox[0]}&y=${manualBox[1]}&w=${manualBox[2]}&h=${manualBox[3]}` : '';
-  try {
-    const resp = await fetch('/api/predict'+q, {method:'POST', body:lastBlob});
-    const r = await resp.json();
-    if(!resp.ok){ lastRes = r.box ? {box:r.box, real_score:0} : null; showError(r); draw(); }
-    else { lastRes=r; show(r); draw(); addHist(r); }
-  } catch(e){ showError({error:String(e), type:'NetworkError'}); }
-  busy=false;
+  if(r.status === 'no_face'){
+    drawBox({frame:r.frame}, '#ffb020');
+    if(now - state.lastNoFace > 800) state.recent = [];
+    state.lastNoFace = now;
+    clearScores(); showResult('No face', 'var(--muted)', 'Look at the camera; make sure your face is well lit and fully visible.');
+    return;
+  }
+  if(r.status === 'rejected'){
+    drawBox(r, '#ffb020');
+    const hint = r.type === 'FaceTooSmallError' ? 'Face too small — move closer to the camera.' : 'Keep your face inside the frame. (' + r.type + ')';
+    showResult('Adjust position', 'var(--warn)', hint); pushHist(null); return;
+  }
+  state.recent.push(r.real_score);
+  const n = still ? 1 : +$('smooth').value; while(state.recent.length > n) state.recent.shift();
+  const avg = state.recent.reduce((a,b)=>a+b,0) / state.recent.length;
+  const live = avg >= threshold();
+  const color = live ? col.good : col.bad;
+  drawBox(r, color);
+  showResult(live ? 'LIVE PERSON' : 'SPOOF / ATTACK', live ? 'var(--good)' : 'var(--bad)',
+    (live ? 'Real-face score is above the threshold.' : 'Real-face score is below the threshold — looks like a photo, screen or replay.')
+    + (r.faces > 1 ? ` (${r.faces} faces seen — scoring the most confident one)` : '') + ` Box: ${r.box_source}.`);
+  $('scoreTxt').textContent = avg.toFixed(3); $('rawTxt').textContent = r.real_score.toFixed(3);
+  $('meterFill').style.width = (avg*100).toFixed(1)+'%'; $('meterFill').style.background = color;
+  $('models').innerHTML = r.per_model.map(m=>`<div>${txt(m.name)} — real ${m.real_prob.toFixed(3)}</div><div class="meter" style="height:8px;margin:3px 0 8px"><i style="width:${(m.real_prob*100).toFixed(1)}%;background:var(--accent)"></i></div>`).join('')
+    + `<div>Fused: average of the two real-face probabilities = ${r.real_score.toFixed(3)} (model's own label: ${txt(r.label)})</div>`;
+  pushHist(r.real_score);
+}
+function pushHist(v){ state.hist.push(v); if(state.hist.length > 150) state.hist.shift(); drawChart(); }
+function drawChart(){
+  const c = $('chart'), dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = c.clientHeight;
+  if(c.width !== w*dpr){ c.width = w*dpr; c.height = h*dpr; }
+  const ctx = c.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,w,h);
+  const cs = getComputedStyle(document.body), y = v => h - 6 - v*(h-12), x = i => i*(w/149);
+  ctx.strokeStyle = cs.getPropertyValue('--line'); ctx.lineWidth = 1;
+  for(const g of [0,0.5,1]){ ctx.beginPath(); ctx.moveTo(0,y(g)); ctx.lineTo(w,y(g)); ctx.stroke(); }
+  ctx.strokeStyle = cs.getPropertyValue('--ink'); ctx.lineWidth = 1.5; ctx.setLineDash([5,4]);
+  ctx.beginPath(); ctx.moveTo(0,y(threshold())); ctx.lineTo(w,y(threshold())); ctx.stroke(); ctx.setLineDash([]);
+  ctx.strokeStyle = cs.getPropertyValue('--good'); ctx.lineWidth = 2; ctx.beginPath(); let pen = false;
+  state.hist.forEach((v,i)=>{ if(v===null){ pen=false; return; } if(!pen){ ctx.moveTo(x(i),y(v)); pen=true; } else ctx.lineTo(x(i),y(v)); });
+  ctx.stroke();
 }
 
-function show(r){
-  const th=+$('th').value, real=r.real_score>=th;
-  $('result').innerHTML = `
-    <div class="verdict" style="color:${real?'var(--good)':'var(--bad)'}">${real?'REAL face':'FAKE / attack'} <span class="big">· ${r.real_score.toFixed(4)}</span></div>
-    <div class="muted">decision = real_score ≥ threshold (${th.toFixed(2)}). Model's own label: <b>${r.label}</b> (confidence ${r.label_confidence.toFixed(3)}). Box: ${r.box.map(v=>Math.round(v)).join(', ')} (${esc(r.box_source)}) · ${r.latency_ms.toFixed(1)} ms</div>
-    <div class="bar"><i style="width:${(r.real_score*100).toFixed(1)}%"></i><span class="tick" style="left:${th*100}%"></span></div>
-    ${r.per_model.map(m=>`<div class="muted">${esc(m.name)} — real ${m.real_prob.toFixed(3)} <span style="opacity:.7">(classes: ${m.probs.map(p=>p.toFixed(3)).join(' / ')})</span></div>
-      <div class="bar"><i style="width:${(m.real_prob*100).toFixed(1)}%"></i></div>`).join('')}`;
+// ---------- wiring ----------
+$('camBtn').onclick = () => state.running ? stopCamera() : startCamera();
+$('camSel').onchange = () => { if(state.running){ stopCamera(); startCamera(); } };
+$('th').oninput = () => { $('thVal').textContent = threshold().toFixed(2); $('meterTick').style.left = (threshold()*100)+'%'; drawChart(); };
+$('rerun').onclick = selfcheck;
+window.addEventListener('resize', drawChart);
+
+if(location.protocol === 'file:'){
+  setPill($('connPill'),'no','Opened as a file'); setPill($('healthPill'),'no','No server');
+  showAlert('<b>Wrong way to open this page.</b> ' + FILE_HELP);
+  $('camBtn').disabled = true; $('fileBtn').disabled = true;
+} else {
+  selfcheck(); loadInfo(); listCameras(); drawChart();
+  setInterval(async ()=>{ if(!state.running && state.connected === false){ try { await api('/api/info'); selfcheck(); loadInfo(); } catch(e){} } }, 2000);
 }
-function showError(r){
-  $('result').innerHTML = `<div class="banner fail" style="margin-top:12px">${esc(r.type||'Error')}: ${esc(r.error)}</div>`;
-}
-function addHist(r){
-  const th=+$('th').value; count++;
-  const tr=document.createElement('tr');
-  tr.innerHTML=`<td>${count}</td><td class="big">${r.real_score.toFixed(4)}</td><td>${r.label}</td><td>${r.real_score>=th?'real':'attack'}</td><td>${esc(r.box_source)}</td><td>${r.latency_ms.toFixed(1)}</td>`;
-  $('hist').prepend(tr); while($('hist').children.length>10) $('hist').lastChild.remove();
-}
-$('th').oninput=()=>{ $('thVal').textContent=(+$('th').value).toFixed(2); if(lastRes && lastRes.per_model){ show(lastRes); draw(); } };
-$('rerun').onclick=selfcheck;
-selfcheck();
 </script>
 </body>
 </html>
