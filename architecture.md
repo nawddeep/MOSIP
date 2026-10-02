@@ -33,8 +33,9 @@ minifasnet/
                export_onnx.py     upstream .pth -> ONNX (deterministic), sanity check vs PyTorch
   java/        org.minifasnet.MiniFasNetPad (API), ImageOps (crop/resize/tensor), PadResult, ModelScore,
                PadException(Code), Cli (predict | batch | bench | resize); src/test = JUnit
-  tests/       test_unit.py, test_eval.py, test_parity.py (+ out/parity_report.md)
+  tests/       test_unit.py, test_eval.py, test_dashboard.py, test_parity.py (+ out/parity_report.md)
   eval/        evaluate.py (APCER/BPCER/sweep), bench_latency.py
+  dashboard/   server.py (stdlib http.server, localhost) + index.html: self-check, upload/webcam try-it (DEV-ONLY)
 minifasnet-study/Silent-Face-Anti-Spoofing   upstream clone (read-only reference, gitignored)
 ```
 

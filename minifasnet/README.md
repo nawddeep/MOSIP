@@ -13,6 +13,7 @@ minifasnet/
   java/     Maven module org.minifasnet (MiniFasNetPad, ImageOps, Cli) + JUnit tests
   tests/    test_unit.py, test_eval.py, test_parity.py (3-way parity), out/parity_report.md
   eval/     evaluate.py (APCER/BPCER), bench_latency.py
+  dashboard/  server.py + index.html  DEV-ONLY local page: model self-check + try images/webcam
   requirements.txt / requirements-dev.txt   pinned, verified Python versions
 ../pyproject.toml   pytest + ruff + pyright configuration (also used by VS Code/Pylance)
 ```
@@ -26,7 +27,8 @@ minifasnet/
 | 4 | Parity tests | done | PyTorch vs ours 5.5e-4, Python vs Java 4.3e-13 — `tests/out/parity_report.md` |
 | 5 | Evaluation script | done | metric unit tests; run on a synthetic set (real-data evaluation pending) |
 | 6 | Latency | done | table below |
-| QA | Error-free codebase | done | ruff clean, pyright 0 errors, `javac -Xlint:all -Werror` clean, 31 pytest + 8 JUnit passing, warnings fail the build |
+| Dash | Dev dashboard (model self-check + try-it page) | done | 8 self-checks pass; `tests/test_dashboard.py`; tamper detection verified |
+| QA | Error-free codebase | done | ruff clean, pyright 0 errors, `javac -Xlint:all -Werror` clean, 36 pytest + 8 JUnit passing, warnings fail the build |
 
 ## Setup
 ```
@@ -88,13 +90,28 @@ covered by the parity table). Do NOT substitute Android `Bitmap.createScaledBitm
 
 ## Tests and quality checks (run from the repo root)
 ```
-.venv/bin/python -m pytest                      # 31 tests; warnings are errors (pyproject.toml)
+.venv/bin/python -m pytest                      # 36 tests; warnings are errors (pyproject.toml)
 .venv/bin/ruff check minifasnet                 # lint
 .venv/bin/pyright                               # type check (0 errors expected)
 cd minifasnet/java && mvn -q package            # compiles with -Xlint:all + failOnWarning, runs 8 JUnit tests
 .venv/bin/python minifasnet/tests/test_parity.py   # regenerates tests/out/parity_report.md
 ```
 If the upstream clone or the Java build is missing, the 4 parity tests are **skipped** with the reason (`-ra` prints it).
+
+## Dashboard (dev-only) — "is the model working?"
+```
+.venv/bin/python minifasnet/dashboard/server.py        # then open http://127.0.0.1:8765  (localhost only; Ctrl+C stops it)
+```
+- **Model health panel** runs 8 self-checks: models load; ONNX files match the SHA-256 in `MODEL_CARD.md` (a modified model
+  turns the banner red); golden score on a gray frame (0.420990 +- 0.001); deterministic output; invalid box rejected; and the three
+  upstream sample images give the expected labels (T1 real, F1/F2 fake — skipped if the `minifasnet-study/` clone is absent).
+- **Try an image:** upload a file or use the webcam (single frame or live every second). Without a drawn box it uses the Haar dev
+  detector; drag on the image to draw your own box (this is what you will want to compare with MediaPipe boxes). The threshold
+  slider changes the real/attack decision live; per-model probabilities and latency are shown.
+- Images are processed in memory and never saved. Webcam frames are JPEG-compressed before sending, which changes pixels slightly
+  versus a raw frame. It is a dev tool, not part of the module and not for production.
+- A green banner means the code and files behave as verified here; it does **not** say the model is accurate on your cameras (use
+  `eval/evaluate.py` with real recordings for that).
 
 ## Evaluation (`eval/evaluate.py`)
 ```

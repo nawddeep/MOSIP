@@ -18,11 +18,13 @@ IN scope (built):
 - Three-way parity tests (upstream PyTorch / Python ONNX / Java), unit tests, static checks.
 - ISO/IEC 30107-3 style evaluation script (APCER per species, BPCER, threshold sweep) for the user's own recordings.
 - Latency benchmark and notes on low-end Android risks.
+- Dev-only local dashboard (self-check + try-it page) added at the user's request (2026-10-02); not part of the shipped module.
 - Model card with provenance, SHA-256, I/O spec, license verdict.
 
 OUT of scope (unless the user explicitly widens it):
 - Other liveness/PAD models; face detection (production detector = MediaPipe on the caller side); L0/L1 device code;
-  active challenges (blink/smile/head turn); Registration Client, Android/Flutter, UI, config system, audit logging; training.
+  active challenges (blink/smile/head turn); Registration Client, Android/Flutter, product UI, config system, audit logging; training.
+  (The dev dashboard is the one explicit UI exception.)
 
 ## 3. Constraints
 - Offline, on-device inference; CPU baseline; low-end Android must stay plausible.

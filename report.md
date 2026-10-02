@@ -3,10 +3,12 @@
 ## CURRENT STATE  (keep <= 25 lines; always true)
 - Date: 2026-10-02. Module **built, verified, error-free** (Steps 1–6 + QA hardening). Scope = MiniFASNet passive-liveness module only.
 - Code: `minifasnet/`. Usage, preprocessing spec, metric definitions, latency: `minifasnet/README.md`. Model facts: `models/MODEL_CARD.md`.
-- Quality gate (all green): pytest 31 passed with warnings-as-errors · ruff clean · pyright 0 errors · `javac -Xlint:all -Werror` clean ·
+- Quality gate (all green): pytest 36 passed with warnings-as-errors · ruff clean · pyright 0 errors · `javac -Xlint:all -Werror` clean ·
   JUnit 8 passed · parity: upstream PyTorch vs ours 5.5e-4 (target 1e-3), Python vs Java 4.3e-13, resize bit-identical.
 - Export deterministic (re-export reproduces committed SHA-256). Runtime needs only numpy + onnxruntime (verified in fresh venv).
 - Latency (Apple M4, both models): Python 1-thread 2.4 ms, Java 1-thread 1.9 ms per frame. Phone numbers UNVERIFIED.
+- Dashboard (dev-only, added on request): `.venv/bin/python minifasnet/dashboard/server.py` -> http://127.0.0.1:8765. 8 self-checks
+  (hashes, golden score, determinism, error handling, 3 known samples); try-it page for images/webcam. Page clicks not tested in a browser.
 - Git: one commit per verified step; `minifasnet-study/` (upstream clone) gitignored.
 - Env: `.venv` python3.11 (use `.venv/bin/python`; system python3 broken in this shell); opencv-python pinned < 5;
   JDK17 + Maven via Homebrew (set JAVA_HOME, see CLAUDE.md).
@@ -25,6 +27,7 @@
 | 4 parity tests | done | 7ce8b16 | tests/out/parity_report.md |
 | 5 evaluation | done | 369b363 | synthetic set (haar + csv modes); metric unit tests |
 | 6 latency | done | bf58aa5 | README latency table |
+| Dashboard | done | "Dev dashboard" commit | live-tested all endpoints with curl; JS syntax checked; tests/test_dashboard.py |
 | QA hardening | done | "QA hardening: error-free codebase + docs sync" | see "QA hardening" below |
 
 ## QA hardening (2026-10-02) — what was wrong and fixed
@@ -60,6 +63,7 @@
 - Real-world accuracy (cameras, lighting, demographics, 3D masks, injection); Android latency; parity on x86/Android CPUs.
 
 ## Context history (newest first)
+- 2026-10-02 (later): graphify knowledge graph built (graphify-out/, gitignored); dev dashboard built.
 - 2026-10-02 (late): "make the codebase errorless": static checks + bug fixes + docs rewrite (QA hardening).
 - 2026-10-02 (night): full permissions granted; finished Steps 4–6, git init + commits; canonical resize decision.
 - 2026-10-02: BUILD started; cloned upstream, venv, ONNX export, Python ref, Java wrapper.

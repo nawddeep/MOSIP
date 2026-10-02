@@ -22,7 +22,7 @@ select = ["E", "F", "W", "B", "I"]
 include = ["minifasnet"]
 exclude = ["minifasnet-study", "**/__pycache__", "minifasnet/java"]
 # Scripts put these folders on sys.path at runtime; tell the type checker / Pylance about them.
-extraPaths = ["minifasnet/python", "minifasnet/eval", "minifasnet-study/Silent-Face-Anti-Spoofing"]
+extraPaths = ["minifasnet/python", "minifasnet/eval", "minifasnet-study/Silent-Face-Anti-Spoofing", "minifasnet/dashboard"]
 venvPath = "."
 venv = ".venv"
 pythonVersion = "3.11"

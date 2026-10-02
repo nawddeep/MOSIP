@@ -26,3 +26,6 @@ minifasnet-study/
 # Java build output
 minifasnet/java/target/
 minifasnet/java/build/
+
+# graphify output (regenerable)
+graphify-out/

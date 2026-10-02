@@ -31,7 +31,7 @@ Do not implement anything beyond the current checkpoint unless required for corr
 2. EVIDENCE: Every claim about the upstream repo must come from its actual code/files (clone in `minifasnet-study/`, read-only,
    gitignored). Anything not verified is marked `UNVERIFIED`.
 3. QUALITY GATE (must stay green before any commit), run from the repo root:
-   - `.venv/bin/python -m pytest` (warnings are errors), `.venv/bin/ruff check minifasnet`, `.venv/bin/pyright` (0 errors)
+   - `.venv/bin/python -m pytest` (warnings are errors; 36 tests), `.venv/bin/ruff check minifasnet`, `.venv/bin/pyright` (0 errors)
    - `cd minifasnet/java && mvn -q package` (compiles with `-Xlint:all` + failOnWarning, runs JUnit)
    - after any preprocessing/model change: `.venv/bin/python minifasnet/tests/test_parity.py` and update the parity numbers in the docs.
 4. PREPROCESSING IS A SPEC: crop + canonical resize + BGR/0..255/NCHW must stay identical in Python and Java
