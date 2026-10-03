@@ -1,0 +1,20 @@
+{
+  // Terminal > Run Task... -> "Start demo dashboard"
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start demo dashboard",
+      "type": "shell",
+      "command": "${workspaceFolder}/minifasnet/dashboard/run.sh",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "Pre-demo browser check",
+      "type": "shell",
+      "command": "${workspaceFolder}/minifasnet/dashboard/e2e/run_e2e.sh",
+      "problemMatcher": []
+    }
+  ]
+}

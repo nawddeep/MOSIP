@@ -11,6 +11,7 @@ Endpoints:  GET  /                 the page
             POST /api/predict      body = JPEG/PNG bytes; query: detector=retinaface|haar, or x,y,w,h (manual box)
 """
 import argparse
+import errno
 import hashlib
 import json
 import math
@@ -307,8 +308,19 @@ def main() -> int:
     ap.add_argument("--min-face-size", type=int, default=32)
     a = ap.parse_args()
     app = App(a.model_dir, a.min_face_size)
-    srv = ThreadingHTTPServer(("127.0.0.1", a.port), make_handler(app))
-    print(f"MiniFASNet demo dashboard (dev-only): http://127.0.0.1:{a.port}", flush=True)
+    srv: Optional[ThreadingHTTPServer] = None
+    for port in range(a.port, a.port + 20):  # if the port is taken (e.g. a dashboard is already running), use the next
+        try:
+            srv = ThreadingHTTPServer(("127.0.0.1", port), make_handler(app))
+            break
+        except OSError as e:
+            if e.errno != errno.EADDRINUSE:
+                raise
+            print(f"port {port} is busy, trying {port + 1}", flush=True)
+    if srv is None:
+        print(f"ERROR: no free port in {a.port}..{a.port + 19}", file=sys.stderr)
+        return 1
+    print(f"MiniFASNet demo dashboard (dev-only): http://127.0.0.1:{srv.server_address[1]}", flush=True)
     print(f"face detector: {'retinaface (upstream)' if app.retina else 'haar (upstream clone not found)'}", flush=True)
     print("keep this terminal open while demoing; Ctrl+C to stop", flush=True)
     try:
