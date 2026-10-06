@@ -191,7 +191,15 @@ public enum AuditEvent {
     BIO_SDK_QUALITY_SCORE_FAILED("REG-EVT-094", SYSTEM_EVENT.getCode(), "BIO_SDK_QUALITY_SCORE_FAILED", "Unable to fetch SDK quality score"),
     BIO_SDK_FILES_NOT_FOUND("REG-EVT-095", SYSTEM_EVENT.getCode(), "BIO_SDK_FILES_NOT_FOUND", "No biometric SDK files found in assets"),
     BIO_SDK_PROVIDER_REGISTERED("REG-EVT-096", SYSTEM_EVENT.getCode(), "BIO_SDK_PROVIDER_REGISTERED", "Biometric SDK provider registered"),
-    BIO_SDK_DEDUPE_MATCH("REG-EVT-097", SYSTEM_EVENT.getCode(), "BIO_SDK_DEDUPE_MATCH", "Biometric data matched with existing operator biometrics");
+    BIO_SDK_DEDUPE_MATCH("REG-EVT-097", SYSTEM_EVENT.getCode(), "BIO_SDK_DEDUPE_MATCH", "Biometric data matched with existing operator biometrics"),
+
+    // Face liveness / presentation attack detection (scores and thresholds appear only here, never in the UI)
+    FACE_LIVENESS_SESSION("REG-LIV-001", USER_EVENT.getCode(), "FACE_LIVENESS_SESSION", "Face liveness session: %s"),
+    FACE_LIVENESS_STATE("REG-LIV-002", SYSTEM_EVENT.getCode(), "FACE_LIVENESS_STATE", "Face liveness state: %s"),
+    FACE_LIVENESS_DECISION("REG-LIV-003", SYSTEM_EVENT.getCode(), "FACE_LIVENESS_DECISION", "Face liveness decision: %s"),
+    FACE_LIVENESS_CHALLENGE("REG-LIV-004", USER_EVENT.getCode(), "FACE_LIVENESS_CHALLENGE", "Face liveness challenge: %s"),
+    FACE_LIVENESS_CONFIG("REG-LIV-005", SYSTEM_EVENT.getCode(), "FACE_LIVENESS_CONFIG", "Face liveness config: %s"),
+    FACE_LIVENESS_GATE_BLOCKED("REG-LIV-006", SYSTEM_EVENT.getCode(), "FACE_LIVENESS_GATE_BLOCKED", "Face capture blocked, liveness not passed: %s");
 
     AuditEvent(String id, String type, String name, String description) {
         this.id = id;

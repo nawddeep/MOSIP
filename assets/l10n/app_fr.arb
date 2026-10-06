@@ -24,6 +24,8 @@
   "user_validated": "Utilisateur validé !",
   "username_required": "Le nom d’utilisateur est requis!",
   "password_required": "Le mot de passe est requis!",
+  "show_password": "Afficher le mot de passe",
+  "hide_password": "Masquer le mot de passe",
   "username_exceed": "Le nom d’utilisateur ne doit pas dépasser 50 caractères!",
   "password_exceed": "Le mot de passe ne doit pas dépasser 50 caractères!",
   "username_incorrect": "Utilisateur introuvable !",

@@ -126,6 +126,12 @@ ext {
     kernelBiometricsApiVersion = "1.3.0"
     qrGenVersion               = "3.0.1"
 
+    // Face liveness (livenessmanager)
+    cameraxVersion             = "1.3.4"
+    mediapipeTasksVersion      = "0.10.14"
+    onnxRuntimeVersion         = "1.19.2"
+    opencvVersion              = "4.10.0"
+
     // Other libs
     aspectjrtVersion           = "1.9.7"
     velocityVersion            = "1.7"
@@ -244,7 +250,7 @@ subprojects { project ->
     }
     // Suppress lint errors in third-party Flutter plugin subprojects whose
     // source we cannot modify. Own modules (app, *manager) are excluded.
-    def ownModules = ['app', 'clientmanager', 'keymanager', 'packetmanager', 'transliterationmanager']
+    def ownModules = ['app', 'clientmanager', 'keymanager', 'packetmanager', 'transliterationmanager', 'livenessmanager']
     if (!ownModules.contains(project.name)) {
         project.afterEvaluate {
             if (project.extensions.findByName("android") != null) {

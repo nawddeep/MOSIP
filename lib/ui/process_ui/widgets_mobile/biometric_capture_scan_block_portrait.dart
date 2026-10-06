@@ -7,6 +7,7 @@
 
 // ignore_for_file: deprecated_member_use
 
+import 'package:registration_client/ui/face_liveness/face_liveness_gate.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -597,6 +598,10 @@ class _BiometricCaptureScanBlockPortraitState
               if (biometricAttributeData.attemptNo <
                   biometricAttributeData.noOfCapturesAllowed) {
                 List<Uint8List?> tempImageList = [];
+                if (!await ensureResidentFaceLiveness(
+                    context, biometricAttributeData.title.replaceAll(" ", ""))) {
+                  return;
+                }
                 await BiometricsApi().invokeDiscoverSbi(widget.field.id!,
                     biometricAttributeData.title.replaceAll(" ", ""));
                 await BiometricsApi()

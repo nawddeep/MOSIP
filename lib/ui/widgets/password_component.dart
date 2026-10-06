@@ -5,13 +5,14 @@
  *
 */
 
+import 'package:registration_client/ui/widgets/password_visibility_toggle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class PasswordComponent extends StatelessWidget {
+class PasswordComponent extends StatefulWidget {
   const PasswordComponent({
     Key? key,
     required this.onTapLogin,
@@ -30,6 +31,21 @@ class PasswordComponent extends StatelessWidget {
   final bool isDisabled;
   final bool isMobile;
   final VoidCallback onTapForgotPassword;
+
+  @override
+  State<PasswordComponent> createState() => _PasswordComponentState();
+}
+
+class _PasswordComponentState extends State<PasswordComponent> {
+  bool _obscurePassword = true;
+
+  VoidCallback get onTapLogin => widget.onTapLogin;
+  VoidCallback get onTapBack => widget.onTapBack;
+  Function get onChanged => widget.onChanged;
+  bool get isLoggingIn => widget.isLoggingIn;
+  bool get isDisabled => widget.isDisabled;
+  bool get isMobile => widget.isMobile;
+  VoidCallback get onTapForgotPassword => widget.onTapForgotPassword;
 
   @override
   Widget build(BuildContext context) {
@@ -68,11 +84,16 @@ class PasswordComponent extends StatelessWidget {
             ),
           ),
           child: TextField(
-            obscureText: true,
+            obscureText: _obscurePassword,
             onChanged: (v) {
               onChanged(v);
             },
             decoration: InputDecoration(
+              suffixIcon: PasswordVisibilityToggle(
+                obscured: _obscurePassword,
+                size: isMobile && !isMobileSize ? 30 : 22,
+                onToggle: () => setState(() => _obscurePassword = !_obscurePassword),
+              ),
               hintText: AppLocalizations.of(context)!.enter_password,
               hintStyle: isMobile
               && !isMobileSize ? AppTextStyle.tabletPortraitTextfieldHintText

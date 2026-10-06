@@ -1,0 +1,21 @@
+{
+  "faceLandmarker": {
+    "file": "face_landmarker.task",
+    "sha256": "64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff",
+    "version": "face_landmarker/float16/1",
+    "source": "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+    "license": "Apache-2.0"
+  },
+  "pad": {
+    "file": "MiniFASNetV2.onnx",
+    "sha256": "0cbe5caec95c31de9d2ef845cb85407d76aecd1b6a2c0e343f7d35306bfbccb8",
+    "version": "MiniFASNetV2-2.7_80x80",
+    "inputSize": 80,
+    "cropScale": 2.7,
+    "inputScale": 1.0,
+    "channelOrder": "BGR",
+    "realClassIndex": 1,
+    "source": "https://github.com/QingHeYang/Silent-Face-Anti-Spoofing-onnx (conversion of minivision-ai/Silent-Face-Anti-Spoofing 2.7_80x80_MiniFASNetV2.pth)",
+    "license": "Apache-2.0"
+  }
+}

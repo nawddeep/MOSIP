@@ -5,6 +5,7 @@
  *
 */
 
+import 'package:registration_client/ui/face_liveness/face_liveness_gate.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -190,7 +191,15 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                       onPressed: () async {
                         if (widget.biometricAttributeData.attemptNo <
                             widget.biometricAttributeData.noOfCapturesAllowed) {
-                          await BiometricsApi().invokeDiscoverSbi(
+                          if (!await ensureResidentFaceLiveness(
+                              context, widget.parameterTitle)) {
+                            return;
+                          }
+                          if (!await ensureResidentFaceLiveness(
+                      context, widget.parameterTitle)) {
+                    return;
+                  }
+                  await BiometricsApi().invokeDiscoverSbi(
                               widget.field.id!, widget.parameterTitle);
                           await BiometricsApi()
                               .extractImageValues(

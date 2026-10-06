@@ -24,6 +24,8 @@
   "user_validated": "تم التحقق من صحة المستخدم!",
   "username_required": "اسم المستخدم مطلوب!",
   "password_required": "كلمة المرور مطلوبة!",
+  "show_password": "إظهار كلمة المرور",
+  "hide_password": "إخفاء كلمة المرور",
   "username_exceed": "يجب ألا يتجاوز اسم المستخدم 50 حرفا!",
   "password_exceed": "يجب ألا تتجاوز كلمة المرور 50 حرفا!",
   "username_incorrect": "لم يتم العثور على المستخدم!",

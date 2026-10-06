@@ -23,6 +23,7 @@ class UsernameComponent extends StatefulWidget {
     required this.onChanged,
     required this.isDisabled,
     required this.isMobile,
+    this.onTapSignup,
   }) : super(key: key);
 
   final List<String?> languages;
@@ -31,6 +32,9 @@ class UsernameComponent extends StatefulWidget {
   final Function onChanged;
   final bool isDisabled;
   final bool isMobile;
+
+  /// Opens the sign-up / request-access page. Hidden when null.
+  final VoidCallback? onTapSignup;
 
   @override
   State<UsernameComponent> createState() => _UsernameComponentState();
@@ -140,6 +144,36 @@ class _UsernameComponentState extends State<UsernameComponent> {
             ),
           ),
         ),
+        if (widget.onTapSignup != null) ...[
+          SizedBox(height: 16.h),
+          Center(
+            child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.signup_no_account,
+                  style: TextStyle(
+                    fontSize: widget.isMobile && !isMobileSize ? 20 : 14,
+                    color: appBlack,
+                  ),
+                ),
+                TextButton(
+                  key: const ValueKey<String>('signup-link'),
+                  onPressed: widget.onTapSignup,
+                  style: TextButton.styleFrom(minimumSize: const Size(44, 44)),
+                  child: Text(
+                    AppLocalizations.of(context)!.signup_link,
+                    style: TextStyle(
+                      fontSize: widget.isMobile && !isMobileSize ? 20 : 14,
+                      fontWeight: FontWeight.w700,
+                      color: appSolidPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }

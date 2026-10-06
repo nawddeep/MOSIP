@@ -2,6 +2,10 @@
 
 The Android Registration Client is a tablet application that serves as a portable version of the existing desktop Registration Client. It has been developed to support accessibility on all Android devices. The creation of the Android Registration Client was driven by the need to meet the mobility requirements of countries adopting MOSIP.
 
+## Face liveness + PAD
+
+Face liveness and presentation attack detection for resident capture, operator login and supervisor approval: see [docs/liveness/README.md](docs/liveness/README.md).
+
 # Developer Guide
 
 The documentation here will guide you through the pre-requisites and the other necessary details required for Android Registration Client developer setup.

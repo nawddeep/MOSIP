@@ -5,6 +5,7 @@
  *
 */
 
+import 'package:registration_client/ui/widgets/password_visibility_toggle.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -73,6 +74,7 @@ class _GenericProcessState extends State<GenericProcess>
 
   String username = '';
   String password = '';
+  bool _obscurePassword = true;
 
   @override
   void initState() {
@@ -1365,8 +1367,13 @@ class _GenericProcessState extends State<GenericProcess>
         ),
       ),
       child: TextField(
-        obscureText: true,
+        obscureText: _obscurePassword,
         decoration: InputDecoration(
+          suffixIcon: PasswordVisibilityToggle(
+            obscured: _obscurePassword,
+            size: isPortrait && !isMobileSize ? 30 : 22,
+            onToggle: () => setState(() => _obscurePassword = !_obscurePassword),
+          ),
           hintText: appLocalizations.enter_password,
           hintStyle: isPortrait && !isMobileSize
               ? AppTextStyle.tabletPortraitTextfieldHintText

@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mosip.io/schemas/registration-client/face-liveness-config/1.json",
+  "title": "MOSIP Registration Client face liveness configuration",
+  "description": "Synced as global param 'mosip.registration.face.liveness.config' (string value = this JSON). Cached locally for offline use.",
+  "type": "object",
+  "required": ["schemaVersion", "configVersion", "policies"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "configVersion": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "livenessTokenTtlSeconds": { "type": "integer", "minimum": 5, "maximum": 300, "default": 60,
+      "description": "How long a SUCCESS stays valid for the following SBI capture / login step. Single use." },
+    "performance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "frameSkip": { "type": "integer", "minimum": 1, "maximum": 10, "default": 1 },
+        "padEveryNthFrame": { "type": "integer", "minimum": 1, "maximum": 10, "default": 1 }
+      }
+    },
+    "policies": {
+      "type": "object",
+      "required": ["resident", "operator", "supervisor"],
+      "additionalProperties": false,
+      "properties": {
+        "resident":   { "$ref": "#/definitions/policy" },
+        "operator":   { "$ref": "#/definitions/policy" },
+        "supervisor": { "$ref": "#/definitions/policy" }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "required": ["algorithm", "value"],
+      "additionalProperties": false,
+      "description": "Required for synced configs. SHA-256 (lower-case hex) of the canonical JSON of the document without this member: keys sorted, no whitespace, numbers in shortest plain form.",
+      "properties": {
+        "algorithm": { "const": "SHA-256" },
+        "value": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    }
+  },
+  "definitions": {
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "passiveThreshold": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.9 },
+        "padRejectThreshold": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.3,
+          "description": "Must be <= passiveThreshold. Scores below are rejected as attacks without a challenge." },
+        "challengeTypes": { "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": { "enum": ["BLINK", "SMILE", "TURN_LEFT", "TURN_RIGHT"] } },
+        "challengeCount": { "type": "integer", "minimum": 1, "maximum": 4, "default": 1,
+          "description": "Must be <= number of challengeTypes." },
+        "challengeTimeoutSeconds": { "type": "integer", "minimum": 3, "maximum": 60, "default": 8 },
+        "maxRetries": { "type": "integer", "minimum": 1, "maximum": 10, "default": 3,
+          "description": "Maximum attempts per session (UI: 'Attempt n of maxRetries')." },
+        "minFaceSize": { "type": "number", "exclusiveMinimum": 0, "maximum": 1, "default": 0.25 },
+        "maxFaces": { "type": "integer", "minimum": 1, "maximum": 1, "default": 1,
+          "description": "Only 1 is accepted today; the field exists so the schema need not change later." },
+        "passiveFrames": { "type": "integer", "minimum": 1, "maximum": 30, "default": 5 },
+        "positioningStableFrames": { "type": "integer", "minimum": 1, "maximum": 30, "default": 5 },
+        "minPassiveMotion": { "type": "number", "minimum": 0, "maximum": 0.1, "default": 0.002,
+          "description": "Mean landmark motion (face widths/frame) required for a passive pass; static scenes are escalated to a challenge. 0 disables." },
+        "quality": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "minBrightness": { "type": "number", "minimum": 0, "maximum": 255, "default": 50 },
+            "maxBrightness": { "type": "number", "minimum": 0, "maximum": 255, "default": 220 },
+            "minSharpness": { "type": "number", "minimum": 0, "default": 25 },
+            "maxMotion": { "type": "number", "exclusiveMinimum": 0, "maximum": 1, "default": 0.15 }
+          }
+        }
+      }
+    }
+  }
+}
