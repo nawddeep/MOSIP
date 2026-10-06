@@ -19,6 +19,13 @@ import 'package:registration_client/main.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:registration_client/model/face_liveness_event.dart';
+import 'package:registration_client/ui/face_liveness/face_liveness_gate.dart';
+import 'package:registration_client/ui/face_liveness/liveness_debug_menu.dart';
+import 'package:registration_client/platform_android/demo_account_service.dart';
+import 'package:registration_client/platform_spi/global_config_service.dart';
+import 'package:registration_client/ui/signup/signup_page.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/dashboard/dashboard_tablet.dart';
 import 'package:registration_client/ui/widgets/network_component.dart';
@@ -256,6 +263,22 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     _showInSnackBar(appLocalizations.user_validated);
   }
 
+  Future<void> _openSignup() async {
+    FocusManager.instance.primaryFocus?.unfocus();
+    final demoUsername = await Navigator.of(context).push<String>(MaterialPageRoute<String>(
+      builder: (_) => SignupPage(
+        adminEmailLoader: () async {
+          final params = await GlobalConfigService().getRegistrationParams();
+          final value = params[signupAdminEmailKey]?.toString().trim();
+          return (value == null || value.isEmpty) ? null : value;
+        },
+      ),
+    ));
+    if (demoUsername != null && mounted) {
+      _showInSnackBar(appLocalizations.signup_demo_created(demoUsername));
+    }
+  }
+
   void _showInSnackBar(String value) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -282,6 +305,22 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     if (password.length > (int.tryParse(authProvider.passwordLength) ?? 50)) {
       _showInSnackBar(appLocalizations.password_exceed);
       return;
+    }
+
+    // Debug builds only: a local demo account (created from Sign up) logs in without a MOSIP server.
+    if (kDebugMode) {
+      final demo = await DemoAccountService.instance.verify(username, password);
+      if (demo != null) {
+        authProvider.startDemoSession(demo.username, demo.fullName);
+        authProvider.setIsSyncing(false);
+        await _navigateToHomePage();
+        if (mounted) {
+          setState(() {
+            isLoggingIn = false;
+          });
+        }
+        return;
+      }
     }
 
     setState(() {
@@ -365,6 +404,20 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   _navigateToHomePage() async {
     if (authProvider.isLoggedIn == true) {
+      // Operator face liveness (policy "operator"): login completes only after liveness passes.
+      final livenessPassed = await ensureFaceLiveness(context, LivenessWorkflow.operator);
+      if (!livenessPassed) {
+        await authProvider.logoutUser();
+        authProvider.setIsLoggedIn(false);
+        authProvider.setIsSyncing(false);
+        if (mounted) {
+          setState(() {
+            isLoggingIn = false;
+          });
+        }
+        return;
+      }
+
       // Start new location session so permission is re-requested if user chose "Only this time" previously
       await LocationService.instance.startNewSession();
 
@@ -399,6 +452,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       color: appWhite,
       child: Center(
         child: InkWell(
+          onDoubleTap: kDebugMode ? () => LivenessDebugMenu.open(context) : null,
           onLongPress: () {
             globalProvider.getAudit("REG-AUTH-002", "REG-MOD-101");
             setState(() {
@@ -509,6 +563,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                       username.trim().isEmpty || username.trim().length > 50,
                   languages: context.watch<GlobalProvider>().languages,
                   isMobile: isMobile,
+                  onTapSignup: _openSignup,
                   mp: context.watch<GlobalProvider>().codeToLanguageMapper,
                   onChanged: (v) {
                     setState(() {

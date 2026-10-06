@@ -5,6 +5,7 @@
  *
 */
 
+import 'package:registration_client/ui/widgets/password_visibility_toggle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -25,6 +26,7 @@ class AuthenticationPage extends StatefulWidget {
 }
 
 class _AuthenticationPageState extends State<AuthenticationPage> {
+  bool _obscurePassword = true;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -172,8 +174,12 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         ),
       ),
       child: TextField(
-        obscureText: true,
+        obscureText: _obscurePassword,
         decoration: InputDecoration(
+          suffixIcon: PasswordVisibilityToggle(
+            obscured: _obscurePassword,
+            onToggle: () => setState(() => _obscurePassword = !_obscurePassword),
+          ),
           hintText: AppLocalizations.of(context)!.enter_password,
           hintStyle: AppTextStyle.tabletPortraitTextfieldHintText,
           border: InputBorder.none,

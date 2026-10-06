@@ -58,6 +58,7 @@ import io.mosip.registration.keymanager.spi.CryptoManagerService;
 import io.mosip.registration_client.api_services.AuditDetailsApi;
 import io.mosip.registration_client.api_services.AuthenticationApi;
 import io.mosip.registration_client.api_services.BiometricsDetailsApi;
+import io.mosip.registration_client.api_services.FaceLivenessApi;
 import io.mosip.registration_client.api_services.CommonDetailsApi;
 import io.mosip.registration_client.api_services.DashBoardDetailsApi;
 import io.mosip.registration_client.api_services.DemographicsDetailsApi;
@@ -141,6 +142,12 @@ public class HostApiModule {
         return new ProcessSpecDetailsApi(appContext, identitySchemaRepository,
                 globalParamRepository, registrationService, auditManagerService);
 
+    }
+
+    @Provides
+    @Singleton
+    FaceLivenessApi getFaceLivenessApi(GlobalParamRepository globalParamRepository, AuditManagerService auditManagerService) {
+        return new FaceLivenessApi(appContext, globalParamRepository, auditManagerService);
     }
 
     @Provides

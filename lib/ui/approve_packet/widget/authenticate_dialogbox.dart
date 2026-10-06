@@ -1,3 +1,6 @@
+import 'package:registration_client/ui/face_liveness/face_liveness_gate.dart';
+import 'package:registration_client/ui/widgets/password_visibility_toggle.dart';
+import 'package:registration_client/model/face_liveness_event.dart';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -23,6 +26,7 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
   bool loading = false;
   String loginError = "";
   bool showLoginError = false;
+  bool _obscurePassword = true;
 
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
   late AuthProvider authProvider;
@@ -80,6 +84,10 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
       loading = true;
     });
     bool isAuthenticated = await _authenticatePacketPassword();
+    if (isAuthenticated) {
+      // Supervisor face liveness (policy "supervisor") must pass before the review is submitted.
+      isAuthenticated = await ensureFaceLiveness(context, LivenessWorkflow.supervisor);
+    }
     if (isAuthenticated) {
       try {
         await context.read<ApprovePacketsProvider>().submitSelected();
@@ -259,8 +267,12 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                           onChanged: (String value){
                             validateForm();
                           },
-                          obscureText: true,
+                          obscureText: _obscurePassword,
                           decoration: InputDecoration(
+                            suffixIcon: PasswordVisibilityToggle(
+                              obscured: _obscurePassword,
+                              onToggle: () => setState(() => _obscurePassword = !_obscurePassword),
+                            ),
                             border: OutlineInputBorder(
                               borderSide: const BorderSide(
                                 color: Colors.black26,

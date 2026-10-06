@@ -1,0 +1,68 @@
+plugins {
+    id 'com.android.library'
+}
+
+apply from: '../jacoco.gradle'
+
+android {
+    lintOptions {
+        abortOnError false
+        ignoreWarnings true
+    }
+    namespace 'io.mosip.registration.livenessmanager'
+    compileSdk rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        minSdk rootProject.ext.minSdkVersion
+        targetSdk rootProject.ext.targetSdkVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+        versionCode 1
+        versionName '1.0'
+    }
+
+    buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+    // Models are memory-mapped by MediaPipe / ONNX Runtime; never compress them.
+    aaptOptions {
+        noCompress 'task', 'onnx'
+    }
+    testOptions {
+        unitTests.returnDefaultValues = false
+    }
+    buildToolsVersion buildToolsVersion
+}
+
+dependencies {
+    // Camera (Apache-2.0)
+    implementation "androidx.camera:camera-core:${rootProject.ext.cameraxVersion}"
+    implementation "androidx.camera:camera-camera2:${rootProject.ext.cameraxVersion}"
+    implementation "androidx.camera:camera-lifecycle:${rootProject.ext.cameraxVersion}"
+    implementation "androidx.lifecycle:lifecycle-runtime:${rootProject.ext.lifecycleRuntimeVersion}"
+
+    // Face detection + landmarks (Apache-2.0)
+    implementation "com.google.mediapipe:tasks-vision:${rootProject.ext.mediapipeTasksVersion}"
+    // PAD model runtime (MIT)
+    implementation "com.microsoft.onnxruntime:onnxruntime-android:${rootProject.ext.onnxRuntimeVersion}"
+    // Preprocessing + quality metrics (Apache-2.0)
+    implementation "org.opencv:opencv:${rootProject.ext.opencvVersion}"
+
+    // Config parsing (Apache-2.0); already used by the app
+    implementation "com.google.code.gson:gson:${rootProject.ext.gsonVersion}"
+
+    testImplementation "junit:junit:${rootProject.ext.junitVersion}"
+    androidTestImplementation "androidx.test.ext:junit:${rootProject.ext.androidxJunitVersion}"
+    androidTestImplementation "androidx.test:core:${rootProject.ext.androidxTestCoreVersion}"
+}

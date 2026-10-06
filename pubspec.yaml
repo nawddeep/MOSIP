@@ -118,6 +118,17 @@ flutter:
     - .git/refs/heads/
     - assets/l10n/
 
+  fonts:
+    # IBM Plex Sans, SIL Open Font License 1.1 (assets/fonts/ibm_plex_sans/OFL.txt). Used by face liveness screens.
+    - family: IBMPlexSans
+      fonts:
+        - asset: assets/fonts/ibm_plex_sans/IBMPlexSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/ibm_plex_sans/IBMPlexSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/ibm_plex_sans/IBMPlexSans-SemiBold.ttf
+          weight: 600
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

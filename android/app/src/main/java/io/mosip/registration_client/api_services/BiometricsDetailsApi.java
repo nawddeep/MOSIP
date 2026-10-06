@@ -59,7 +59,9 @@ import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.SingleType;
+import io.mosip.registration.livenessmanager.model.Workflow;
 import io.mosip.registration_client.MainActivity;
+import io.mosip.registration_client.liveness.LivenessGuard;
 import io.mosip.registration_client.model.BiometricsPigeon;
 
 @Singleton
@@ -130,10 +132,33 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
         this.activity = mainActivity;
     }
 
+    private LivenessGuard livenessGuard;
+
+    public void setLivenessGuard(LivenessGuard livenessGuard) {
+        this.livenessGuard = livenessGuard;
+    }
+
+    /**
+     * Resident face capture requires a fresh, single-use liveness pass issued natively by the
+     * liveness engine (see docs/liveness). Exception photos and operator onboarding are not gated.
+     */
+    private boolean isFaceCaptureAllowed(String fieldId, Modality modality) {
+        if (modality != Modality.FACE || OPERATOR_BIOMETRICS.equals(fieldId)) {
+            return true;
+        }
+        return livenessGuard != null && livenessGuard.consumePass(Workflow.RESIDENT);
+    }
+
     @Override
     public void invokeDiscoverSbi(@NonNull String fieldId, @NonNull String modality,
             @NonNull BiometricsPigeon.Result<String> result) {
         auditManagerService.audit(AuditEvent.BIOMETRIC_CAPTURE, Components.REGISTRATION);
+        if (!isFaceCaptureAllowed(fieldId, getModality(modality))) {
+            auditManagerService.auditWithArguments(AuditEvent.FACE_LIVENESS_GATE_BLOCKED,
+                    Components.REGISTRATION.getId(), Components.REGISTRATION.getName(), fieldId);
+            result.error(new IllegalStateException("FACE_LIVENESS_REQUIRED"));
+            return;
+        }
         currentModality = getModality(modality);
         this.fieldId = fieldId;
         discoverSBI();

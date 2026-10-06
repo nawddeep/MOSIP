@@ -60,6 +60,25 @@ class AuthProvider with ChangeNotifier {
   String get idleTime => _idleTime;
   String get passwordLength => _passwordLength;
 
+  bool _isDemoSession = false;
+  bool get isDemoSession => _isDemoSession;
+
+  /// Debug-only local demo login (see DemoAccountService). No server session or sync exists.
+  startDemoSession(String userId, String fullName) {
+    _isDemoSession = true;
+    _userId = userId;
+    _username = fullName;
+    _userEmail = '';
+    _isDefault = false;
+    _isOfficer = true;
+    _isOperator = true;
+    _isSupervisor = true;
+    _isOnboarded = true;
+    _loginError = '';
+    _isLoggedIn = true;
+    notifyListeners();
+  }
+
   setIsLoggedIn(bool value) {
     _isLoggedIn = value;
     notifyListeners();

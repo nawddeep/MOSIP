@@ -24,6 +24,8 @@
   "user_validated": "उपयोगकर्ता मान्य!",
   "username_required": "उपयोगकर्ता नाम आवश्यक है!",
   "password_required": "पासवर्ड आवश्यक है!",
+  "show_password": "पासवर्ड दिखाएं",
+  "hide_password": "पासवर्ड छिपाएं",
   "username_exceed": "उपयोगकर्ता नाम 50 वर्णों से अधिक नहीं होना चाहिए!",
   "password_exceed": "पासवर्ड 50 वर्णों से अधिक नहीं होना चाहिए!",
   "username_incorrect": "उपयोगकर्ता नहीं मिला!",

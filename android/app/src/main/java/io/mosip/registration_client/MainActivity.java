@@ -85,6 +85,8 @@ import io.mosip.registration_client.api_services.MasterDataSyncApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
 import io.mosip.registration_client.api_services.RegistrationApi;
 import io.mosip.registration_client.api_services.SecureScreenApi;
+import io.mosip.registration_client.api_services.FaceLivenessApi;
+import io.mosip.registration_client.api_services.DemoAccountApi;
 import io.mosip.registration_client.api_services.TransliterationApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
 import io.mosip.registration_client.model.AuditResponsePigeon;
@@ -205,6 +207,9 @@ public class MainActivity extends FlutterActivity {
     @Inject
     SecureScreenApi secureScreenApi;
 
+    @Inject
+    FaceLivenessApi faceLivenessApi;
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -313,6 +318,9 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (faceLivenessApi != null) {
+            faceLivenessApi.release();
+        }
         unregisterReceiver(broadcastReceiver);
         try {
             unregisterReceiver(rescheduleReceiver);
@@ -420,6 +428,10 @@ public class MainActivity extends FlutterActivity {
         GlobalConfigSettingsPigeon.GlobalConfigSettingsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), globalConfigSettingsApi);
         SecureScreenPigeon.SecureScreenApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), secureScreenApi);
         secureScreenApi.setCallbackActivity(this);
+        faceLivenessApi.setup(flutterEngine, this);
+        // Debug builds only (the API refuses every call in release builds).
+        new DemoAccountApi(this).setup(flutterEngine.getDartExecutor().getBinaryMessenger());
+        biometricsDetailsApi.setLivenessGuard(faceLivenessApi);
     }
 
     @Override

@@ -125,6 +125,8 @@ android {
         resources.excludes.add("META-INF/additional-spring*")
         resources.pickFirsts.add("mozilla/public-suffix-list.txt")
         resources.excludes.add("META-INF/INDEX.LIST")
+        // MediaPipe (livenessmanager) and protobuf-javalite both ship the well-known .proto sources
+        resources.pickFirsts.add("google/protobuf/*.proto")
     }
 }
 tasks.register("jacocoTestReport", JacocoReport) {
@@ -144,6 +146,12 @@ tasks.register("jacocoTestReport", JacocoReport) {
 }
 flutter {
     source '../..'
+}
+
+configurations.all {
+    // biometrics-util 1.3.0 declares protobuf-java 3.16.3 but none of its classes use it; it clashes
+    // with protobuf-javalite required by MediaPipe (livenessmanager). Keep only the lite runtime.
+    exclude group: 'com.google.protobuf', module: 'protobuf-java'
 }
 
 dependencies {
@@ -235,6 +243,7 @@ dependencies {
     implementation project(':keymanager')
     implementation project(':packetmanager')
     implementation project(':transliterationmanager')
+    implementation project(':livenessmanager')
 
     androidTestImplementation "androidx.test.ext:junit:${rootProject.ext.androidxJunitVersion}"
     androidTestImplementation "androidx.test.espresso:espresso-core:${rootProject.ext.espressoVersion}"
