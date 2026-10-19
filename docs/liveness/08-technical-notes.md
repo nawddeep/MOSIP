@@ -52,7 +52,7 @@ Honest gaps: config integrity is a **digest**, not a signature, so authenticity 
 5. Liveness (CameraX) and the stored biometric (SBI/MDS) are two captures; the 60 s single-use pass narrows but does not close the gap (risk R1).
 6. Operator/supervisor "face login" is a liveness gate on top of the password; there is no face matching (no MOSIP API for it), and it is disabled by default.
 7. The MiniFASNet crop uses the MediaPipe landmark box, which is tighter than upstream's detector box. Offline check: 0.991 vs 0.996 on the real sample, which is acceptable but not identical.
-8. UI copy is English constants (not yet in `lib/l10n` ARB files).
+8. UI copy is fully localized into 6 languages (EN, HI, FR, AR, TA, KN) via `assets/l10n` ARB files with screen-reader accessibility announcements for countdown and oval mode transitions.
 9. The APK grows about 59 MB per ABI.
 10. End-to-end SBI capture after a pass, and the operator/supervisor flows, are not exercised on device (they need MOSIP sandbox sync, an onboarded machine and Mock MDS).
 
@@ -62,6 +62,6 @@ Honest gaps: config integrity is a **digest**, not a signature, so authenticity 
 - Bind liveness to the stored biometric: face-match the SBI image against the last liveness frame (needs a MOSIP bio-SDK), or an MDS with built-in PAD.
 - Config signature verification with the MOSIP sign certificate (keymanager).
 - Play Integrity / key attestation for injection resistance; an L1 vendor adapter demo.
-- Move copy into ARB localisation; screen-reader announcements for countdowns.
+- [COMPLETED] Move copy into ARB localisation; screen-reader announcements for countdowns.
 - ABI splits; optional removal of OpenCV in favour of the pure-Java analyzer.
 - Optional extras from the brief: configurable challenge pools (supported already via `challengeTypes`), diagnostic mode, anonymised metrics export (PERFORMANCE records exist), model version management (manifest-based, extendable), multi-vendor adapter demo.

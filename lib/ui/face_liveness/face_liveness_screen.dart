@@ -239,7 +239,7 @@ class FaceLivenessScreenState extends State<FaceLivenessScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(LivenessCopy.workflowTitle(widget.workflow),
+                Text(LivenessCopy.workflowTitle(widget.workflow, context),
                     style: LivenessTheme.title, overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 4),
                 AttemptIndicator(
@@ -274,19 +274,19 @@ class FaceLivenessScreenState extends State<FaceLivenessScreen> {
 
   String _messageKey(FaceLivenessEvent? e) {
     if (e == null) return 'intro';
-    final copy = LivenessCopy.forEvent(e);
+    final copy = LivenessCopy.forEvent(e, context);
     return '${e.state}-${copy[0]}';
   }
 
   Widget _message(FaceLivenessEvent? e, bool reduceMotion) {
     if (e == null) {
-      return const Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-        Text(LivenessCopy.introTitle, style: LivenessTheme.message, textAlign: TextAlign.center),
-        SizedBox(height: 8),
-        Text(LivenessCopy.introBody, style: LivenessTheme.body, textAlign: TextAlign.center),
+      return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        Text(LivenessCopy.getIntroTitle(context), style: LivenessTheme.message, textAlign: TextAlign.center),
+        const SizedBox(height: 8),
+        Text(LivenessCopy.getIntroBody(context), style: LivenessTheme.body, textAlign: TextAlign.center),
       ]);
     }
-    final copy = LivenessCopy.forEvent(e);
+    final copy = LivenessCopy.forEvent(e, context);
     return Semantics(
       liveRegion: true,
       child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
@@ -317,27 +317,27 @@ class FaceLivenessScreenState extends State<FaceLivenessScreen> {
     final children = <Widget>[];
     switch (group) {
       case 'intro':
-        children.add(LivenessPillButton(label: LivenessCopy.start, onPressed: _busy ? null : _start));
+        children.add(LivenessPillButton(label: LivenessCopy.getStart(context), onPressed: _busy ? null : _start));
         break;
       case 'success':
         children.add(LivenessPillButton(
-            label: LivenessCopy.continueLabel, onPressed: () => Navigator.of(context).maybePop(true)));
+            label: LivenessCopy.getContinueLabel(context), onPressed: () => Navigator.of(context).maybePop(true)));
         break;
       case 'max':
-        children.add(LivenessPillButton(label: LivenessCopy.recoveryOptions, onPressed: _recovery));
+        children.add(LivenessPillButton(label: LivenessCopy.getRecoveryOptions(context), onPressed: _recovery));
         break;
       case 'failure':
-        children.add(LivenessPillButton(label: LivenessCopy.tryAgain, onPressed: _busy ? null : _retry));
+        children.add(LivenessPillButton(label: LivenessCopy.getTryAgain(context), onPressed: _busy ? null : _retry));
         children.add(const SizedBox(height: LivenessTheme.gap));
-        children.add(LivenessPillButton(label: LivenessCopy.cancel, onPressed: _cancel, primary: false));
+        children.add(LivenessPillButton(label: LivenessCopy.getCancel(context), onPressed: _cancel, primary: false));
         break;
       case 'system':
-        children.add(LivenessPillButton(label: LivenessCopy.retryConnection, onPressed: _busy ? null : _retry));
+        children.add(LivenessPillButton(label: LivenessCopy.getRetryConnection(context), onPressed: _busy ? null : _retry));
         children.add(const SizedBox(height: LivenessTheme.gap));
-        children.add(LivenessPillButton(label: LivenessCopy.cancel, onPressed: _cancel, primary: false));
+        children.add(LivenessPillButton(label: LivenessCopy.getCancel(context), onPressed: _cancel, primary: false));
         break;
       default:
-        children.add(LivenessPillButton(label: LivenessCopy.cancel, onPressed: _cancel, primary: false));
+        children.add(LivenessPillButton(label: LivenessCopy.getCancel(context), onPressed: _cancel, primary: false));
     }
     return Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: children);
   }
@@ -370,14 +370,18 @@ extension _TimerRing on LivenessOval {
       key: ValueKey<String>('timer-${e.challengeType}'),
       tween: Tween<double>(begin: from, end: reduceMotion ? from : target),
       duration: reduceMotion ? Duration.zero : const Duration(seconds: 1),
-      builder: (context, value, _) => LivenessOval(
-        key: key,
-        state: state,
-        color: color,
-        timerFraction: value,
-        preview: preview,
-        reduceMotion: reduceMotion,
-        width: width,
+      builder: (context, value, _) => Semantics(
+        liveRegion: true,
+        label: LivenessCopy.countdown(secs, context),
+        child: LivenessOval(
+          key: key,
+          state: state,
+          color: color,
+          timerFraction: value,
+          preview: preview,
+          reduceMotion: reduceMotion,
+          width: width,
+        ),
       ),
     );
   }
