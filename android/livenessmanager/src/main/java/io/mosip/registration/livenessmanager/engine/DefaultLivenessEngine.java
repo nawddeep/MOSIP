@@ -65,10 +65,13 @@ public final class DefaultLivenessEngine implements LivenessEngine {
             // PAD needs a usable crop; a face that is too small gives meaningless scores.
             if (runPad && quality.getHint() != QualityHint.FAR) {
                 float s = padModel.liveScore(frame, face);
-                if (Float.isNaN(s) || s < 0f || s > 1f) {
+                if (Float.isNaN(s)) {
+                    score = null; // PadModel.NOT_SCORABLE: this frame simply is not counted
+                } else if (s < 0f || s > 1f) {
                     throw new EngineException("PAD model returned out-of-range score", null);
+                } else {
+                    score = s;
                 }
-                score = s;
             }
             return new FrameAnalysis(frame.getFrameId(), frame.getTimestampNanos(), frame.isMirrored(),
                     1, face, quality, score);

@@ -73,7 +73,7 @@ public class DefaultLivenessEngineTest {
     @Test
     public void outOfRangeScoreAndUninitialisedUseFailClosed() throws Exception {
         Pad p = new Pad();
-        p.score = Float.NaN;
+        p.score = 1.5f;
         DefaultLivenessEngine e = new DefaultLivenessEngine(new Detector(), p, new LumaQualityAnalyzer());
         try {
             e.analyze(LumaQualityAnalyzerTest.frame(130, 40), new LivenessPolicy(), true);
@@ -88,5 +88,16 @@ public class DefaultLivenessEngineTest {
         } catch (LivenessEngine.EngineException expected) {
             assertTrue(expected.getMessage().contains("out-of-range"));
         }
+    }
+
+    @Test
+    public void notScorableFrameIsSkippedNotFailed() throws Exception {
+        Pad p = new Pad();
+        p.score = PadModel.NOT_SCORABLE;
+        DefaultLivenessEngine e = new DefaultLivenessEngine(new Detector(), p, new LumaQualityAnalyzer());
+        e.initialize();
+        FrameAnalysis a = e.analyze(LumaQualityAnalyzerTest.frame(130, 40), new LivenessPolicy(), true);
+        assertEquals(1, a.getFaceCount());
+        assertNull(a.getPadLiveScore());
     }
 }

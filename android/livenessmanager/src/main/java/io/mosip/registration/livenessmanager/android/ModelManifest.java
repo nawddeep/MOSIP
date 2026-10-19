@@ -34,12 +34,14 @@ public final class ModelManifest {
         public String license;
     }
 
-    public static class PadEntry extends Entry {
-        public int inputSize = 80;
-        public double cropScale = 2.7;
-        public double inputScale = 1.0;
-        public String channelOrder = "BGR";
-        public int realClassIndex = 1;
+    /** MiniFASNet ensemble (vendored org.minifasnet library): every listed model is run and averaged. */
+    public static class PadEntry {
+        public String engine;
+        public int minFaceSize = 32;
+        public int intraOpThreads = 1;
+        public java.util.List<Entry> models;
+        public String source;
+        public String license;
     }
 
     public Entry faceLandmarker;
@@ -48,7 +50,7 @@ public final class ModelManifest {
     public static ModelManifest load(AssetManager assets) throws LivenessEngine.EngineException {
         try (InputStream in = assets.open(DIR + "manifest.json")) {
             ModelManifest m = new Gson().fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), ModelManifest.class);
-            if (m == null || m.faceLandmarker == null || m.pad == null) {
+            if (m == null || m.faceLandmarker == null || m.pad == null || m.pad.models == null || m.pad.models.isEmpty()) {
                 throw new LivenessEngine.EngineException("Model manifest incomplete", null, true);
             }
             return m;

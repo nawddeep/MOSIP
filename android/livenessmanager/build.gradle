@@ -54,7 +54,8 @@ dependencies {
 
     // Face detection + landmarks (Apache-2.0)
     implementation "com.google.mediapipe:tasks-vision:${rootProject.ext.mediapipeTasksVersion}"
-    // PAD model runtime (MIT)
+    // PAD: vendored MiniFASNet ensemble (pure Java) running on ONNX Runtime Android (MIT)
+    implementation project(':minifasnet')
     implementation "com.microsoft.onnxruntime:onnxruntime-android:${rootProject.ext.onnxRuntimeVersion}"
     // Preprocessing + quality metrics (Apache-2.0)
     implementation "org.opencv:opencv:${rootProject.ext.opencvVersion}"

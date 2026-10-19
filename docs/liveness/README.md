@@ -35,15 +35,18 @@ flutter build apk --debug      # or: flutter run
 ```
 
 Notes:
-- The models (`face_landmarker.task` 3.8 MB, `MiniFASNetV2.onnx` 1.7 MB) are committed under `android/livenessmanager/src/main/assets/liveness/models/`, pinned by SHA-256 in `manifest.json`. Nothing is downloaded at runtime.
+- The models (`face_landmarker.task` 3.8 MB; MiniFASNet ensemble `minifasnet/2.7_80x80_MiniFASNetV2.onnx` + `minifasnet/4_0_0_80x80_MiniFASNetV1SE.onnx`, 1.7 MB each) are committed under `android/livenessmanager/src/main/assets/liveness/models/`, pinned by SHA-256 in `manifest.json`. Nothing is downloaded at runtime. The PAD library is vendored in `android/minifasnet/` (see its `UPSTREAM.md`).
 - `android/gradle.properties` raises the Gradle heap to 4 GB (the native ML libraries need it).
 - If the Gradle wrapper download times out from the JVM, download `gradle-8.5-all.zip` with curl into `~/.gradle/wrapper/dists/gradle-8.5-all/<hash>/`.
 
 ## 2. Run and test
 
 ```bash
-# Native engine unit tests (state machine, challenges, config, attacks, metrics): 74 tests
+# Native engine unit tests (state machine, challenges, config, attacks, metrics, PAD adapter): 81 tests
 cd android && ./gradlew :livenessmanager:testDebugUnitTest
+
+# Vendored MiniFASNet library: real ONNX inference on the shipped models (8 tests + 3 golden-sample tests)
+./gradlew :minifasnet:test -PminifasnetSamples=/path/to/upstream/samples   # golden tests skip without samples
 
 # Flutter widget tests for every liveness state: 26 tests
 flutter test test/face_liveness

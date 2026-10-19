@@ -7,15 +7,22 @@
     "license": "Apache-2.0"
   },
   "pad": {
-    "file": "MiniFASNetV2.onnx",
-    "sha256": "0cbe5caec95c31de9d2ef845cb85407d76aecd1b6a2c0e343f7d35306bfbccb8",
-    "version": "MiniFASNetV2-2.7_80x80",
-    "inputSize": 80,
-    "cropScale": 2.7,
-    "inputScale": 1.0,
-    "channelOrder": "BGR",
-    "realClassIndex": 1,
-    "source": "https://github.com/QingHeYang/Silent-Face-Anti-Spoofing-onnx (conversion of minivision-ai/Silent-Face-Anti-Spoofing 2.7_80x80_MiniFASNetV2.pth)",
-    "license": "Apache-2.0"
+    "engine": "minifasnet-ensemble (org.minifasnet, vendored from faceDetection_manifestNET @ d0cfabe)",
+    "minFaceSize": 32,
+    "intraOpThreads": 1,
+    "models": [
+      {
+        "file": "minifasnet/2.7_80x80_MiniFASNetV2.onnx",
+        "sha256": "fe59ec8048b16a1d9be0139d4d03749078053aa2e1e57c6f333957895886c866",
+        "version": "MiniFASNetV2-2.7_80x80"
+      },
+      {
+        "file": "minifasnet/4_0_0_80x80_MiniFASNetV1SE.onnx",
+        "sha256": "2b45c7b23879e1af72adfb565b493cd33704c57984b8e63f9e39db61057f2342",
+        "version": "MiniFASNetV1SE-4_0_0_80x80"
+      }
+    ],
+    "source": "Deterministic ONNX export (export_onnx.py, opset 17) of minivision-ai/Silent-Face-Anti-Spoofing @ b6d5f04 weights; see android/minifasnet/MODEL_CARD.md",
+    "license": "Code Apache-2.0; weights licence UNCLEAR upstream (see MODEL_CARD.md)"
   }
 }
