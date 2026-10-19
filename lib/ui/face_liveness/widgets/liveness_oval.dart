@@ -10,6 +10,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:registration_client/model/face_liveness_event.dart';
+import 'package:registration_client/ui/face_liveness/liveness_copy.dart';
 import 'package:registration_client/ui/face_liveness/liveness_theme.dart';
 
 /// Visual mode of the oval, derived from the liveness state.
@@ -130,34 +131,38 @@ class _LivenessOvalState extends State<LivenessOval> with TickerProviderStateMix
         // One damped oscillation for the failure shake.
         final t = _shake.value;
         final dx = t == 0 || t == 1 ? 0.0 : math.sin(t * math.pi * 4) * 10 * (1 - t);
-        return Transform.translate(
-          offset: Offset(dx, 0),
-          child: SizedBox(
-            width: w + 24,
-            height: h + 24,
-            child: Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-                ClipOval(
-                  child: Container(
-                    width: w,
-                    height: h,
-                    color: LivenessTheme.ovalFill,
-                    child: widget.preview,
+        return Semantics(
+          label: LivenessCopy.ovalSemantics(widget.mode, context),
+          liveRegion: true,
+          child: Transform.translate(
+            offset: Offset(dx, 0),
+            child: SizedBox(
+              width: w + 24,
+              height: h + 24,
+              child: Stack(
+                alignment: Alignment.center,
+                children: <Widget>[
+                  ClipOval(
+                    child: Container(
+                      width: w,
+                      height: h,
+                      color: LivenessTheme.ovalFill,
+                      child: widget.preview,
+                    ),
                   ),
-                ),
-                CustomPaint(
-                  size: Size(w + 24, h + 24),
-                  painter: OvalRingPainter(
-                    mode: widget.mode,
-                    color: widget.color,
-                    loop: widget.reduceMotion ? 0 : _loop.value,
-                    timerFraction: widget.timerFraction.clamp(0.0, 1.0).toDouble(),
-                    success: _success.value,
-                    showSilhouette: widget.preview == null,
+                  CustomPaint(
+                    size: Size(w + 24, h + 24),
+                    painter: OvalRingPainter(
+                      mode: widget.mode,
+                      color: widget.color,
+                      loop: widget.reduceMotion ? 0 : _loop.value,
+                      timerFraction: widget.timerFraction.clamp(0.0, 1.0).toDouble(),
+                      success: _success.value,
+                      showSilhouette: widget.preview == null,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
