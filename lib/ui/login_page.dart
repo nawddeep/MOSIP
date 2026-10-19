@@ -6,6 +6,7 @@
 */
 
 import 'dart:async';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -30,7 +31,6 @@ import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/dashboard/dashboard_tablet.dart';
 import 'package:registration_client/ui/widgets/network_component.dart';
 import 'package:registration_client/ui/widgets/sync_alert_dialog.dart';
-import 'package:registration_client/utils/app_style.dart';
 import 'package:registration_client/ui/machine_keys.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -144,97 +144,30 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
-    double h = ScreenUtil().screenHeight;
-    double w = ScreenUtil().screenWidth;
     appLocalizations = AppLocalizations.of(context)!;
-
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: appSolidPrimary,
-        bottomNavigationBar: _getBottomBar(),
-        body: Stack(
-          children: [
-            Positioned(
-              bottom: 0,
-              left: 16.w,
-              child: _getBuildingsImage(),
-            ),
-            SizedBox(
-              height: h,
-              width: w,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      height: 20.h,
-                    ),
-                    // Container(
-                    //   alignment: Alignment.centerRight,
-                    //   padding: EdgeInsets.symmetric(
-                    //       horizontal: isMobile ? 20.w : 80.w),
-                    //   child: InkWell(
-                    //     onTap: () {},
-                    //     child: Container(
-                    //       height: isMobileSize ? 46.h : 62.h,
-                    //       width: 129.w,
-                    //       decoration: BoxDecoration(
-                    //         color: Colors.transparent,
-                    //         border: Border.all(
-                    //           color: appWhite,
-                    //         ),
-                    //         borderRadius: const BorderRadius.all(
-                    //           Radius.circular(5),
-                    //         ),
-                    //       ),
-                    //       child: Center(
-                    //         child: Text(appLocalizations.help,
-                    //             style: isMobile && !isMobileSize
-                    //                 ? AppTextStyle.tabletPortraitHelpText
-                    //                 : AppTextStyle.mobileHelpText),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                    SizedBox(
-                      height: isMobileSize ? 78.h : 86.h,
-                    ),
-                    Flexible(
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isMobile
-                                  ? isMobileSize
-                                      ? 20.w
-                                      : 92.w
-                                  : 80.w,
-                            ),
-                            child: isMobile ? _mobileView() : _tabletView(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            isMachineKeysDialogOpen
-                ? Container(
-                    color: Colors.transparent.withOpacity(0.5),
-                    child: Center(
-                      child: MachineKeys(
-                        onCloseComponent: () {
-                          _toggleMachineKeysDialog();
-                        },
-                      ),
-                    ),
-                  )
-                : const SizedBox(),
-          ],
-        ),
+    return Stack(children: [
+      AccountShell(
+        title: appLocalizations.welcome,
+        description: appLocalizations.community_reg_text,
+        onLogoDoubleTap:
+            kDebugMode ? () => LivenessDebugMenu.open(context) : null,
+        onLogoLongPress: () {
+          setState(() => isMachineKeysDialogOpen = true);
+        },
+        child: _loginComponent(),
+        footer: Text(appLocalizations.info_text,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 13, height: 1.5, color: RegistrationTheme.muted)),
       ),
-    );
+      if (isMachineKeysDialogOpen)
+        Positioned.fill(
+            child: Container(
+                color: Colors.black54,
+                child: Center(
+                    child: MachineKeys(
+                        onCloseComponent: _toggleMachineKeysDialog)))),
+    ]);
   }
 
   _getUserValidation() async {
@@ -255,7 +188,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       _showInSnackBar(appLocalizations.username_incorrect);
       return;
     }
-    globalProvider.getAudit("REG-AUTH-001","REG-MOD-101");
+    globalProvider.getAudit("REG-AUTH-001", "REG-MOD-101");
     final User user = authProvider.currentUser;
     globalProvider.setCenterId(user.centerId!);
     globalProvider.setName(user.name!);
@@ -265,7 +198,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   Future<void> _openSignup() async {
     FocusManager.instance.primaryFocus?.unfocus();
-    final demoUsername = await Navigator.of(context).push<String>(MaterialPageRoute<String>(
+    final demoUsername =
+        await Navigator.of(context).push<String>(MaterialPageRoute<String>(
       builder: (_) => SignupPage(
         adminEmailLoader: () async {
           final params = await GlobalConfigService().getRegistrationParams();
@@ -405,7 +339,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   _navigateToHomePage() async {
     if (authProvider.isLoggedIn == true) {
       // Operator face liveness (policy "operator"): login completes only after liveness passes.
-      final livenessPassed = await ensureFaceLiveness(context, LivenessWorkflow.operator);
+      final livenessPassed =
+          await ensureFaceLiveness(context, LivenessWorkflow.operator);
       if (!livenessPassed) {
         await authProvider.logoutUser();
         authProvider.setIsLoggedIn(false);
@@ -443,114 +378,28 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     }
   }
 
-  _getBottomBar() {
-    return Container(
-      height: isMobile && !isMobileSize ? 94.h : 62.h,
-      padding: EdgeInsets.symmetric(
-        vertical: 15.h,
-      ),
-      color: appWhite,
-      child: Center(
-        child: InkWell(
-          onDoubleTap: kDebugMode ? () => LivenessDebugMenu.open(context) : null,
-          onLongPress: () {
-            globalProvider.getAudit("REG-AUTH-002", "REG-MOD-101");
-            setState(() {
-              isMachineKeysDialogOpen = true;
-            });
-          },
-          child: Image.asset(
-            appIcon,
-            fit: BoxFit.fill,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _welcomeTextComponent() {
-    return Column(
-      crossAxisAlignment:
-          isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-      children: [
-        Text(
-          appLocalizations.welcome,
-          style: isMobile && !isMobileSize
-              ? AppTextStyle.tabletPortraitWelcomeText
-              : AppTextStyle.tabletWelcomeText,
-          textAlign: isMobile ? TextAlign.center : TextAlign.start,
-        ),
-        Text(
-          appLocalizations.community_reg_text,
-          style: isMobile && !isMobileSize
-              ? AppTextStyle.tabletPortraitCommunityRegClientText
-              : AppTextStyle.tabletCommunityRegClientText,
-          textAlign: isMobile ? TextAlign.center : TextAlign.start,
-        )
-      ],
-    );
-  }
-
-  Widget _infoTextComponent() {
-    return Text(
-      appLocalizations.info_text,
-      style: isMobile && !isMobileSize
-          ? AppTextStyle.tabletPortraitInfoText
-          : AppTextStyle.mobileInfoText,
-      textAlign: isMobile ? TextAlign.center : TextAlign.start,
-    );
-  }
-
-  Widget _appCombinedTextComponent() {
-    return Column(
-      crossAxisAlignment:
-          isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-      children: [
-        _welcomeTextComponent(),
-        SizedBox(
-          height: isMobile && !isMobileSize ? 18.h : 12.h,
-        ),
-        _infoTextComponent(),
-      ],
-    );
-  }
-
   Widget _loginComponent() {
     return Container(
-      width: isMobile
-          ? isMobileSize
-              ? 358.w
-              : 616.w
-          : 424.w,
-      padding: EdgeInsets.symmetric(
-        horizontal: isMobile && !isMobileSize ? 30.w : 20.w,
-        vertical: isMobile && !isMobileSize ? 30.h : 20.h,
-      ),
-      decoration: BoxDecoration(
-        color: appWhite,
-        border: Border.all(
-          width: 1.w,
-        ),
-        borderRadius: const BorderRadius.all(
-          Radius.circular(12),
-        ),
-      ),
+      padding: const EdgeInsets.all(24),
+      decoration: RegistrationTheme.surface(shadow: true),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            height: isMobile && !isMobileSize ? 16.h : 34.h,
+            height: 4,
           ),
           if (!context.watch<AuthProvider>().isNetworkPresent) ...[
             Text(
               appLocalizations.login_text,
-              style: isMobile && !isMobileSize
-                  ? AppTextStyle.tabletPortraitHeaderText
-                  : AppTextStyle.mobileHeaderText,
+              style: const TextStyle(
+                  fontFamily: 'IBMPlexSans',
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  color: RegistrationTheme.ink),
             ),
             SizedBox(
-              height: context.watch<AuthProvider>().isValidUser ? 42.h : 38.h,
+              height: 24,
             ),
           ],
           !context.watch<AuthProvider>().isValidUser &&
@@ -575,7 +424,12 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           context.watch<AuthProvider>().isValidUser &&
                   !context.watch<AuthProvider>().isNetworkPresent
               ? PasswordComponent(
-                  isDisabled: password.isEmpty || password.length > (int.tryParse(context.watch<AuthProvider>().passwordLength) ?? 50),
+                  isDisabled: password.isEmpty ||
+                      password.length >
+                          (int.tryParse(context
+                                  .watch<AuthProvider>()
+                                  .passwordLength) ??
+                              50),
                   onTapLogin: () async {
                     await _getLoginAction();
                     await globalProvider.getThresholdValues();
@@ -624,56 +478,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                   })
               : const SizedBox(),
         ],
-      ),
-    );
-  }
-
-  Widget _mobileView() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        _appCombinedTextComponent(),
-        SizedBox(
-          height: isMobileSize ? 40.h : 70.h,
-        ),
-        _loginComponent(),
-      ],
-    );
-  }
-
-  Widget _tabletView() {
-    return SingleChildScrollView(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Column(
-            children: [
-              SizedBox(
-                width: 399.w,
-                child: _appCombinedTextComponent(),
-              ),
-              SizedBox(
-                height: 100.h,
-              ),
-            ],
-          ),
-          SizedBox(
-            width: 41.w,
-          ),
-          _loginComponent(),
-        ],
-      ),
-    );
-  }
-
-  Widget _getBuildingsImage() {
-    return SizedBox(
-      height: isMobile ? (350.48).h : (293.48).h,
-      width: isMobile ? (478.28).w : (400.28).w,
-      child: Image.asset(
-        isMobile ? buildingsX : buildingsXX,
-        fit: BoxFit.fill,
       ),
     );
   }

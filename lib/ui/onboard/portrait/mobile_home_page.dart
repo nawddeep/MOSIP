@@ -6,14 +6,11 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
-import 'package:registration_client/model/settings.dart';
-import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/dashboard/user_dashboard.dart';
 import 'package:registration_client/ui/onboard/portrait/tasks_page.dart';
-import 'package:registration_client/ui/onboard/widgets/bottom_navbar_widget.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -52,11 +49,9 @@ class _MobileHomePageState extends State<MobileHomePage> {
   Widget build(BuildContext context) {
     List<Widget> bottomNavPages = [
       const UserDashBoard(),
-      SettingsScreen(
-        getSettingsUI: (BuildContext context) async {
-          return await widget.getSettingsUI(context);
-        }
-      ),
+      SettingsScreen(getSettingsUI: (BuildContext context) async {
+        return await widget.getSettingsUI(context);
+      }),
       Container(
         height: ScreenUtil().screenHeight,
         width: ScreenUtil().screenWidth,
@@ -65,9 +60,9 @@ class _MobileHomePageState extends State<MobileHomePage> {
           vertical: 14.h,
         ),
         margin: EdgeInsets.only(
-          top: 14.h,
+          top: 0,
         ),
-        color: appBlueShade,
+        color: RegistrationTheme.canvas,
         child: TasksPage(
           operationalTasks: widget.operationalTasks,
           getProcessUI: (BuildContext context, Process process) {
@@ -84,97 +79,59 @@ class _MobileHomePageState extends State<MobileHomePage> {
       const ProfilePage(),
     ];
 
-    return SafeArea(
-      child: Scaffold(
-        bottomNavigationBar: _getBottomNavigationBar(),
-        body: Column(
-          children: [
-            Expanded(
-              child: bottomNavPages[selectedTab],
+    return Theme(
+        data: RegistrationTheme.light(),
+        child: SafeArea(
+          child: Scaffold(
+            backgroundColor: RegistrationTheme.canvas,
+            appBar: AppBar(
+                title: Text(AppLocalizations.of(context)!.community_reg_text),
+                leading: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Image.asset(appIconLogoOnly)),
+                actions: [
+                  IconButton(
+                      tooltip: AppLocalizations.of(context)!.profile,
+                      onPressed: () => changeTab(3),
+                      icon: const Icon(Icons.account_circle_outlined)),
+                  const SizedBox(width: 8)
+                ]),
+            bottomNavigationBar: _getBottomNavigationBar(),
+            body: Column(
+              children: [
+                Expanded(
+                  child: bottomNavPages[selectedTab],
+                ),
+              ],
             ),
-            if (selectedTab != 1) ...[
-              Text(
-                "Community Registration - Client Version ${context.watch<GlobalProvider>().versionNoApp}",
-                style: TextStyle(
-                  color: const Color(0xff6F6E6E),
-                  fontSize: 14,
-                  fontWeight: regular,
-                ),
-              ),
-              Text(
-                "Git Commit Id ${context.watch<GlobalProvider>().commitIdApp}",
-                style: TextStyle(
-                  color: const Color(0xff6F6E6E),
-                  fontSize: 14,
-                  fontWeight: regular,
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   _getBottomNavigationBar() {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      currentIndex: selectedTab,
-      onTap: (index) => changeTab(index),
+    final l = AppLocalizations.of(context)!;
+    return NavigationBar(
+      selectedIndex: selectedTab,
+      onDestinationSelected: changeTab,
       backgroundColor: Colors.white,
-      items: [
-        BottomNavigationBarItem(
-          label: "",
-          icon: BottomNavBarWidget(
-            index: 0,
-            selectedIndex: selectedTab,
-            imagePath: dashboardIcon,
-            selectedImagePath: dashboardSelectedIcon,
-            title: AppLocalizations.of(context)!.dashboard,
-          ),
-        ),
-        BottomNavigationBarItem(
-          label: "",
-          icon: BottomNavBarWidget(
-            index: 1,
-            selectedIndex: selectedTab,
-            imagePath: settingsIcon,
-            selectedImagePath: settingsSelectedIcon,
-            title: AppLocalizations.of(context)!.settings,
-          ),
-        ),
-        BottomNavigationBarItem(
-          label: "",
-          icon: SizedBox(
-            height: 54.h,
-            child: Center(
-              child: Image.asset(
-                appIconLogoOnly,
-                fit: BoxFit.fill,
-              ),
-            ),
-          ),
-        ),
-        // BottomNavigationBarItem(
-        //   label: "",
-        //   icon: BottomNavBarWidget(
-        //     index: 3,
-        //     selectedIndex: selectedTab,
-        //     imagePath: notificationIcon,
-        //     selectedImagePath: notificationIcon,
-        //     title: AppLocalizations.of(context)!.notifications,
-        //   ),
-        // ),
-        BottomNavigationBarItem(
-          label: "",
-          icon: BottomNavBarWidget(
-            index: 3,
-            selectedIndex: selectedTab,
-            imagePath: profileIcon,
-            selectedImagePath: profileSelectedIcon,
-            title: AppLocalizations.of(context)!.profile,
-          ),
-        )
+      indicatorColor: RegistrationTheme.softBlue,
+      elevation: 0,
+      height: 76,
+      destinations: [
+        NavigationDestination(
+            icon: const Icon(Icons.dashboard_outlined),
+            selectedIcon: const Icon(Icons.dashboard_rounded),
+            label: l.dashboard),
+        NavigationDestination(
+            icon: const Icon(Icons.tune_rounded), label: l.settings),
+        NavigationDestination(
+            icon: const Icon(Icons.workspaces_outline),
+            selectedIcon: const Icon(Icons.workspaces_rounded),
+            label: l.registration_tasks),
+        NavigationDestination(
+            icon: const Icon(Icons.person_outline_rounded),
+            selectedIcon: const Icon(Icons.person_rounded),
+            label: l.profile),
       ],
     );
   }

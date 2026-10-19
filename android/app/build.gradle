@@ -102,9 +102,12 @@ android {
             minifyEnabled false
             shrinkResources false
             signingConfig localProperties['storeFile'] ? signingConfigs.release : signingConfigs.debug
-            ndk {
-                abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64', 'x86'
-                // architectures: 'armeabi-v7a', 'arm64-v8a', 'armeabi', 'x86', 'x86_64'
+            // Flutter's per-ABI packaging supplies its own filters. Android
+            // rejects a build that sets both these filters and ABI splits.
+            if (!(project.findProperty('split-per-abi')?.toBoolean() ?: false)) {
+                ndk {
+                    abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64', 'x86'
+                }
             }
         }
     }

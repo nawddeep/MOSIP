@@ -12,7 +12,8 @@ class LivenessCopy {
   LivenessCopy._();
 
   static const String introTitle = 'Before we start';
-  static const String introBody = 'Look at the camera. Keep your face inside the oval.';
+  static const String introBody =
+      'Look at the camera. Keep your face inside the oval.';
   static const String start = 'Start';
 
   static const String tryAgain = 'Try again';
@@ -67,7 +68,10 @@ class LivenessCopy {
     switch (e.state) {
       case LivenessUiState.idle:
       case LivenessUiState.positioning:
-        return <String?>['Position your face in the oval', 'Look directly at the camera.'];
+        return <String?>[
+          'Position your face in the oval',
+          'Look directly at the camera.'
+        ];
       case LivenessUiState.passiveCheck:
         return <String?>['Checking face liveness…', 'Hold still for a moment.'];
       case LivenessUiState.challenge:
@@ -81,22 +85,49 @@ class LivenessCopy {
       case LivenessUiState.poorQuality:
         return <String?>[poorQuality(e.hint), null];
       case LivenessUiState.livenessFailed:
-        return <String?>['We could not verify face liveness. Please try again.', null];
+        return <String?>[
+          'We could not verify face liveness. Please try again.',
+          null
+        ];
       case LivenessUiState.padFailed:
-        return <String?>['Face verification could not be completed. Please try again.', null];
+        return <String?>[
+          'Face verification could not be completed. Please try again.',
+          null
+        ];
       case LivenessUiState.maxRetries:
         return <String?>[
           'We could not complete face verification. All ${e.maxAttempts} attempts have been used. Please follow the recovery process.',
           null
         ];
       case LivenessUiState.deviceUnavailable:
+        return <String?>[
+          'Camera device not available. Check the device connection and try again.',
+          null
+        ];
       case LivenessUiState.cameraError:
+        return <String?>[
+          'Camera could not start.',
+          'Close other apps using the camera, then try again.'
+        ];
       case LivenessUiState.invalidFrames:
-        return <String?>['Camera device not available. Check the device connection and try again.', null];
+        return <String?>[
+          'Camera images could not be read.',
+          'Check the camera connection, then try again.'
+        ];
       case LivenessUiState.engineError:
-        return <String?>['Face verification could not start. Please try again.', null];
+        return <String?>[
+          'Face verification could not start. Please try again.',
+          null
+        ];
       case LivenessUiState.success:
-        return <String?>['Good, face captured successfully.', null];
+        return <String?>[
+          e.workflow == LivenessWorkflow.resident
+              ? 'Good, face captured successfully.'
+              : 'Face verification successful.',
+          e.workflow == LivenessWorkflow.resident
+              ? null
+              : 'Continue to complete authentication.'
+        ];
     }
   }
 }

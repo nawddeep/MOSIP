@@ -6,7 +6,6 @@
 */
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 class LanguageComponent extends StatefulWidget {
@@ -33,70 +32,22 @@ class LanguageComponent extends StatefulWidget {
 class _LanguageComponentState extends State<LanguageComponent> {
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        if (!widget.isFreezed && !widget.isDisabled) {
-          widget.onTap();
-        }
-      },
-
-      child: Container(
-        height: 60.h,
-        padding: EdgeInsets.only(
-          left: 25.w,
-          right: 25.w,
-          top: widget.isMobile && !isMobileSize ? 15.h : 9.h,
-          bottom: widget.isMobile && !isMobileSize ? 15.h : 9.h,
-        ),
-        decoration: BoxDecoration(
-          color: widget.isFreezed
-              ? appButtonBorderText
-              : widget.isSelected
-              ? appButtonBorderText
-              : Colors.transparent,
-          border: Border.all(
-            width: 1,
-            color: widget.isDisabled
-                ? appBlackShade3
-                : widget.isSelected
-                ? appButtonBorderText
-                : languageSelectedColor,
-          ),
-          borderRadius: const BorderRadius.all(
-            Radius.circular(36),
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            widget.isFreezed || widget.isSelected
-                ? Icon(
-              Icons.check,
-              color: widget.isFreezed ? appGreyShade : appWhite,
-            )
-                : const SizedBox(),
-            SizedBox(
-              width: widget.isFreezed || widget.isSelected ? 15.02 : 0,
-            ),
-            Directionality(
-              textDirection: TextDirection.ltr,
-              child: Text(
-                widget.title,
-                style: TextStyle(
-                  fontSize: widget.isMobile && !isMobileSize ? 24 : 16,
-                  color: widget.isDisabled
-                      ? appBlackShade3
-                      : widget.isFreezed
-                      ? appGreyShade
-                      : widget.isSelected
-                      ? appWhite
-                      : appBlackShade1,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    return ChoiceChip(
+      label: Text(widget.title),
+      selected: widget.isSelected || widget.isFreezed,
+      onSelected:
+          widget.isDisabled || widget.isFreezed ? null : (_) => widget.onTap(),
+      selectedColor: const Color(0xFFECF2FF),
+      backgroundColor: Colors.white,
+      labelStyle: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: widget.isDisabled ? appBlackShade3 : appSolidPrimary),
+      side: BorderSide(
+          color: widget.isSelected ? appSolidPrimary : const Color(0xFFE2E8F2)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      materialTapTargetSize: MaterialTapTargetSize.padded,
     );
   }
 }

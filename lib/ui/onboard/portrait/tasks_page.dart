@@ -6,7 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/provider/global_provider.dart';
@@ -45,91 +45,58 @@ class _TasksPageState extends State<TasksPage> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        currentIndex = 0;
-                      });
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 28.h,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: currentIndex == 0
-                              ? appSolidPrimary
-                              : greyBorderShade,
-                        ),
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(6),
-                          topRight: Radius.circular(6),
-                        ),
-                        color: currentIndex == 0 ? appSolidPrimary : appWhite,
-                      ),
-                      child: Center(
-                        child: Text(
-                          AppLocalizations.of(context)!.registration_tasks,
-                          style: TextStyle(
-                            fontSize: isMobileSize ? 14 : 24,
-                            fontWeight: semiBold,
-                            color: currentIndex == 0 ? appWhite : appBlack,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      Provider.of<GlobalProvider>(context, listen: false)
-                          .getAudit("NAV_OPERATIONAL_TASKS", "REG-MOD-102");
-                      setState(() {
-                        currentIndex = 1;
-                      });
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 28.h,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: currentIndex == 1
-                              ? appSolidPrimary
-                              : greyBorderShade,
-                        ),
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(6),
-                          topRight: Radius.circular(6),
-                        ),
-                        color: currentIndex == 1 ? appSolidPrimary : appWhite,
-                      ),
-                      child: Center(
-                        child: Text(
-                          AppLocalizations.of(context)!.operation_tasks,
-                          style: TextStyle(
-                            fontSize: isMobileSize ? 14 : 24,
-                            fontWeight: semiBold,
-                            color: currentIndex == 1 ? appWhite : appBlack,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+            child: Container(
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                  color: const Color(0xFFE8EDF6),
+                  borderRadius: BorderRadius.circular(16)),
+              child: LayoutBuilder(
+                  builder: (context, constraints) => Wrap(
+                      children: List.generate(
+                          2,
+                          (index) => SizedBox(
+                                width: MediaQuery.of(context).textScaleFactor >
+                                            1.3 &&
+                                        constraints.maxWidth < 600
+                                    ? constraints.maxWidth
+                                    : constraints.maxWidth / 2,
+                                child: Semantics(
+                                  selected: currentIndex == index,
+                                  child: TextButton(
+                                    onPressed: () {
+                                      if (index == 1)
+                                        context.read<GlobalProvider>().getAudit(
+                                            'NAV_OPERATIONAL_TASKS',
+                                            'REG-MOD-102');
+                                      setState(() => currentIndex = index);
+                                    },
+                                    style: TextButton.styleFrom(
+                                        minimumSize: const Size(48, 52),
+                                        backgroundColor: currentIndex == index
+                                            ? Colors.white
+                                            : Colors.transparent,
+                                        foregroundColor: currentIndex == index
+                                            ? appSolidPrimary
+                                            : RegistrationTheme.muted,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12))),
+                                    child: Text(
+                                        index == 0
+                                            ? AppLocalizations.of(context)!
+                                                .registration_tasks
+                                            : AppLocalizations.of(context)!
+                                                .operation_tasks,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600)),
+                                  ),
+                                ),
+                              )))),
             ),
-          ),
-          Container(
-            color: appSolidPrimary,
-            height: 2.5.h,
-            margin: EdgeInsets.symmetric(horizontal: 20.w),
           ),
           currentIndex == 0
               ? RegistrationTasks(
@@ -144,7 +111,7 @@ class _TasksPageState extends State<TasksPage> {
                   operationalTasks: widget.operationalTasks,
                 ),
           SizedBox(
-            height: 125.h,
+            height: 24,
           ),
         ],
       ),
