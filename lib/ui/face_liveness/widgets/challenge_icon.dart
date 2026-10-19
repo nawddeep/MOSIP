@@ -9,11 +9,16 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:registration_client/model/face_liveness_event.dart';
+import 'package:registration_client/ui/face_liveness/liveness_copy.dart';
 import 'package:registration_client/ui/face_liveness/liveness_theme.dart';
 
 /// Line icon for the active challenge, gently animated (eye closes, mouth curves, arrow slides).
 class ChallengeIcon extends StatefulWidget {
-  const ChallengeIcon({super.key, required this.challenge, this.reduceMotion = false, this.size = 48});
+  const ChallengeIcon(
+      {super.key,
+      required this.challenge,
+      this.reduceMotion = false,
+      this.size = 48});
 
   final LivenessChallenge challenge;
   final bool reduceMotion;
@@ -23,9 +28,10 @@ class ChallengeIcon extends StatefulWidget {
   State<ChallengeIcon> createState() => _ChallengeIconState();
 }
 
-class _ChallengeIconState extends State<ChallengeIcon> with SingleTickerProviderStateMixin {
-  late final AnimationController _c =
-      AnimationController(vsync: this, duration: const Duration(milliseconds: 1600));
+class _ChallengeIconState extends State<ChallengeIcon>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+      vsync: this, duration: const Duration(milliseconds: 1600));
 
   @override
   void initState() {
@@ -52,12 +58,13 @@ class _ChallengeIconState extends State<ChallengeIcon> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: widget.challenge.name,
+      label: LivenessCopy.challenge(widget.challenge),
       child: AnimatedBuilder(
         animation: _c,
         builder: (_, __) => CustomPaint(
           size: Size.square(widget.size),
-          painter: _ChallengeIconPainter(widget.challenge, widget.reduceMotion ? 0.0 : _c.value),
+          painter: _ChallengeIconPainter(
+              widget.challenge, widget.reduceMotion ? 0.0 : _c.value),
         ),
       ),
     );
@@ -86,8 +93,10 @@ class _ChallengeIconPainter extends CustomPainter {
         final open = 1 - closed;
         final eye = Path()
           ..moveTo(w * 0.1, h * 0.5)
-          ..quadraticBezierTo(w * 0.5, h * (0.5 - 0.38 * open), w * 0.9, h * 0.5)
-          ..quadraticBezierTo(w * 0.5, h * (0.5 + 0.38 * open), w * 0.1, h * 0.5);
+          ..quadraticBezierTo(
+              w * 0.5, h * (0.5 - 0.38 * open), w * 0.9, h * 0.5)
+          ..quadraticBezierTo(
+              w * 0.5, h * (0.5 + 0.38 * open), w * 0.1, h * 0.5);
         canvas.drawPath(eye, p);
         if (open > 0) canvas.drawCircle(Offset(w * 0.5, h * 0.5), w * 0.1, p);
         break;
@@ -98,7 +107,8 @@ class _ChallengeIconPainter extends CustomPainter {
         final curve = 0.06 + 0.12 * (0.5 + 0.5 * math.sin(t * 2 * math.pi));
         final mouth = Path()
           ..moveTo(w * 0.32, h * 0.6)
-          ..quadraticBezierTo(w * 0.5, h * (0.6 + curve * 1.6), w * 0.68, h * 0.6);
+          ..quadraticBezierTo(
+              w * 0.5, h * (0.6 + curve * 1.6), w * 0.68, h * 0.6);
         canvas.drawPath(mouth, p);
         break;
       case LivenessChallenge.turnLeft:
@@ -117,5 +127,6 @@ class _ChallengeIconPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_ChallengeIconPainter old) => old.t != t || old.challenge != challenge;
+  bool shouldRepaint(_ChallengeIconPainter old) =>
+      old.t != t || old.challenge != challenge;
 }

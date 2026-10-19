@@ -24,23 +24,43 @@ class LivenessTheme {
 
   static const String fontFamily = 'IBMPlexSans';
 
-  static const double gutter = 20;
+  static const double gutter = 24;
   static const double gap = 12;
   static const double buttonHeight = 52;
   static const double minTouchTarget = 44;
   static const double maxContentWidth = 560;
-  static const Duration stateTransition = Duration(milliseconds: 400);
+  static const Duration stateTransition = Duration(milliseconds: 220);
 
   static const TextStyle title = TextStyle(
-      fontFamily: fontFamily, fontSize: 17, fontWeight: FontWeight.w600, color: text, height: 1.3);
+      fontFamily: fontFamily,
+      fontSize: 17,
+      fontWeight: FontWeight.w600,
+      color: text,
+      height: 1.3);
   static const TextStyle message = TextStyle(
-      fontFamily: fontFamily, fontSize: 22, fontWeight: FontWeight.w600, color: text, height: 1.3);
+      fontFamily: fontFamily,
+      fontSize: 26,
+      fontWeight: FontWeight.w600,
+      color: text,
+      height: 1.2,
+      letterSpacing: -0.5);
   static const TextStyle body = TextStyle(
-      fontFamily: fontFamily, fontSize: 16, fontWeight: FontWeight.w400, color: textSecondary, height: 1.45);
+      fontFamily: fontFamily,
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      color: textSecondary,
+      height: 1.45);
   static const TextStyle caption = TextStyle(
-      fontFamily: fontFamily, fontSize: 13, fontWeight: FontWeight.w500, color: textSecondary, height: 1.3);
+      fontFamily: fontFamily,
+      fontSize: 13,
+      fontWeight: FontWeight.w500,
+      color: textSecondary,
+      height: 1.3);
   static const TextStyle button = TextStyle(
-      fontFamily: fontFamily, fontSize: 16, fontWeight: FontWeight.w600, height: 1.2);
+      fontFamily: fontFamily,
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      height: 1.2);
 
   /// Ring colour for a state. Positioning and guidance use a dimmed "checking" tone.
   static Color ringColor(LivenessUiState? s) {

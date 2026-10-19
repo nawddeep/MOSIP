@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/foundation.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -62,7 +63,8 @@ class _SignupPageState extends State<SignupPage> {
   bool _demoAvailable = false;
   bool _busy = false;
 
-  DemoAccountService get _demo => widget.demoAccounts ?? DemoAccountService.instance;
+  DemoAccountService get _demo =>
+      widget.demoAccounts ?? DemoAccountService.instance;
 
   static final RegExp _emailRe = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
   static final RegExp _phoneRe = RegExp(r'^\+?[0-9 ()-]{7,20}$');
@@ -80,24 +82,38 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   void dispose() {
-    for (final c in <TextEditingController>[_fullName, _email, _phone, _username, _centre, _note, _password, _confirm]) {
+    for (final c in <TextEditingController>[
+      _fullName,
+      _email,
+      _phone,
+      _username,
+      _centre,
+      _note,
+      _password,
+      _confirm
+    ]) {
       c.dispose();
     }
     super.dispose();
   }
 
-  String? _required(String? v, AppLocalizations l) => (v == null || v.trim().isEmpty) ? l.signup_required : null;
+  String? _required(String? v, AppLocalizations l) =>
+      (v == null || v.trim().isEmpty) ? l.signup_required : null;
 
   String _requestText(AppLocalizations l) {
-    final role = _role == _Role.officer ? l.signup_role_officer : l.signup_role_supervisor;
+    final role = _role == _Role.officer
+        ? l.signup_role_officer
+        : l.signup_role_supervisor;
     final lines = <String>[
       '${l.signup_full_name}: ${_fullName.text.trim()}',
       '${l.signup_email}: ${_email.text.trim()}',
-      if (_phone.text.trim().isNotEmpty) '${l.signup_phone}: ${_phone.text.trim()}',
+      if (_phone.text.trim().isNotEmpty)
+        '${l.signup_phone}: ${_phone.text.trim()}',
       '${l.signup_username}: ${_username.text.trim()}',
       '${l.signup_centre}: ${_centre.text.trim()}',
       '${l.signup_role}: $role',
-      if (_note.text.trim().isNotEmpty) '${l.signup_note}: ${_note.text.trim()}',
+      if (_note.text.trim().isNotEmpty)
+        '${l.signup_note}: ${_note.text.trim()}',
     ];
     return lines.join('\n');
   }
@@ -109,7 +125,8 @@ class _SignupPageState extends State<SignupPage> {
     final messenger = ScaffoldMessenger.of(context);
     String? admin;
     try {
-      admin = await (widget.adminEmailLoader?.call() ?? Future<String?>.value(null));
+      admin = await (widget.adminEmailLoader?.call() ??
+          Future<String?>.value(null));
     } catch (_) {
       admin = null;
     }
@@ -117,7 +134,8 @@ class _SignupPageState extends State<SignupPage> {
     final uri = Uri(
       scheme: 'mailto',
       path: admin ?? '',
-      query: 'subject=${Uri.encodeComponent('${l.signup_title}: ${_username.text.trim()}')}'
+      query:
+          'subject=${Uri.encodeComponent('${l.signup_title}: ${_username.text.trim()}')}'
           '&body=${Uri.encodeComponent(body)}',
     );
     bool opened = false;
@@ -133,12 +151,15 @@ class _SignupPageState extends State<SignupPage> {
     }
     if (!mounted) return;
     setState(() => _busy = false);
-    messenger.showSnackBar(SnackBar(content: Text(opened ? l.signup_request_sent : l.signup_request_copied)));
+    messenger.showSnackBar(SnackBar(
+        content:
+            Text(opened ? l.signup_request_sent : l.signup_request_copied)));
   }
 
   Future<void> _createDemo() async {
     final l = AppLocalizations.of(context)!;
-    final requestOk = _requestFieldValid(_fullName.text, l) && _usernameRe.hasMatch(_username.text.trim());
+    final requestOk = _requestFieldValid(_fullName.text, l) &&
+        _usernameRe.hasMatch(_username.text.trim());
     if (!requestOk) {
       // Name and username come from the main form; show its errors.
       _requestForm.currentState!.validate();
@@ -148,101 +169,136 @@ class _SignupPageState extends State<SignupPage> {
     setState(() => _busy = true);
     final username = _username.text.trim().toLowerCase();
     try {
-      await _demo.create(username: username, fullName: _fullName.text.trim(), password: _password.text);
+      await _demo.create(
+          username: username,
+          fullName: _fullName.text.trim(),
+          password: _password.text);
       if (!mounted) return;
       Navigator.of(context).pop(username);
     } on PlatformException catch (e) {
       if (!mounted) return;
       setState(() => _busy = false);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(e.code == 'EXISTS' ? l.signup_demo_exists : (e.message ?? e.code)),
+        content: Text(
+            e.code == 'EXISTS' ? l.signup_demo_exists : (e.message ?? e.code)),
       ));
     }
   }
 
-  bool _requestFieldValid(String v, AppLocalizations l) => _required(v, l) == null;
+  bool _requestFieldValid(String v, AppLocalizations l) =>
+      _required(v, l) == null;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
-    return Scaffold(
-      backgroundColor: appWhite,
-      appBar: AppBar(
-        backgroundColor: appSolidPrimary,
-        foregroundColor: appWhite,
-        title: Text(l.signup_title),
-      ),
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 560),
-            child: ListView(
-              padding: const EdgeInsets.all(20),
-              children: <Widget>[
-                Text(l.signup_intro, style: const TextStyle(fontSize: 15, height: 1.4, color: appBlack)),
-                const SizedBox(height: 20),
-                Form(
-                  key: _requestForm,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      _field(_fullName, l.signup_full_name,
-                          validator: (v) => _required(v, l), autofill: AutofillHints.name),
-                      _field(_email, l.signup_email,
-                          keyboard: TextInputType.emailAddress,
-                          autofill: AutofillHints.email,
-                          validator: (v) => _required(v, l) ??
-                              (_emailRe.hasMatch(v!.trim()) ? null : l.signup_invalid_email)),
-                      _field(_phone, l.signup_phone,
-                          keyboard: TextInputType.phone,
-                          autofill: AutofillHints.telephoneNumber,
-                          validator: (v) => (v == null || v.trim().isEmpty || _phoneRe.hasMatch(v.trim()))
-                              ? null
-                              : l.signup_invalid_phone),
-                      _field(_username, l.signup_username,
-                          autofill: AutofillHints.newUsername,
-                          validator: (v) => _required(v, l) ??
-                              (_usernameRe.hasMatch(v!.trim()) ? null : l.signup_invalid_username)),
-                      _field(_centre, l.signup_centre, validator: (v) => _required(v, l)),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 14),
-                        child: DropdownButtonFormField<_Role>(
-                          value: _role,
-                          decoration: _decoration(l.signup_role),
-                          items: <DropdownMenuItem<_Role>>[
-                            DropdownMenuItem<_Role>(value: _Role.officer, child: Text(l.signup_role_officer)),
-                            DropdownMenuItem<_Role>(value: _Role.supervisor, child: Text(l.signup_role_supervisor)),
-                          ],
-                          onChanged: (r) => setState(() => _role = r ?? _Role.officer),
-                        ),
-                      ),
-                      _field(_note, l.signup_note, maxLines: 3),
-                      const SizedBox(height: 6),
-                      SizedBox(
-                        height: 52,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: appSolidPrimary,
-                            foregroundColor: appWhite,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+    return Theme(
+        data: RegistrationTheme.light(),
+        child: Scaffold(
+          backgroundColor: RegistrationTheme.canvas,
+          appBar: AppBar(
+            backgroundColor: RegistrationTheme.canvas,
+            foregroundColor: RegistrationTheme.ink,
+            title: Text(l.signup_title),
+          ),
+          body: SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 560),
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+                  children: <Widget>[
+                    Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                            color: RegistrationTheme.softBlue,
+                            borderRadius: BorderRadius.circular(16)),
+                        child: Text(l.signup_intro,
+                            style: const TextStyle(
+                                fontSize: 15,
+                                height: 1.5,
+                                color: RegistrationTheme.ink))),
+                    const SizedBox(height: 20),
+                    Form(
+                      key: _requestForm,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          _field(_fullName, l.signup_full_name,
+                              validator: (v) => _required(v, l),
+                              autofill: AutofillHints.name),
+                          _field(_email, l.signup_email,
+                              keyboard: TextInputType.emailAddress,
+                              autofill: AutofillHints.email,
+                              validator: (v) =>
+                                  _required(v, l) ??
+                                  (_emailRe.hasMatch(v!.trim())
+                                      ? null
+                                      : l.signup_invalid_email)),
+                          _field(_phone, l.signup_phone,
+                              keyboard: TextInputType.phone,
+                              autofill: AutofillHints.telephoneNumber,
+                              validator: (v) => (v == null ||
+                                      v.trim().isEmpty ||
+                                      _phoneRe.hasMatch(v.trim()))
+                                  ? null
+                                  : l.signup_invalid_phone),
+                          _field(_username, l.signup_username,
+                              autofill: AutofillHints.newUsername,
+                              validator: (v) =>
+                                  _required(v, l) ??
+                                  (_usernameRe.hasMatch(v!.trim())
+                                      ? null
+                                      : l.signup_invalid_username)),
+                          _field(_centre, l.signup_centre,
+                              validator: (v) => _required(v, l)),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 14),
+                            child: DropdownButtonFormField<_Role>(
+                              value: _role,
+                              decoration: _decoration(l.signup_role),
+                              items: <DropdownMenuItem<_Role>>[
+                                DropdownMenuItem<_Role>(
+                                    value: _Role.officer,
+                                    child: Text(l.signup_role_officer)),
+                                DropdownMenuItem<_Role>(
+                                    value: _Role.supervisor,
+                                    child: Text(l.signup_role_supervisor)),
+                              ],
+                              onChanged: (r) =>
+                                  setState(() => _role = r ?? _Role.officer),
+                            ),
                           ),
-                          onPressed: _busy ? null : _sendRequest,
-                          child: Text(l.signup_send, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                        ),
+                          _field(_note, l.signup_note, maxLines: 3),
+                          const SizedBox(height: 6),
+                          SizedBox(
+                            height: 52,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: appSolidPrimary,
+                                foregroundColor: appWhite,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14)),
+                              ),
+                              onPressed: _busy ? null : _sendRequest,
+                              child: Text(l.signup_send,
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600)),
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
+                    if (_demoAvailable) ...<Widget>[
+                      const SizedBox(height: 28),
+                      _demoSection(l),
                     ],
-                  ),
+                  ],
                 ),
-                if (_demoAvailable) ...<Widget>[
-                  const SizedBox(height: 28),
-                  _demoSection(l),
-                ],
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   Widget _demoSection(AppLocalizations l) {
@@ -250,9 +306,9 @@ class _SignupPageState extends State<SignupPage> {
       key: const ValueKey<String>('demo-section'),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF8E6),
-        border: Border.all(color: const Color(0xFFE5B14B)),
-        borderRadius: BorderRadius.circular(8),
+        color: const Color(0xFFFFFAEF),
+        border: Border.all(color: const Color(0xFFEEDDB5)),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Form(
         key: _demoForm,
@@ -264,33 +320,46 @@ class _SignupPageState extends State<SignupPage> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(l.signup_demo_title,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: appBlack)),
+                    style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: appBlack)),
               ),
             ]),
             const SizedBox(height: 8),
-            Text(l.signup_demo_body, style: const TextStyle(fontSize: 14, height: 1.4, color: appBlack)),
+            Text(l.signup_demo_body,
+                style: const TextStyle(
+                    fontSize: 14, height: 1.4, color: appBlack)),
             const SizedBox(height: 14),
             _field(_password, l.signup_password,
                 obscure: _obscure,
                 autofill: AutofillHints.newPassword,
                 suffix: PasswordVisibilityToggle(
-                    obscured: _obscure, onToggle: () => setState(() => _obscure = !_obscure)),
-                validator: (v) => (v == null || v.length < 8) ? l.signup_password_min : null),
+                    obscured: _obscure,
+                    onToggle: () => setState(() => _obscure = !_obscure)),
+                validator: (v) =>
+                    (v == null || v.length < 8) ? l.signup_password_min : null),
             _field(_confirm, l.signup_confirm_password,
                 obscure: _obscureConfirm,
                 suffix: PasswordVisibilityToggle(
-                    obscured: _obscureConfirm, onToggle: () => setState(() => _obscureConfirm = !_obscureConfirm)),
-                validator: (v) => v != _password.text ? l.signup_password_mismatch : null),
+                    obscured: _obscureConfirm,
+                    onToggle: () =>
+                        setState(() => _obscureConfirm = !_obscureConfirm)),
+                validator: (v) =>
+                    v != _password.text ? l.signup_password_mismatch : null),
             SizedBox(
               height: 52,
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: appSolidPrimary,
                   side: const BorderSide(color: appSolidPrimary),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
                 ),
                 onPressed: _busy ? null : _createDemo,
-                child: Text(l.signup_create_demo, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                child: Text(l.signup_create_demo,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w600)),
               ),
             ),
           ],
@@ -299,11 +368,18 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-  InputDecoration _decoration(String label, {Widget? suffix}) => InputDecoration(
+  InputDecoration _decoration(String label, {Widget? suffix}) =>
+      InputDecoration(
         labelText: label,
         suffixIcon: suffix,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: RegistrationTheme.line)),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
       );
 
   Widget _field(

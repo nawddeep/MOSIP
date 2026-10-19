@@ -1,0 +1,94 @@
+{
+  "contract": "design-contract.md: MOSIP blue/white account and workspace screens; dark face verification; existing flows retained.",
+  "targetViewports": [
+    "390x844",
+    "1024x768"
+  ],
+  "accessibility": {
+    "status": "pass",
+    "evidence": "Widget checks cover keyboard submission, disabled busy actions, readable field labels, 200% text layout, long task labels, and existing reduced-motion verification behavior. Material controls retain focus and screen-reader semantics. Manual Android TalkBack and hardware keyboard testing remain untested."
+  },
+  "responsive": {
+    "status": "pass",
+    "evidence": "Rendered all four surfaces at 390x844 and 1024x768; reviewed large-text home variants. Large-text tabs stack on narrow layouts, scrolling keeps content reachable, and tests assert navigation stays inside the viewport."
+  },
+  "contentStates": {
+    "loading": {
+      "status": "pass",
+      "evidence": "Busy password submission shows progress and disables login, back and forgot-password actions; repeat keyboard submission is blocked by widget test."
+    },
+    "empty": {
+      "status": "pass",
+      "evidence": "RegistrationTasks retains a synchronization action and renders an empty workflow placeholder; no task counts are fabricated. Widget test confirms synchronization remains actionable with an empty workflow list."
+    },
+    "error": {
+      "status": "pass",
+      "evidence": "Existing signup validation, email fallback, and every liveness error state pass widget tests. Camera, image and engine errors have distinct retry guidance."
+    },
+    "partial": {
+      "status": "pass",
+      "evidence": "Task cards omit unavailable timestamps; missing or invalid sync dates no longer throw during rendering, and absent labels receive a safe fallback. Invalid timestamp sentinel covered by widget test."
+    },
+    "success": {
+      "status": "pass",
+      "evidence": "Signup demo creation returns its username; verification Continue returns true only from success, with workflow-specific copy."
+    },
+    "permission": {
+      "status": "pass",
+      "evidence": "Camera denial prevents start and exposes settings when permanently denied. Verified by mock permission-channel widget test."
+    }
+  },
+  "renderedEvidence": [
+    {
+      "viewport": "390x844",
+      "artifact": "previews/login-390x844.png",
+      "observation": "Reviewed login rendered with IBM Plex Sans, Material icons and bundled brand assets; text and controls remain legible. Camera preview is intentionally absent in the fixture."
+    },
+    {
+      "viewport": "1024x768",
+      "artifact": "previews/login-1024x768.png",
+      "observation": "Reviewed login rendered with IBM Plex Sans, Material icons and bundled brand assets; text and controls remain legible. Camera preview is intentionally absent in the fixture."
+    },
+    {
+      "viewport": "390x844",
+      "artifact": "previews/signup-390x844.png",
+      "observation": "Reviewed signup rendered with IBM Plex Sans, Material icons and bundled brand assets; text and controls remain legible. Camera preview is intentionally absent in the fixture."
+    },
+    {
+      "viewport": "1024x768",
+      "artifact": "previews/signup-1024x768.png",
+      "observation": "Reviewed signup rendered with IBM Plex Sans, Material icons and bundled brand assets; text and controls remain legible. Camera preview is intentionally absent in the fixture."
+    },
+    {
+      "viewport": "390x844",
+      "artifact": "previews/home-390x844.png",
+      "observation": "Reviewed home rendered with IBM Plex Sans, Material icons and bundled brand assets; text and controls remain legible. Camera preview is intentionally absent in the fixture."
+    },
+    {
+      "viewport": "1024x768",
+      "artifact": "previews/home-1024x768.png",
+      "observation": "Reviewed home rendered with IBM Plex Sans, Material icons and bundled brand assets; text and controls remain legible. Camera preview is intentionally absent in the fixture."
+    },
+    {
+      "viewport": "390x844",
+      "artifact": "previews/verification-390x844.png",
+      "observation": "Reviewed verification rendered with IBM Plex Sans, Material icons and bundled brand assets; text and controls remain legible. Camera preview is intentionally absent in the fixture."
+    },
+    {
+      "viewport": "1024x768",
+      "artifact": "previews/verification-1024x768.png",
+      "observation": "Reviewed verification rendered with IBM Plex Sans, Material icons and bundled brand assets; text and controls remain legible. Camera preview is intentionally absent in the fixture."
+    },
+    {
+      "viewport": "390x844",
+      "artifact": "previews/home-large-390x844.png",
+      "observation": "Reviewed home-large rendered with IBM Plex Sans, Material icons and bundled brand assets; text and controls remain legible. Camera preview is intentionally absent in the fixture."
+    },
+    {
+      "viewport": "1024x768",
+      "artifact": "previews/home-large-1024x768.png",
+      "observation": "Reviewed home-large rendered with IBM Plex Sans, Material icons and bundled brand assets; text and controls remain legible. Camera preview is intentionally absent in the fixture."
+    }
+  ],
+  "validation": "52 tests passed on pinned Flutter 3.10.4. Static analysis: no errors or warnings in changed frontend files; informational notices remain. Preview fixtures use sample workflows and an empty camera texture, not real user or device data."
+}

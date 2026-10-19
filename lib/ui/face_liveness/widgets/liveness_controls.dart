@@ -11,7 +11,11 @@ import 'package:registration_client/ui/face_liveness/liveness_theme.dart';
 
 /// Pill button, 52 px tall (touch target well above 44 px).
 class LivenessPillButton extends StatelessWidget {
-  const LivenessPillButton({super.key, required this.label, required this.onPressed, this.primary = true});
+  const LivenessPillButton(
+      {super.key,
+      required this.label,
+      required this.onPressed,
+      this.primary = true});
 
   final String label;
   final VoidCallback? onPressed;
@@ -19,7 +23,8 @@ class LivenessPillButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(LivenessTheme.buttonHeight / 2));
+    final shape =
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(16));
     const size = Size.fromHeight(LivenessTheme.buttonHeight);
     if (primary) {
       return ElevatedButton(
@@ -41,7 +46,8 @@ class LivenessPillButton extends StatelessWidget {
         minimumSize: size,
         shape: shape,
         foregroundColor: LivenessTheme.text,
-        side: const BorderSide(color: LivenessTheme.textSecondary),
+        side: const BorderSide(color: Color(0xFF39424E)),
+        backgroundColor: const Color(0xFF1C232B),
         textStyle: LivenessTheme.button,
       ),
       child: Text(label),
@@ -51,7 +57,11 @@ class LivenessPillButton extends StatelessWidget {
 
 /// Dots plus "Attempt n of N". Past attempts red, current attempt filled, future attempts outlined.
 class AttemptIndicator extends StatelessWidget {
-  const AttemptIndicator({super.key, required this.attempt, required this.maxAttempts, this.currentFailed = false});
+  const AttemptIndicator(
+      {super.key,
+      required this.attempt,
+      required this.maxAttempts,
+      this.currentFailed = false});
 
   final int attempt;
   final int maxAttempts;
@@ -69,19 +79,29 @@ class AttemptIndicator extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 3),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: failed ? LivenessTheme.failure : (current ? LivenessTheme.text : Colors.transparent),
-          border: Border.all(color: failed ? LivenessTheme.failure : LivenessTheme.textSecondary, width: 1.2),
+          color: failed
+              ? LivenessTheme.failure
+              : (current ? LivenessTheme.text : Colors.transparent),
+          border: Border.all(
+              color:
+                  failed ? LivenessTheme.failure : LivenessTheme.textSecondary,
+              width: 1.2),
         ),
       ));
     }
     return Semantics(
       label: LivenessCopy.attempt(attempt, maxAttempts),
       excludeSemantics: true,
-      child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-        ...dots,
-        const SizedBox(width: 8),
-        Text(LivenessCopy.attempt(attempt, maxAttempts), style: LivenessTheme.caption),
-      ]),
+      child: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 4,
+          runSpacing: 4,
+          children: <Widget>[
+            ...dots,
+            const SizedBox(width: 8),
+            Text(LivenessCopy.attempt(attempt, maxAttempts),
+                style: LivenessTheme.caption),
+          ]),
     );
   }
 }
@@ -98,7 +118,8 @@ class OfflineIndicator extends StatelessWidget {
         border: Border.all(color: const Color(0x99A5AEB8)),
       ),
       child: const Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-        Icon(Icons.cloud_off_outlined, size: 14, color: LivenessTheme.textSecondary),
+        Icon(Icons.cloud_off_outlined,
+            size: 14, color: LivenessTheme.textSecondary),
         SizedBox(width: 4),
         Text(LivenessCopy.offline, style: LivenessTheme.caption),
       ]),

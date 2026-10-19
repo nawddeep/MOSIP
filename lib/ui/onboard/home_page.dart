@@ -13,7 +13,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
-import 'package:registration_client/model/settings.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/approve_packets_provider.dart';
@@ -122,8 +121,12 @@ class _HomePageState extends State<HomePage> {
 
   Widget getProcessUI(BuildContext context, Process process) {
     List<Screen?> sortedScreens;
-    sortedScreens = process.screens!.toList()..sort((e1, e2) => e1!.order!.compareTo(e2!.order!));
-    if (process.flow == "NEW" || process.flow == "UPDATE" || process.flow == "LOST" || process.flow == "CORRECTION") {
+    sortedScreens = process.screens!.toList()
+      ..sort((e1, e2) => e1!.order!.compareTo(e2!.order!));
+    if (process.flow == "NEW" ||
+        process.flow == "UPDATE" ||
+        process.flow == "LOST" ||
+        process.flow == "CORRECTION") {
       globalProvider.clearRegistrationProcessData();
       globalProvider.setPreRegistrationId("");
       globalProvider.setAdditionalInfoReqId("");
@@ -137,29 +140,35 @@ class _HomePageState extends State<HomePage> {
       }
       globalProvider.createRegistrationLanguageMap();
       //globalProvider.getAudit("REG-HOME-002", "REG-MOD-102");
-      String auditeventid="REG-EVT-002";
-      switch(process.flow){
+      String auditeventid = "REG-EVT-002";
+      switch (process.flow) {
         case "NEW":
-          auditeventid="REG-EVT-002";
-        break;
+          auditeventid = "REG-EVT-002";
+          break;
         case "UPDATE":
-          auditeventid="REG-EVT-003";
-        break;
+          auditeventid = "REG-EVT-003";
+          break;
         case "LOST":
-          auditeventid="REG-EVT-001";
-        break;
+          auditeventid = "REG-EVT-001";
+          break;
         case "CORRECTION":
-          auditeventid="REG-EVT-007";
-        break;
+          auditeventid = "REG-EVT-007";
+          break;
       }
       globalProvider.getAudit(auditeventid, "REG-MOD-102");
       showDialog(
         context: context,
         builder: (BuildContext context) => LanguageSelector(
-          newProcess: Process(label: process.label, autoSelectedGroups: process.autoSelectedGroups,
-              caption: process.caption, flow: process.flow, icon: process.icon, id: process.id,
-              isActive: process.isActive, order: process.order, screens: sortedScreens
-          ),
+          newProcess: Process(
+              label: process.label,
+              autoSelectedGroups: process.autoSelectedGroups,
+              caption: process.caption,
+              flow: process.flow,
+              icon: process.icon,
+              id: process.id,
+              isActive: process.isActive,
+              order: process.order,
+              screens: sortedScreens),
         ),
       );
     }
@@ -169,8 +178,9 @@ class _HomePageState extends State<HomePage> {
   String getRoleBasedBiometricTitle(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final globalProvider = Provider.of<GlobalProvider>(context, listen: false);
-    
-    final bool isOnboarding = globalProvider.onboardingProcessName == "Onboarding";
+
+    final bool isOnboarding =
+        globalProvider.onboardingProcessName == "Onboarding";
 
     if (authProvider.isOfficer) {
       return isOnboarding
@@ -216,13 +226,13 @@ class _HomePageState extends State<HomePage> {
         ),
         "title": appLocalizations.synchronize_data,
         "onTap": syncData,
-        "subtitle": context.watch<SyncProvider>().lastSuccessfulSyncTime != ""
-            ? DateFormat("EEEE d MMMM, hh:mma")
-                .format(DateTime.parse(
-                        context.watch<SyncProvider>().lastSuccessfulSyncTime)
-                    .toLocal())
-                .toString()
-            : "Last Sync time not found",
+        "subtitle": DateTime.tryParse(
+                    context.watch<SyncProvider>().lastSuccessfulSyncTime) ==
+                null
+            ? null
+            : DateFormat('d MMM, h:mm a').format(DateTime.parse(
+                    context.watch<SyncProvider>().lastSuccessfulSyncTime)
+                .toLocal()),
       },
       // {
       //   "icon": SvgPicture.asset(
@@ -256,8 +266,9 @@ class _HomePageState extends State<HomePage> {
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
         "title": appLocalizations.appliction_upload,
-        "onTap": (context){
-          Provider.of<GlobalProvider>(context, listen: false).getAudit("REG-EVT-005", "REG-MOD-102");
+        "onTap": (context) {
+          Provider.of<GlobalProvider>(context, listen: false)
+              .getAudit("REG-EVT-005", "REG-MOD-102");
           Navigator.push(
               context,
               MaterialPageRoute(
