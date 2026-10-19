@@ -52,8 +52,8 @@ public final class AndroidLivenessFactory {
     }
 
     /** MediaPipe + MiniFASNet + OpenCV engine. Native libraries and models load in initialize(). */
-    public static LivenessEngine createEngine(Context context, boolean useNnapi) {
-        return new LazyEngine(context.getApplicationContext(), useNnapi);
+    public static LivenessEngine createEngine(Context context) {
+        return new LazyEngine(context.getApplicationContext());
     }
 
     public static LivenessController createController(Context context, LivenessController.DeviceProvider devices,
@@ -71,7 +71,7 @@ public final class AndroidLivenessFactory {
             }, period, period, TimeUnit.MILLISECONDS);
             return () -> f.cancel(false);
         };
-        return new LivenessController(devices, createEngine(context, false), config, audit, gate,
+        return new LivenessController(devices, createEngine(context), config, audit, gate,
                 background, ticker, systemClock());
     }
 
@@ -81,12 +81,10 @@ public final class AndroidLivenessFactory {
 
     static final class LazyEngine implements LivenessEngine {
         private final Context context;
-        private final boolean useNnapi;
         private DefaultLivenessEngine delegate;
 
-        LazyEngine(Context context, boolean useNnapi) {
+        LazyEngine(Context context) {
             this.context = context;
-            this.useNnapi = useNnapi;
         }
 
         @Override
@@ -103,7 +101,7 @@ public final class AndroidLivenessFactory {
             OpenCvFrameCache cache = new OpenCvFrameCache();
             DefaultLivenessEngine engine = new DefaultLivenessEngine(
                     new MediaPipeFaceDetector(context, manifest.faceLandmarker),
-                    new OnnxMiniFasNetPadModel(context, manifest.pad, cache, useNnapi),
+                    MiniFasNetModels.createPadModel(context, manifest.pad),
                     new OpenCvQualityAnalyzer(cache));
             try {
                 engine.initialize();

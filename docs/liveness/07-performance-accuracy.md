@@ -19,6 +19,17 @@
 | APK size added (arm64 native + models, uncompressed) | OpenCV 20.9 MB, ONNX Runtime 18.4 MB, MediaPipe 14.0 MB, models 5.5 MB, about **59 MB per ABI** | `unzip -l` |
 | APK size, debug, all 4 ABIs | 279 MB → 548 MB | build output |
 
+### After the MiniFASNet ensemble integration (2026-10-19, same emulator)
+
+| Metric | Single MiniFASNetV2 (before) | V2 + V1SE ensemble (now) |
+|---|---|---|
+| Per-frame engine time, mean | 35.4 ms | **64.1 ms** |
+| p95 / max | 70.1 / 154.7 ms | **110.9 / 165.4 ms** |
+| Frames measured | 382 | 113 (all PAD-scored) |
+| Still-photo attack (real engine) | rejected via motion rule → challenge → timeout | same: challenge → timeout |
+
+Two models roughly double PAD cost. On low-end phones use `padEveryNthFrame: 2` (landmarks still every frame); upstream measured ~2 ms/frame for the ensemble on desktop ORT, so most of the gap on phones is CPU, not the library.
+
 ### Device matrix (to fill on real hardware)
 
 | Device class | Example | fps | mean / p95 ms | Native heap Δ | Battery per 100 sessions | Status |

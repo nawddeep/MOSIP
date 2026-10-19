@@ -10,7 +10,8 @@ All are OSI-approved licences. Versions are pinned in `android/build.gradle` (`e
 | MediaPipe Tasks Vision (`com.google.mediapipe:tasks-vision`) | 0.10.14 | Apache-2.0 | face detection + 478 landmarks | `:livenessmanager` |
 | └ transitive `protobuf-javalite` | 4.26.1 | BSD-3-Clause | MediaPipe runtime | |
 | ONNX Runtime Android (`com.microsoft.onnxruntime:onnxruntime-android`) | 1.19.2 | MIT | PAD model inference | `:livenessmanager` |
-| OpenCV (`org.opencv:opencv`) | 4.10.0 | Apache-2.0 | PAD crop/resize/colour conversion, quality metrics | `:livenessmanager` |
+| `org.minifasnet` PAD library (vendored, module `:minifasnet`) | upstream commit `d0cfabe` | **No LICENSE file in source repo — must be added by its author before release** | MiniFASNet ensemble: crop, canonical bilinear resize, inference, score fusion | `:minifasnet` (see `android/minifasnet/UPSTREAM.md`) |
+| OpenCV (`org.opencv:opencv`) | 4.10.0 | Apache-2.0 | quality metrics (PAD preprocessing now lives in `org.minifasnet`) | `:livenessmanager` |
 | Gson | 2.13.2 (already in app) | Apache-2.0 | config parsing, canonical JSON | `:livenessmanager` |
 
 ## Models (assets, verified by SHA-256 before use)
@@ -18,7 +19,7 @@ All are OSI-approved licences. Versions are pinned in `android/build.gradle` (`e
 | Model | File | SHA-256 | Licence | Source |
 |---|---|---|---|---|
 | MediaPipe Face Landmarker (float16, v1) | `face_landmarker.task` (3.8 MB) | `64184e22…0bc9ff` | Apache-2.0 | storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/ |
-| MiniFASNetV2 2.7_80x80 (Silent-Face-Anti-Spoofing) | `MiniFASNetV2.onnx` (1.7 MB) | `0cbe5cae…bfbccb8` | Apache-2.0 (weights: Minivision / Mininglamp; licence copy shipped as `LICENSE-MiniFASNet-Apache-2.0.txt`) | ONNX conversion: github.com/QingHeYang/Silent-Face-Anti-Spoofing-onnx (Apache-2.0) of github.com/minivision-ai/Silent-Face-Anti-Spoofing |
+| MiniFASNetV2 2.7_80x80 + MiniFASNetV1SE 4_0_0_80x80 (Silent-Face-Anti-Spoofing ensemble) | `minifasnet/2.7_80x80_MiniFASNetV2.onnx`, `minifasnet/4_0_0_80x80_MiniFASNetV1SE.onnx` (1.7 MB each) | `fe59ec80…c866`, `2b45c7b2…2342` | Code Apache-2.0; **weights licence UNCLEAR** (no separate terms upstream; see `android/minifasnet/MODEL_CARD.md`) | Deterministic opset-17 export by github.com/pratik-aep/faceDetection_manifestNET of minivision-ai/Silent-Face-Anti-Spoofing @ b6d5f04 |
 
 ## Fonts
 
@@ -52,3 +53,10 @@ All are OSI-approved licences. Versions are pinned in `android/build.gradle` (`e
 | ML Kit Face Detection | not open source (Google APIs ToS), so not OSI |
 | Datasets OULU-NPU / SiW / CelebA-Spoof for tuning | research / non-commercial licences; check terms before product tuning |
 | `google_fonts` package | downloads fonts at runtime, which breaks offline-first |
+
+## Test-only (JVM)
+
+| Component | Version | Licence | Use |
+|---|---|---|---|
+| ONNX Runtime (desktop Java) | 1.19.2 | MIT | real inference in `:minifasnet` tests |
+| JUnit Jupiter | 5.10.2 | EPL-2.0 | `:minifasnet` tests |

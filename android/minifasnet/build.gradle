@@ -1,0 +1,36 @@
+// Vendored MiniFASNet passive-PAD library (pure Java, no Android dependencies).
+// Source: https://github.com/pratik-aep/faceDetection_manifestNET (minifasnet/java), see UPSTREAM.md.
+// Kept byte-identical to upstream so its Python/Java/PyTorch parity evidence stays valid.
+plugins {
+    id 'java-library'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+dependencies {
+    // Android supplies onnxruntime-android (same ai.onnxruntime API) through :livenessmanager.
+    compileOnly "com.microsoft.onnxruntime:onnxruntime:${rootProject.ext.onnxRuntimeVersion}"
+
+    // JVM tests run real inference with desktop ONNX Runtime on the shipped model files.
+    testImplementation "com.microsoft.onnxruntime:onnxruntime:${rootProject.ext.onnxRuntimeVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.2"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.10.2"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ['-Xlint:all', '-Werror']
+}
+
+test {
+    useJUnitPlatform()
+    // The exact model files shipped in the APK.
+    systemProperty 'modelDir', file('../livenessmanager/src/main/assets/liveness/models/minifasnet').absolutePath
+    // Optional: folder with upstream sample images image_T1/F1/F2.jpg for the golden-score test
+    //   ./gradlew :minifasnet:test -PminifasnetSamples=/path/to/samples
+    systemProperty 'samplesDir', project.findProperty('minifasnetSamples') ?: ''
+    testLogging { events 'failed'; exceptionFormat 'full' }
+}
