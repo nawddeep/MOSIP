@@ -1,0 +1,29 @@
+# Tool configuration only (this repo is not a pip-installable package).
+# Used by: pytest, ruff (lint), pyright / VS Code Pylance (type checking + import resolution).
+
+[tool.pytest.ini_options]
+testpaths = ["minifasnet/tests"]
+addopts = "-ra"
+filterwarnings = [
+    "error",  # any new warning fails the test run
+    # Upstream (read-only) code calls F.softmax without dim -> torch UserWarning. We do not modify upstream.
+    "ignore:Implicit dimension choice for softmax:UserWarning",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = ["minifasnet-study"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "I"]
+
+[tool.pyright]
+include = ["minifasnet"]
+exclude = ["minifasnet-study", "**/__pycache__", "minifasnet/java"]
+# Scripts put these folders on sys.path at runtime; tell the type checker / Pylance about them.
+extraPaths = ["minifasnet/python", "minifasnet/eval", "minifasnet-study/Silent-Face-Anti-Spoofing", "minifasnet/dashboard"]
+venvPath = "."
+venv = ".venv"
+pythonVersion = "3.11"
+typeCheckingMode = "standard"
