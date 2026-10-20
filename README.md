@@ -6,6 +6,10 @@ The Android Registration Client is a tablet application that serves as a portabl
 
 Face liveness and presentation attack detection for resident capture, operator login and supervisor approval: see [docs/liveness/README.md](docs/liveness/README.md).
 
+## Website and in-browser demo
+
+A landing site and in-browser demo client (mock data, works offline): open [website/index.html](website/index.html). See [website/README.md](website/README.md).
+
 # Developer Guide
 
 The documentation here will guide you through the pre-requisites and the other necessary details required for Android Registration Client developer setup.
