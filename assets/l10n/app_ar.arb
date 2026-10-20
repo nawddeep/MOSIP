@@ -405,6 +405,23 @@
   "liveness_state_camera_unavailable": "جهاز الكاميرا غير متاح. تحقق من اتصال الجهاز وحاول مرة أخرى.",
   "liveness_state_engine_error": "تعذر بدء التحقق من الوجه. يرجى المحاولة مرة أخرى.",
   "liveness_state_success": "رائع، تم التقاط الوجه بنجاح.",
-  "liveness_semantics_countdown": "باقي {seconds} ثوانٍ"
+  "liveness_semantics_countdown": "باقي {seconds} ثوانٍ",
+  "liveness_caption": "التحقق من الوجه",
+  "liveness_state_camera_error": "تعذر تشغيل الكاميرا.",
+  "liveness_state_camera_error_hint": "أغلق التطبيقات الأخرى التي تستخدم الكاميرا، ثم حاول مرة أخرى.",
+  "liveness_state_invalid_frames": "تعذرت قراءة صور الكاميرا.",
+  "liveness_state_invalid_frames_hint": "تحقق من اتصال الكاميرا، ثم حاول مرة أخرى.",
+  "liveness_state_success_auth": "تم التحقق من الوجه بنجاح.",
+  "liveness_state_success_auth_hint": "تابع لإكمال المصادقة.",
+  "liveness_recovery_title": "التحقق من الوجه يحتاج إلى مساعدة",
+  "liveness_recovery_body_resident": "اطلب المساعدة من مشغل التسجيل. يمكنه فحص الكاميرا والإضاءة وإرشادك خلال إجراءات الاسترداد المعتمدة. لم يتم قبول وجهك.",
+  "liveness_recovery_body_staff": "تواصل مع المسؤول أو مع دعم مركز التسجيل لاتباع إجراءات الاسترداد المعتمدة. لم ينجح التحقق من الوجه. لا يمكنك متابعة محاولة المصادقة هذه.",
+  "liveness_recovery_stay": "البقاء هنا",
+  "liveness_recovery_return": "العودة إلى الشاشة السابقة",
+  "liveness_permission_title": "السماح بالوصول إلى الكاميرا",
+  "liveness_permission_body": "يلزم الوصول إلى الكاميرا للتحقق من وجهك. اسمح بالوصول من إعدادات الجهاز، ثم عد وحاول مرة أخرى.",
+  "liveness_open_settings": "فتح الإعدادات",
+  "liveness_starting": "جارٍ بدء التحقق من الوجه",
+  "liveness_challenge_number": "التحدي {number}",
+  "liveness_challenge_next": "تم اكتشاف الإجراء. التحدي {number}"
 }
-
