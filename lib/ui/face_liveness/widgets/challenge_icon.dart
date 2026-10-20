@@ -58,7 +58,7 @@ class _ChallengeIconState extends State<ChallengeIcon>
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: LivenessCopy.challenge(widget.challenge),
+      label: LivenessCopy.challenge(widget.challenge, context),
       child: AnimatedBuilder(
         animation: _c,
         builder: (_, __) => CustomPaint(

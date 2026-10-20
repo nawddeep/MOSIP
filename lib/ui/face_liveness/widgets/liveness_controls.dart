@@ -89,8 +89,9 @@ class AttemptIndicator extends StatelessWidget {
         ),
       ));
     }
+    final attemptText = LivenessCopy.attempt(attempt, maxAttempts, context);
     return Semantics(
-      label: LivenessCopy.attempt(attempt, maxAttempts),
+      label: attemptText,
       excludeSemantics: true,
       child: Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
@@ -99,8 +100,7 @@ class AttemptIndicator extends StatelessWidget {
           children: <Widget>[
             ...dots,
             const SizedBox(width: 8),
-            Text(LivenessCopy.attempt(attempt, maxAttempts),
-                style: LivenessTheme.caption),
+            Text(attemptText, style: LivenessTheme.caption),
           ]),
     );
   }
@@ -117,11 +117,10 @@ class OfflineIndicator extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0x99A5AEB8)),
       ),
-      child: const Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-        Icon(Icons.cloud_off_outlined,
-            size: 14, color: LivenessTheme.textSecondary),
-        SizedBox(width: 4),
-        Text(LivenessCopy.offline, style: LivenessTheme.caption),
+      child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        const Icon(Icons.cloud_off_outlined, size: 14, color: LivenessTheme.textSecondary),
+        const SizedBox(width: 4),
+        Text(LivenessCopy.getOffline(context), style: LivenessTheme.caption),
       ]),
     );
   }

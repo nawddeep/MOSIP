@@ -205,17 +205,13 @@ class FaceLivenessScreenState extends State<FaceLivenessScreen> {
       builder: (dialogContext) => Theme(
         data: LivenessTheme.materialTheme(),
         child: AlertDialog(
-          title: const Text('Face verification needs assistance'),
+          title: Text(LivenessCopy.recoveryTitle(context)),
           content: SingleChildScrollView(
-              child: Text(
-            widget.workflow == LivenessWorkflow.resident
-                ? 'Ask the registration operator for help. They can check the camera and lighting and guide you through the approved recovery process. Your face has not been accepted.'
-                : 'Contact your administrator or registration centre support for the approved recovery process. Face verification has not passed. You cannot continue this authentication attempt.',
-          )),
+              child: Text(LivenessCopy.recoveryBody(widget.workflow, context))),
           actions: <Widget>[
             TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text('Stay here')),
+                child: Text(LivenessCopy.recoveryStay(context))),
             TextButton(
                 onPressed: () {
                   Navigator.of(dialogContext).pop();
@@ -225,7 +221,7 @@ class FaceLivenessScreenState extends State<FaceLivenessScreen> {
                     Navigator.of(context).maybePop(false);
                   }
                 },
-                child: const Text('Return to previous screen')),
+                child: Text(LivenessCopy.recoveryReturn(context))),
           ],
         ),
       ),
@@ -357,9 +353,9 @@ class FaceLivenessScreenState extends State<FaceLivenessScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text('Face verification', style: LivenessTheme.caption),
+                Text(LivenessCopy.caption(context), style: LivenessTheme.caption),
                 const SizedBox(height: 4),
-                Text(LivenessCopy.workflowTitle(widget.workflow),
+                Text(LivenessCopy.workflowTitle(widget.workflow, context),
                     style: LivenessTheme.title,
                     overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 4),
@@ -413,32 +409,28 @@ class FaceLivenessScreenState extends State<FaceLivenessScreen> {
 
   String _messageKey(FaceLivenessEvent? e) {
     if (e == null) return 'intro';
-    final copy = LivenessCopy.forEvent(e);
+    final copy = LivenessCopy.forEvent(e, context);
     return '${e.state}-${copy[0]}';
   }
 
   Widget _message(FaceLivenessEvent? e, bool reduceMotion) {
     if (_permissionDenied) {
-      return const Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-        Text('Allow camera access',
+      return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        Text(LivenessCopy.permissionTitle(context),
             style: LivenessTheme.message, textAlign: TextAlign.center),
-        SizedBox(height: 8),
-        Text(
-            'Camera access is needed to verify your face. Allow access in your device settings, then return and try again.',
-            style: LivenessTheme.body,
-            textAlign: TextAlign.center),
-      ]);
-    }
-    if (e == null) {
-      return const Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-        Text(LivenessCopy.introTitle,
-            style: LivenessTheme.message, textAlign: TextAlign.center),
-        SizedBox(height: 8),
-        Text(LivenessCopy.introBody,
+        const SizedBox(height: 8),
+        Text(LivenessCopy.permissionBody(context),
             style: LivenessTheme.body, textAlign: TextAlign.center),
       ]);
     }
-    final copy = LivenessCopy.forEvent(e);
+    if (e == null) {
+      return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        Text(LivenessCopy.getIntroTitle(context), style: LivenessTheme.message, textAlign: TextAlign.center),
+        const SizedBox(height: 8),
+        Text(LivenessCopy.getIntroBody(context), style: LivenessTheme.body, textAlign: TextAlign.center),
+      ]);
+    }
+    final copy = LivenessCopy.forEvent(e, context);
     return Semantics(
       liveRegion: true,
       child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
@@ -449,10 +441,7 @@ class FaceLivenessScreenState extends State<FaceLivenessScreen> {
           const SizedBox(height: 10),
         ],
         if (e.state == LivenessUiState.challenge) ...<Widget>[
-          Text(
-              _challengeNumber > 1
-                  ? 'Action detected. Challenge $_challengeNumber'
-                  : 'Challenge 1',
+          Text(LivenessCopy.challengeProgress(_challengeNumber, context),
               style: LivenessTheme.caption,
               textAlign: TextAlign.center),
           const SizedBox(height: 8),
@@ -463,7 +452,7 @@ class FaceLivenessScreenState extends State<FaceLivenessScreen> {
             e.secondsRemaining != null) ...<Widget>[
           const SizedBox(height: 8),
           ExcludeSemantics(
-              child: Text('${e.secondsRemaining} seconds remaining',
+              child: Text(LivenessCopy.countdown(e.secondsRemaining!, context),
                   style: LivenessTheme.caption)),
         ],
         if (copy[1] != null) ...<Widget>[
@@ -492,14 +481,14 @@ class FaceLivenessScreenState extends State<FaceLivenessScreen> {
       case 'permission':
         if (_permissionBlocked) {
           children.add(LivenessPillButton(
-              label: 'Open settings',
+              label: LivenessCopy.openSettings(context),
               onPressed: () async {
                 await openAppSettings();
               }));
           children.add(const SizedBox(height: LivenessTheme.gap));
         }
         children.add(LivenessPillButton(
-            label: 'Try again',
+            label: LivenessCopy.getTryAgain(context),
             onPressed: _busy ? null : (_event == null ? _start : _retry)));
         children.add(const SizedBox(height: LivenessTheme.gap));
         children.add(LivenessPillButton(
@@ -507,37 +496,37 @@ class FaceLivenessScreenState extends State<FaceLivenessScreen> {
         break;
       case 'intro':
         children.add(LivenessPillButton(
-            label: LivenessCopy.start, onPressed: _busy ? null : _start));
+            label: LivenessCopy.getStart(context), onPressed: _busy ? null : _start));
         break;
       case 'success':
         children.add(LivenessPillButton(
-            label: LivenessCopy.continueLabel,
+            label: LivenessCopy.getContinueLabel(context),
             onPressed: () => Navigator.of(context).maybePop(true)));
         break;
       case 'max':
         children.add(LivenessPillButton(
-            label: LivenessCopy.recoveryOptions, onPressed: _recovery));
+            label: LivenessCopy.getRecoveryOptions(context), onPressed: _recovery));
         break;
       case 'failure':
         children.add(LivenessPillButton(
-            label: LivenessCopy.tryAgain, onPressed: _busy ? null : _retry));
+            label: LivenessCopy.getTryAgain(context), onPressed: _busy ? null : _retry));
         children.add(const SizedBox(height: LivenessTheme.gap));
         children.add(LivenessPillButton(
-            label: LivenessCopy.cancel, onPressed: _cancel, primary: false));
+            label: LivenessCopy.getCancel(context), onPressed: _cancel, primary: false));
         break;
       case 'system':
         children.add(LivenessPillButton(
             label: e?.state == LivenessUiState.deviceUnavailable
-                ? LivenessCopy.retryConnection
-                : LivenessCopy.tryAgain,
+                ? LivenessCopy.getRetryConnection(context)
+                : LivenessCopy.getTryAgain(context),
             onPressed: _busy ? null : _retry));
         children.add(const SizedBox(height: LivenessTheme.gap));
         children.add(LivenessPillButton(
-            label: LivenessCopy.cancel, onPressed: _cancel, primary: false));
+            label: LivenessCopy.getCancel(context), onPressed: _cancel, primary: false));
         break;
       default:
         children.add(LivenessPillButton(
-            label: LivenessCopy.cancel, onPressed: _cancel, primary: false));
+            label: LivenessCopy.getCancel(context), onPressed: _cancel, primary: false));
     }
     return Column(
         mainAxisSize: MainAxisSize.min,
@@ -545,7 +534,7 @@ class FaceLivenessScreenState extends State<FaceLivenessScreen> {
         children: <Widget>[
           if (_busy) ...<Widget>[
             Semantics(
-                label: 'Starting face verification',
+                label: LivenessCopy.starting(context),
                 child: const LinearProgressIndicator()),
             const SizedBox(height: LivenessTheme.gap),
           ],
@@ -587,14 +576,18 @@ extension _TimerRing on LivenessOval {
       key: ValueKey<String>('timer-${e.challengeType}'),
       tween: Tween<double>(begin: from, end: reduceMotion ? from : target),
       duration: reduceMotion ? Duration.zero : const Duration(seconds: 1),
-      builder: (context, value, _) => LivenessOval(
-        key: key,
-        state: state,
-        color: color,
-        timerFraction: value,
-        preview: preview,
-        reduceMotion: reduceMotion,
-        width: width,
+      builder: (context, value, _) => Semantics(
+        liveRegion: true,
+        label: LivenessCopy.countdown(secs, context),
+        child: LivenessOval(
+          key: key,
+          state: state,
+          color: color,
+          timerFraction: value,
+          preview: preview,
+          reduceMotion: reduceMotion,
+          width: width,
+        ),
       ),
     );
   }

@@ -400,5 +400,76 @@
   "signup_create_demo": "Create demo account",
   "signup_demo_exists": "A demo account with this username already exists",
   "signup_demo_created": "Demo account created. Log in with username {username}.",
-  "@signup_demo_created": {"placeholders": {"username": {"type": "String"}}}
+  "@signup_demo_created": {"placeholders": {"username": {"type": "String"}}},
+  "liveness_intro_title": "Before we start",
+  "liveness_intro_body": "Look at the camera. Keep your face inside the oval.",
+  "liveness_start": "Start",
+  "liveness_try_again": "Try again",
+  "liveness_cancel": "Cancel",
+  "liveness_recovery_options": "Recovery options",
+  "liveness_retry_connection": "Retry connection",
+  "liveness_continue": "Continue",
+  "liveness_offline": "Offline",
+  "liveness_workflow_resident": "Resident registration",
+  "liveness_workflow_operator": "Operator login",
+  "liveness_workflow_supervisor": "Supervisor approval",
+  "liveness_attempt": "Attempt {n} of {max}",
+  "@liveness_attempt": {
+    "placeholders": {
+      "n": {"type": "int"},
+      "max": {"type": "int"}
+    }
+  },
+  "liveness_challenge_blink": "Please blink",
+  "liveness_challenge_smile": "Please smile",
+  "liveness_challenge_turn_left": "Please turn your head to the left",
+  "liveness_challenge_turn_right": "Please turn your head to the right",
+  "liveness_challenge_generic": "Please follow the instruction",
+  "liveness_hint_lighting": "Improve the lighting",
+  "liveness_hint_far": "Move closer",
+  "liveness_hint_blurry": "Hold still.",
+  "liveness_state_position_face": "Position your face in the oval",
+  "liveness_state_look_camera": "Look directly at the camera.",
+  "liveness_state_checking": "Checking face liveness…",
+  "liveness_state_hold_still": "Hold still for a moment.",
+  "liveness_state_timeout": "Time ran out. Please try again.",
+  "liveness_state_no_face": "We cannot see your face. Move into the oval.",
+  "liveness_state_multiple_faces": "Only one person should be in view.",
+  "liveness_state_failed": "We could not verify face liveness. Please try again.",
+  "liveness_state_pad_failed": "Face verification could not be completed. Please try again.",
+  "liveness_state_max_retries": "We could not complete face verification. All {maxAttempts} attempts have been used. Please follow the recovery process.",
+  "@liveness_state_max_retries": {
+    "placeholders": {
+      "maxAttempts": {"type": "int"}
+    }
+  },
+  "liveness_state_camera_unavailable": "Camera device not available. Check the device connection and try again.",
+  "liveness_state_engine_error": "Face verification could not start. Please try again.",
+  "liveness_state_success": "Good, face captured successfully.",
+  "liveness_semantics_countdown": "{seconds} seconds remaining",
+  "@liveness_semantics_countdown": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "liveness_caption": "Face verification",
+  "liveness_state_camera_error": "Camera could not start.",
+  "liveness_state_camera_error_hint": "Close other apps using the camera, then try again.",
+  "liveness_state_invalid_frames": "Camera images could not be read.",
+  "liveness_state_invalid_frames_hint": "Check the camera connection, then try again.",
+  "liveness_state_success_auth": "Face verification successful.",
+  "liveness_state_success_auth_hint": "Continue to complete authentication.",
+  "liveness_recovery_title": "Face verification needs assistance",
+  "liveness_recovery_body_resident": "Ask the registration operator for help. They can check the camera and lighting and guide you through the approved recovery process. Your face has not been accepted.",
+  "liveness_recovery_body_staff": "Contact your administrator or registration centre support for the approved recovery process. Face verification has not passed. You cannot continue this authentication attempt.",
+  "liveness_recovery_stay": "Stay here",
+  "liveness_recovery_return": "Return to previous screen",
+  "liveness_permission_title": "Allow camera access",
+  "liveness_permission_body": "Camera access is needed to verify your face. Allow access in your device settings, then return and try again.",
+  "liveness_open_settings": "Open settings",
+  "liveness_starting": "Starting face verification",
+  "liveness_challenge_number": "Challenge {number}",
+  "@liveness_challenge_number": {"placeholders": {"number": {"type": "int"}}},
+  "liveness_challenge_next": "Action detected. Challenge {number}",
+  "@liveness_challenge_next": {"placeholders": {"number": {"type": "int"}}}
 }
