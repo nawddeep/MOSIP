@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:provider/provider.dart';
 
 import '../../../provider/connectivity_provider.dart';
@@ -54,7 +55,7 @@ class _ExportButtonState extends State<ExportButton> {
         await exportPacketsProvider.exportSelected();
         exportPacketsProvider.searchedList();
       },
-      style: OutlinedButton.styleFrom(side: BorderSide(width: 1.5, color: solidPrimary),backgroundColor: Colors.white),
+      style: OutlinedButton.styleFrom(side: BorderSide(width: 1.5, color: solidPrimary),backgroundColor: RegistrationTheme.card),
       child: SizedBox(
         height: 60,
         child:  Row(
@@ -62,7 +63,7 @@ class _ExportButtonState extends State<ExportButton> {
           children: [
             const Icon(Icons.upload_sharp, size: 26,),
             const SizedBox(width: 4,),
-            Text(AppLocalizations.of(context)!.export, style:Theme.of(context).textTheme.titleLarge?.copyWith(color: solidPrimary, fontSize: 17),),
+            Text(AppLocalizations.of(context)!.export, style:Theme.of(context).textTheme.titleLarge?.copyWith(color: solidPrimary, fontSize: RegistrationTheme.fsHeading),),
           ],
         ),
       ),

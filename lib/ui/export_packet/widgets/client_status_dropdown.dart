@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:provider/provider.dart';
 
 import '../../../provider/export_packet_provider.dart';
@@ -13,15 +14,15 @@ class ClientStatusDropdown extends StatelessWidget {
     return Container(
         height: 56,
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey), // Add border
-          borderRadius: BorderRadius.circular(8.0), // Rounded corners
+          border: Border.all(color: RegistrationTheme.muted), // Add border
+          borderRadius: BorderRadius.circular(RegistrationTheme.rLg), // Rounded corners
         ),
         child: DropdownButton<String>(
           value: context.watch<ExportPacketsProvider>().clientStatus,
           elevation: 1,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 16),
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: RegistrationTheme.fsBody),
           underline: const SizedBox.shrink(),
-          dropdownColor: Colors.white,
+          dropdownColor: RegistrationTheme.card,
           padding: const EdgeInsets.all(16),
           items: [
             DropdownMenuItem(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:provider/provider.dart';
 
 import '../../../provider/connectivity_provider.dart';
@@ -50,7 +51,7 @@ class _UploadButtonState extends State<UploadButton> {
         await exportPacketsProvider.uploadSelected();
         exportPacketsProvider.searchedList();
       },
-      style: OutlinedButton.styleFrom(side:(context.watch<ExportPacketsProvider>().countSelected==0)?const BorderSide(width: 1.5, color: Colors.grey): BorderSide(width: 1.5, color: solidPrimary), backgroundColor: Colors.white),
+      style: OutlinedButton.styleFrom(side:(context.watch<ExportPacketsProvider>().countSelected==0)?const BorderSide(width: 1.5, color: RegistrationTheme.muted): BorderSide(width: 1.5, color: solidPrimary), backgroundColor: RegistrationTheme.card),
       child: SizedBox(
         height: 60,
         child:  Row(
@@ -58,7 +59,7 @@ class _UploadButtonState extends State<UploadButton> {
           children: [
             const Icon(Icons.cloud_upload_outlined, size: 28,),
             const SizedBox(width: 6,),
-            Text(AppLocalizations.of(context)!.upload, style:Theme.of(context).textTheme.titleLarge?.copyWith(color: (context.watch<ExportPacketsProvider>().countSelected==0)? Colors.grey :  solidPrimary, fontSize: 17),),
+            Text(AppLocalizations.of(context)!.upload, style:Theme.of(context).textTheme.titleLarge?.copyWith(color: (context.watch<ExportPacketsProvider>().countSelected==0)? RegistrationTheme.muted :  solidPrimary, fontSize: RegistrationTheme.fsHeading),),
           ],
         ),
       ),

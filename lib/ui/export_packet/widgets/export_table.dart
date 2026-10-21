@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +13,7 @@ class ExportTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double tableWidth = 1500;
-    TextStyle? textTheme = Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 16, fontWeight: FontWeight.bold);
+    TextStyle? textTheme = Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: RegistrationTheme.fsBody, fontWeight: FontWeight.bold);
 
     return SizedBox(
       width: tableWidth,
@@ -24,7 +25,7 @@ class ExportTable extends StatelessWidget {
             return   Column(
               children: [
                 Container(
-                  color: Colors.white,
+                  color: RegistrationTheme.card,
                   child: ListTile(
                     horizontalTitleGap: 0,
                     leading: Checkbox(
@@ -55,7 +56,7 @@ class ExportTable extends StatelessWidget {
                     },
                   ),
                 ),
-                Container(height: 1.25, color:Colors.grey.shade200),
+                Container(height: 1.25, color:RegistrationTheme.line),
               ],
             );
           }
@@ -67,7 +68,7 @@ class ExportTable extends StatelessWidget {
               context.read<ExportPacketsProvider>().setSelected(index-1, value);
             }, side: BorderSide(color: solidPrimary, width: 1.5),),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            tileColor:  context.watch<ExportPacketsProvider>().matchingSelected[index-1]? const Color(0XFFF0F5FF) : Colors.white,
+            tileColor:  context.watch<ExportPacketsProvider>().matchingSelected[index-1]? RegistrationTheme.accentTint : RegistrationTheme.card,
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -87,7 +88,7 @@ class ExportTable extends StatelessWidget {
           );
         },
         separatorBuilder: (BuildContext context, int index) {
-          return Container(height: 1,color:context.watch<ExportPacketsProvider>().matchingSelected[index]?Colors.white: const Color(0XFFF0F5FF),);
+          return Container(height: 1,color:context.watch<ExportPacketsProvider>().matchingSelected[index]?RegistrationTheme.card: RegistrationTheme.accentTint,);
         },
       ),
     );

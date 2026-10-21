@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/components.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/ui/export_packet/widgets/export_button.dart';
 import 'package:registration_client/ui/export_packet/widgets/search_box.dart';
@@ -33,7 +35,7 @@ class ExportPacketsPage extends StatelessWidget {
               margin: const EdgeInsets.all(14),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white.withOpacity(0.2),
+                    backgroundColor: RegistrationTheme.card.withOpacity(0.2),
                     padding: const EdgeInsets.all(4)),
                 child: const Icon(
                   Icons.arrow_back,
@@ -143,7 +145,7 @@ class ExportPacketsPage extends StatelessWidget {
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge
-                                  ?.copyWith(fontSize: 20),
+                                  ?.copyWith(fontSize: RegistrationTheme.fsTitle),
                             )
                                 : Text(
                               AppLocalizations.of(context)!
@@ -154,7 +156,7 @@ class ExportPacketsPage extends StatelessWidget {
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge
-                                  ?.copyWith(fontSize: 20),
+                                  ?.copyWith(fontSize: RegistrationTheme.fsTitle),
                             ),
                             const SizedBox(
                               width: 50,
@@ -182,14 +184,30 @@ class ExportPacketsPage extends StatelessWidget {
               const SizedBox(
                 height: 8,
               ),
-              const Expanded(
+              Expanded(
                 child: Card(
                   margin: EdgeInsets.zero,
-                  elevation: 2,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: ExportTable(),
-                  ),
+                  elevation: 0,
+                  child: context
+                          .watch<ExportPacketsProvider>()
+                          .matchingPackets
+                          .isEmpty
+                      // Explain the empty list instead of an empty table.
+                      ? Center(
+                          child: SingleChildScrollView(
+                            child: EmptyState(
+                              icon: Icons.inventory_2_outlined,
+                              title: AppLocalizations.of(context)!
+                                  .ui_packets_empty_title,
+                              message: AppLocalizations.of(context)!
+                                  .ui_packets_empty_message,
+                            ),
+                          ),
+                        )
+                      : const SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: ExportTable(),
+                        ),
                 ),
               )
             ],
