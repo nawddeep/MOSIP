@@ -30,8 +30,9 @@ Widgets must read colours, sizes, radii and durations from these files, never li
 | `sunkenStrong` | `#E0E0DB` | pressed / divider on sunken (paper-3) |
 | `ink` | `#0A0A0B` | primary text (fg-on-paper) |
 | `muted` | `#64646A` | secondary text, helper text, icons |
-| `line` | `#0A0A0B` @ 11% (`0x1C0A0A0B`) | 1px borders, dividers |
-| `lineStrong` | `#0A0A0B` @ 22% (`0x380A0A0B`) | input / outlined-button border, dialog border |
+| `line` | `#E4E4E4` (11% ink on white) | 1px borders, dividers |
+| `lineStrong` | `#C9C9C9` (22% ink on white) | outlined-button border, dialog border |
+| `inputBorder` | `#86868B` | text-field outline, checkbox/radio border (3.6:1, WCAG 1.4.11) |
 | `accent` | `#3B6FE8` | primary button fill, focus ring, selected indicator |
 | `accentPress` | `#2F5FD0` | pressed primary, **all blue text and links on paper** |
 | `onAccent` | `#FFFFFF` | text on accent |
@@ -74,6 +75,8 @@ Status tints (inline alerts, chips): background = status colour at 9% on surface
 | liveness text / secondary on ink | 18.07 / 6.03 | AA |
 | ok / warn / err / focus-blue on ink | 7.94 / 8.80 / 7.27 / 8.23 | AA |
 | accent `#3B6FE8` on ink | **4.33** | not used for text on ink |
+| Desktop 22% line as field outline | ~1.6 | fails 3:1 → fields use `inputBorder` (3.62 white / 3.38 canvas) |
+| muted on sunkenStrong | 4.44 | avoided: disabled states use `sunken` (5.01) |
 
 Colour is never the only signal: every status also carries an icon and a word
 (`✓ Synced`, `! Pending`, `× Failed`), and the liveness oval state is always paired with the instruction text.
@@ -84,8 +87,14 @@ Family: **IBM Plex Sans** (bundled, `IBMPlexSans`). Desktop uses Inter Tight; th
 deliberate difference: Plex is already bundled (offline, OFL-licensed) and the brief asks for it.
 Sizes, weights and tracking follow the Desktop.
 
-Mono labels: Desktop uses JetBrains Mono uppercase. Android has no bundled mono, so `label` is
-Plex Sans 11.5/600 with tracking 1.2, uppercased (a no-op in hi/ta/kn/ar).
+Mono labels: Desktop uses JetBrains Mono, upper-cased by CSS. Android has no bundled mono, so
+`label` is Plex Sans 11.5/600 with tracking 1.2. Text is **not** upper-cased in code: ui-test finds
+elements by `@text`, and changing the case of an existing string would break its locator.
+
+Scripts Plex does not cover (Arabic, Devanagari, Tamil, Kannada) fall back to the platform's Noto
+fonts on device. Every token style also names the fallback family `RegistrationScriptFallback`,
+which no device ships (so it is skipped); screenshot tests register a local script font under that
+name so RTL renders show real glyphs.
 
 | Style | Size / line | Weight | Tracking | Desktop source |
 |---|---|---|---|---|
@@ -95,6 +104,7 @@ Plex Sans 11.5/600 with tracking 1.2, uppercased (a no-op in hi/ta/kn/ar).
 | `body` | 16 / 1.5 | 400 | 0 | body (17 on Desktop; 16 on phone) |
 | `bodyStrong` | 16 / 1.5 | 500 | 0 | field values |
 | `small` | 14.5 / 1.45 | 400 | 0 | helper, secondary |
+| `fieldLabel` | 14.5 / 1.4 | 500 | 0 | label above a form field |
 | `xs` | 12.5 / 1.4 | 500 | 0 | timestamps, meta |
 | `label` | 11.5 / 1.3 | 600 | 1.2 | section labels (`CONSENT`, `REGISTRATION TASKS`) |
 | `button` | 16 / 1.2 | 600 | 0 | all buttons |
@@ -118,7 +128,7 @@ All sizes follow `MediaQuery.textScaleFactor`; nothing is clamped. Layouts must 
 | `.btn` 44px | buttons **48** min; primary **52** (`.btn-lg`); full-width primary at phone width |
 | `.btn-sm` 34px | not used; smallest target 48×48 |
 | Chip 36px | chip visual 36, hit area padded to 48 |
-| Side nav, 38px items | phone: existing bottom navigation, 64 tall, icon + label; tablet: existing top/side nav restyled |
+| Side nav, 38px items | phone: existing bottom `NavigationBar`, 76 tall (fits two-line translated labels), hairline on top; tablet: existing nav restyled |
 | Hover states | pressed states (`accentPress`, `sunken`) + ink ripple |
 | Toast top-right | floating SnackBar, bottom, inverted (ink bg, white text), radius 5 |
 
@@ -129,9 +139,9 @@ All sizes follow `MediaQuery.textScaleFactor`; nothing is clamped. Layouts must 
 - **Secondary (line) button**: transparent, 1px `lineStrong`, `ink` label, 48 tall.
 - **Ghost button**: no border, `accentPress` label, 48 tall (links, "Forgot password").
 - **Danger**: `err` fill, white label (logout confirm, discard).
-- **Input**: `surface` fill, 1px `lineStrong`, `r 5`, 52 tall, label above the field (`small`, 500,
-  `ink`), mandatory `*` in `err`. Focus: 2px `accent`. Error: 1px `err` border + message below with
-  an error icon, in `small`/`err`.
+- **Input**: `card` fill, 1px `inputBorder`, `r 5`, 52 tall, label `fieldLabel`, mandatory `*` in
+  `err`. Focus: 2px `accent`. Error: 1px `err` border + message below in `small`/`err` (up to 3 lines).
+  Provided by `InputDecorationTheme`; widgets should not override borders.
 - **Panel / card**: `surface`, 1px `line`, `rLg 8`, padding 16 (phone) / 20 (tablet). Optional
   header row: `label`-style title + trailing action.
 - **Task card** (home): panel with a leading 40px icon tile (`sunken`, `r 5`, `ink` icon), `heading`
@@ -155,12 +165,16 @@ All sizes follow `MediaQuery.textScaleFactor`; nothing is clamped. Layouts must 
 Easing `Cubic(0.22, 1, 0.36, 1)` (Desktop `--ease`). Durations: `fast 160ms`, `base 280ms`, `slow 480ms`.
 Every animation is skipped when `MediaQuery.disableAnimations` is true. Allowed moments only:
 
-1. Login success → Home: fade + 8px rise, `base`.
-2. Home cards: staggered fade/rise, 40ms stagger, total < 600ms.
-3. Liveness oval: existing ring animations (each state change < 600ms).
-4. Biometric capture success: check mark, `slow`.
-5. Registration complete: check + soft scale, `slow`.
-6. Sync indicator: rotating sync icon while syncing.
+| # | Moment | Implementation |
+|---|---|---|
+| 1 | Login success → Home | `FadeRise` around the home body (`mobile_home_page.dart`), `base` |
+| 2 | Home cards | `FadeRise` with `staggerFor(index)` in `HomePageCard`, 40ms steps capped at 7 → done < 600ms |
+| 3 | Liveness oval | existing `LivenessOval` ring animations (unchanged) |
+| 4 | Biometric capture success | `SuccessCheck` replaces the green check image on scanned tiles, `slow` |
+| 5 | Registration complete | `SuccessCheck` beside the acknowledgement title, `slow` |
+| 6 | Sync indicator | `SyncSpinner` on the Synchronize Data card while a global sync runs |
+
+All live in `lib/ui/theme/components.dart` and are covered by `test/ui/components_test.dart`.
 
 Forbidden: `BackdropFilter` over the camera, custom shaders, Lottie/Rive, new image assets, new packages.
 

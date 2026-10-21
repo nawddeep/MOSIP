@@ -2,8 +2,8 @@
 
 Purpose: support repeated registration work, operator access, and face verification.
 Audience: registration operators, residents following camera instructions, supervisors.
-Direction: calm, readable operations UI; retain MOSIP blue/white and dark face verification colors.
-Detail: consistent inset icon tiles, softly outlined surfaces, clear status chips, rounded rectangular controls.
+Direction: calm, readable operations UI matched to the Desktop client (paper palette, ink face verification); see design-system.md.
+Detail: sunken icon tiles, 1px hairline panels, icon + word status badges, 5/8 px radii.
 
 Targets: 390x844 phone and 1024x768 tablet; scrolling at enlarged text and keyboard insets.
 Login primary action: validate username, then existing password authentication. Preserve language, forgot-password, signup and debug access.

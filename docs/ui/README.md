@@ -1,22 +1,31 @@
-# UI refresh
+# UI
 
-The account and home screens retain MOSIP blue and white. Face verification retains its dark theme and amber/green/red status colors. Shared IBM Plex Sans typography, 14–20 px control/surface radii, quieter borders, and constrained responsive layouts connect the screens.
+The operator screens follow the Desktop client (`website/`): paper palette, IBM Plex Sans with the
+Desktop type scale, flat hairline panels, 5/8 px radii, one accent-blue primary action. Face
+verification uses the Desktop ink (dark) palette.
 
-- Login: responsive brand/form composition, language chips, labeled fields, keyboard submission, password visibility, and disabled busy actions.
-- Signup: refreshed access-request form and clearly separate local testing section. Validation and email/clipboard behavior are preserved.
-- Home: labeled Material navigation, segmented task selection, consistent actionable cards, two-column tablet workflows, and readable icons. At 200% text, narrow-screen task tabs stack. Empty workflows retain synchronization.
-- Verification: framed camera region, clearer header hierarchy, rounded controls, larger prompts, action progress, permission and error recovery. The native camera texture replaces the empty fixture preview on a real device.
+- Design system: [design-system.md](design-system.md)
+- Plan and per-screen notes: [redesign-plan.md](redesign-plan.md)
+- Changelog, including text/locator changes for `ui-test/`: [CHANGELOG.md](CHANGELOG.md)
+- Desktop reference captures: [desktop-reference/](desktop-reference/)
+- Before/after renders: [screenshots/before/](screenshots/before/), [screenshots/after/](screenshots/after/)
+- Golden previews (compared by tests): [previews/](previews/)
+- Behaviour rules: [design-contract.md](design-contract.md)
 
-## Verification
-
-52 tests pass using Flutter 3.10.4. Phone (390x844), tablet (1024x768), and 200% home text previews are retained under `previews/`. Visual tests use sample workflow data; they do not establish backend or model correctness. Static analysis of changed frontend files reports no errors or warnings; informational style notices remain.
-
-The design contract and review-evidence JSON record the scope and checks. No physical Android device was connected; on-device camera and TalkBack verification remain to be performed.
-
-To run the selected suite:
+## Tests
 
 ```sh
-flutter test test/face_liveness test/widgets/signup_page_test.dart test/widgets/password_visibility_test.dart test/ui
+flutter analyze
+flutter test test/face_liveness test/ui test/widgets
 ```
 
-APK packaging also supports Flutter's per-ABI builds without conflicting with release ABI filters. The normal universal build retains its existing architecture filters.
+`test/ui/modern_visual_review_test.dart` compares golden previews (phone 390x844, tablet 1024x768,
+200% text). `test/ui/rtl_layout_test.dart` checks Arabic RTL layout on the same sizes. To refresh the
+Arabic screenshots in `screenshots/after/` (macOS; uses the system Arabic font at render time only):
+
+```sh
+UI_SCREENSHOTS=1 flutter test test/ui/rtl_layout_test.dart --update-goldens
+```
+
+`test/ui/components_test.dart` covers reduced motion, the 600 ms motion budget, badges and touch
+sizes; `test/ui/ui_arb_parity_test.dart` keeps redesign strings translated in all six locales.
