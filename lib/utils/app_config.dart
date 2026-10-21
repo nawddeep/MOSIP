@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 
 String appIcon = 'assets/images/MOSIP Logo@2x.png';
 String appIconLogoOnly = 'assets/images/MOSIP Logo Only.png';
@@ -22,88 +23,95 @@ String dashboardSelectedIcon = 'assets/svg/DashboardSelected.svg';
 String settingsSelectedIcon = 'assets/svg/SettingsSelected.svg';
 String profileIcon = 'assets/svg/ProfileIcon.svg';
 String profileSelectedIcon = 'assets/svg/ProfileSelected.svg';
-Color solidPrimary = const Color(0xFF1C43A1);
+// Legacy colour names, re-pointed to the Desktop-matched tokens in
+// RegistrationTheme (docs/ui/design-system.md). Names are kept so existing
+// widgets follow; new code should use RegistrationTheme directly.
+Color solidPrimary = RegistrationTheme.accentPress;
 
-Color backgroundColor = const Color(0xFFF8FCFF);
-Color pureWhite = const Color(0xFFFFFFFF);
+Color backgroundColor = RegistrationTheme.canvas;
+Color pureWhite = RegistrationTheme.card;
 
-Color blackShade1 = const Color(0xFF333333);
+Color blackShade1 = RegistrationTheme.ink;
 
 List<Color> appColors = [
-  const Color(0xFF014DAF),
-  const Color(0xFFF97707),
-  const Color(0xFF01A2FD),
-  const Color(0xFFFEC401)
+  RegistrationTheme.accentPress,
+  RegistrationTheme.warn,
+  RegistrationTheme.accent,
+  RegistrationTheme.warnLine,
 ];
 
-const Color appWhite = Color(0xFFffffff);
-const Color appBlack = Color(0xFF000000);
-const Color appBlackShade1 = Color(0xFF333333);
-const Color appBlackShade2 = Color(0xFF6F6E6E);
-const Color appBlackShade3 = Color(0xFF999999);
-const Color appGreyShade = Color(0xFF9B9B9F);
-const Color appSolidPrimary = Color(0xFF1C43A1);
-const Color appBlueShade1 = Color(0xFF214FBF);
-const Color appInfoText = Color(0xFFB1C8FF);
-const Color appButtonBorderText = Color(0xFF1C43A2);
-const Color appYellow = Color(0xFFFEC401);
-const Color appOrange = Color(0xFFF97707);
-const Color appBackButtonBorder = Color(0xFF2A4EA7);
-const Color buttonDisabled = Color(0XFFCCCCCC);
-const Color mandatoryField = Color(0XFFD32D2D);
-const Color previewHeaderColor = Color(0XFF666666);
-const Color previewHeaderComponentColor = Color(0XFFF5F5F5);
-const Color authIconBackground = Color(0XFFF8FCFF);
-const Color authIconBorder = Color(0XFFE1EDF5);
-const Color dividerColor = Color(0XFFE5EBFA);
-const Color languageSelectedColor = Color(0XFF1C429F);
-const Color languageFreezedColor = Color(0XFFD9E3FF);
-const Color appBlueShade = Color(0XFFFAFBFF);
-const Color greyBorderShade = Color(0XFFEAEAEA);
+const Color appWhite = RegistrationTheme.card;
+const Color appBlack = RegistrationTheme.ink;
+const Color appBlackShade1 = RegistrationTheme.ink;
+const Color appBlackShade2 = RegistrationTheme.muted;
+// Was #999999 (2.8:1, fails AA); muted keeps hints readable.
+const Color appBlackShade3 = RegistrationTheme.muted;
+const Color appGreyShade = RegistrationTheme.inputBorder;
+// Used as fill and as text, so the AA-safe pressed blue.
+const Color appSolidPrimary = RegistrationTheme.accentPress;
+const Color appBlueShade1 = RegistrationTheme.accent;
+const Color appInfoText = RegistrationTheme.focusOnInk;
+const Color appButtonBorderText = RegistrationTheme.accentPress;
+const Color appYellow = RegistrationTheme.warnLine;
+const Color appOrange = RegistrationTheme.warn;
+const Color appBackButtonBorder = RegistrationTheme.lineStrong;
+const Color buttonDisabled = RegistrationTheme.sunkenStrong;
+const Color mandatoryField = RegistrationTheme.err;
+const Color previewHeaderColor = RegistrationTheme.muted;
+const Color previewHeaderComponentColor = RegistrationTheme.sunken;
+const Color authIconBackground = RegistrationTheme.canvas;
+const Color authIconBorder = RegistrationTheme.line;
+const Color dividerColor = RegistrationTheme.line;
+const Color languageSelectedColor = RegistrationTheme.accentPress;
+const Color languageFreezedColor = RegistrationTheme.accentTint;
+const Color appBlueShade = RegistrationTheme.cardAlt;
+const Color greyBorderShade = RegistrationTheme.line;
 const Color dropShadow = Color(0X0000000F);
-const Color iconContainerColor = Color(0XFFF4F7FF);
-const Color memoryCardColor = Color(0XFFF0F5FF);
-const Color appRed = Color(0xFFBE1B1B);
-const Color dropDownSelector = Color(0xFF1C429F);
-const Color dropDownDividerColor = Color(0xFFBDCDF4);
-const Color dashBoardPacketUploadColor = Color(0xFF4B9B21);
-const Color dashBoardPacketUploadPendingColor = Color(0xFFE5961A);
-const Color dashBoardPacketUploadExceptionColor = Color(0xFFB71D1D);
-const Color logoutButtonColor = Color(0xFFC70000);
-const Color bottomBarSelectedColor = Color(0xFFEFF4FF);
-const Color bulletPointColor = Color(0xFF656565);
+const Color iconContainerColor = RegistrationTheme.sunken;
+const Color memoryCardColor = RegistrationTheme.cardAlt;
+const Color appRed = RegistrationTheme.err;
+const Color dropDownSelector = RegistrationTheme.accentPress;
+const Color dropDownDividerColor = RegistrationTheme.line;
+const Color dashBoardPacketUploadColor = RegistrationTheme.ok;
+const Color dashBoardPacketUploadPendingColor = RegistrationTheme.warn;
+const Color dashBoardPacketUploadExceptionColor = RegistrationTheme.err;
+const Color logoutButtonColor = RegistrationTheme.err;
+const Color bottomBarSelectedColor = RegistrationTheme.sunken;
+const Color bulletPointColor = RegistrationTheme.muted;
 
+// Indexed palette used across process_ui. Order must not change.
 List<Color> secondaryColors = [
-  const Color(0xFF214FBF),
-  const Color(0xFF6F6E6E),
-  const Color(0xFF999999),
-  const Color(0xFFFAFBFF),
-  const Color(0xFFF4F7FF),
-  const Color(0xFF7F7F7F),
-  const Color(0xFF1A9B42),
-  const Color(0xFF4E4E4E),
-  const Color(0xFF000000),
-  const Color(0xFFC0CAE3),
-  const Color(0xFFFAFBFF),
-  const Color(0xFF4B9D20),
-  const Color(0xFF1C429F),
-  const Color(0xFFE1EDF5),
-  const Color(0xFFE5EBFA),
-  const Color(0xFFFF0000),
-  const Color(0xFFF29D1C),
-  const Color(0xFFE0E0E0),
-  const Color(0xFFF8F8F8),
-  const Color(0xFF848484),
-  const Color(0xFFC11717),
-  const Color(0xFFF7F7F7),
-  const Color(0xFFCCCCCC),
-  const Color(0xFFFFF7EB),
-  const Color(0xFFA8781E),
-  const Color(0xFFFF0202),
-  const Color(0xFFC4102B),
+  RegistrationTheme.accent, // 0
+  RegistrationTheme.muted, // 1
+  RegistrationTheme.muted, // 2 (was #999, fails AA)
+  RegistrationTheme.cardAlt, // 3
+  RegistrationTheme.sunken, // 4
+  RegistrationTheme.muted, // 5
+  RegistrationTheme.ok, // 6
+  RegistrationTheme.ink, // 7
+  RegistrationTheme.ink, // 8
+  RegistrationTheme.lineStrong, // 9
+  RegistrationTheme.cardAlt, // 10
+  RegistrationTheme.ok, // 11
+  RegistrationTheme.accentPress, // 12
+  RegistrationTheme.line, // 13
+  RegistrationTheme.line, // 14
+  RegistrationTheme.err, // 15
+  RegistrationTheme.warn, // 16
+  RegistrationTheme.sunkenStrong, // 17
+  RegistrationTheme.cardAlt, // 18
+  RegistrationTheme.muted, // 19
+  RegistrationTheme.err, // 20
+  RegistrationTheme.canvas, // 21
+  RegistrationTheme.lineStrong, // 22
+  RegistrationTheme.warnTint, // 23
+  RegistrationTheme.warn, // 24
+  RegistrationTheme.err, // 25
+  RegistrationTheme.err, // 26
 ];
-FontWeight regular = FontWeight.w300;
-FontWeight bold = FontWeight.bold;
+// IBM Plex Sans ships 400/500/600; 300 and 700 would be synthesized.
+FontWeight regular = FontWeight.w400;
+FontWeight bold = FontWeight.w600;
 FontWeight semiBold = FontWeight.w500;
 
 /* For 1.1.5 configuration, the screen headers will be saved in the 

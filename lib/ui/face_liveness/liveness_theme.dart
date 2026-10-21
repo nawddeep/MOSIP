@@ -12,22 +12,31 @@ import 'package:registration_client/model/face_liveness_event.dart';
 class LivenessTheme {
   LivenessTheme._();
 
-  static const Color background = Color(0xFF0F1215);
-  static const Color ovalFill = Color(0xFF151A20);
-  static const Color text = Color(0xFFF2F4F7);
-  static const Color textSecondary = Color(0xFFA5AEB8);
+  // Desktop "ink" theme (website/ :root), see docs/ui/design-system.md.
+  static const Color background = Color(0xFF0B0B0C); // ink-0
+  static const Color ovalFill = Color(0xFF161618); // ink-2
+  static const Color raised = Color(0xFF1C1C1F); // ink-3
+  static const Color line = Color(0x1CF5F5F7); // line-on-ink, 11%
+  static const Color text = Color(0xFFF5F5F7); // fg-on-ink
+  static const Color textSecondary = Color(0xFF8E8E93); // mute-on-ink
 
-  static const Color checking = Color(0xFFA9BCCF);
-  static const Color challenge = Color(0xFFE5B14B);
-  static const Color success = Color(0xFF6CC08B);
-  static const Color failure = Color(0xFFE0746B);
+  /// Desktop focus-blue: plain accent blue is 4.3:1 on ink, below AA.
+  static const Color checking = Color(0xFF86A6F5);
+  static const Color challenge = Color(0xFFCDA866); // warn-ink
+  static const Color success = Color(0xFF86AE90); // ok-ink
+  static const Color failure = Color(0xFFD48A82); // err-ink
+
+  /// Primary button fill (white label, 4.5:1).
+  static const Color accent = Color(0xFF3B6FE8);
+  static const Color onAccent = Color(0xFFFFFFFF);
 
   static const String fontFamily = 'IBMPlexSans';
 
   static const double gutter = 24;
   static const double gap = 12;
+  static const double radius = 5;
   static const double buttonHeight = 52;
-  static const double minTouchTarget = 44;
+  static const double minTouchTarget = 48;
   static const double maxContentWidth = 560;
   static const Duration stateTransition = Duration(milliseconds: 220);
 

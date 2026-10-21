@@ -18,6 +18,7 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/login_page.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_driver/driver_extension.dart';
 import 'package:flutter/services.dart';
@@ -236,16 +237,7 @@ class _BuildAppState extends State<BuildApp> {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: context.watch<GlobalProvider>().appLocal,
-          theme: ThemeData(
-            colorScheme: ColorScheme.light(primary: solidPrimary),
-            primaryColor: solidPrimary,
-            textTheme: const TextTheme(
-              titleLarge: TextStyle(fontSize: 24),
-              bodyLarge: TextStyle(fontSize: 18),
-            ),
-            elevatedButtonTheme:
-            const ElevatedButtonThemeData(style: ButtonStyle()),
-          ),
+          theme: RegistrationTheme.light(),
           builder: (context, child) {
             MediaQueryData mediaQueryData = MediaQuery.of(context);
             Orientation orientation = mediaQueryData.orientation;

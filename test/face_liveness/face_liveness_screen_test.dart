@@ -162,15 +162,15 @@ void main() {
 
   test('status colours follow the design tokens', () {
     expect(LivenessTheme.ringColor(LivenessUiState.passiveCheck),
-        const Color(0xFFA9BCCF));
+        const Color(0xFF86A6F5));
     expect(LivenessTheme.ringColor(LivenessUiState.challenge),
-        const Color(0xFFE5B14B));
+        const Color(0xFFCDA866));
     expect(LivenessTheme.ringColor(LivenessUiState.success),
-        const Color(0xFF6CC08B));
+        const Color(0xFF86AE90));
     expect(LivenessTheme.ringColor(LivenessUiState.padFailed),
-        const Color(0xFFE0746B));
-    expect(LivenessTheme.background, const Color(0xFF0F1215));
-    expect(LivenessTheme.ovalFill, const Color(0xFF151A20));
+        const Color(0xFFD48A82));
+    expect(LivenessTheme.background, const Color(0xFF0B0B0C));
+    expect(LivenessTheme.ovalFill, const Color(0xFF161618));
   });
 
   testWidgets('intro, start, challenge, success, continue pops true',
@@ -325,7 +325,7 @@ void main() {
     await offline.close();
   });
 
-  testWidgets('pill buttons are 52 px tall and touch targets at least 44 px',
+  testWidgets('pill buttons are 52 px tall and touch targets at least 48 px',
       (tester) async {
     final mock = MockFaceLivenessService(autoPlay: false);
     await tester.pumpWidget(host(
@@ -339,7 +339,7 @@ void main() {
       expect(tester.getSize(find.byWidget(e.widget)).height, 52);
     }
     expect(tester.getSize(find.byTooltip('Back')).height,
-        greaterThanOrEqualTo(44));
+        greaterThanOrEqualTo(48));
   });
 
   testWidgets('recovery explains next steps without accepting verification',

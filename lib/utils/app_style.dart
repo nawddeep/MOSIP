@@ -53,7 +53,7 @@ abstract class AppTextStyle {
   );
 
   static TextStyle mobileButtonText = const TextStyle(
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w600,
     fontSize: 14,
     color: appWhite,
     letterSpacing: 0.5,
@@ -67,7 +67,7 @@ abstract class AppTextStyle {
   );
   
   static TextStyle mobileCommunityRegClientText = const TextStyle(
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w600,
     fontSize: 18,
     color: appWhite,
     letterSpacing: 0.5,
@@ -81,14 +81,14 @@ abstract class AppTextStyle {
   );
 
   static TextStyle mobileForgotPasswordText = const TextStyle(
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w600,
     fontSize: 14,
     color: appSolidPrimary,
     letterSpacing: 0.5,
   );
 
   static TextStyle mobileBackButtonText = const TextStyle(
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w600,
     fontSize: 14,
     color: appButtonBorderText,
     letterSpacing: 0.5,
@@ -130,7 +130,7 @@ abstract class AppTextStyle {
   );
 
   static TextStyle tabletButtonText = const TextStyle(
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w600,
     fontSize: 14,
     color: appWhite,
     letterSpacing: 0,
@@ -144,7 +144,7 @@ abstract class AppTextStyle {
   );
 
   static TextStyle tabletCommunityRegClientText = const TextStyle(
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w600,
     fontSize: 26,
     color: appWhite,
     letterSpacing: 0,
@@ -165,7 +165,7 @@ abstract class AppTextStyle {
   );
 
   static TextStyle tabletBackButtonText = const TextStyle(
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w600,
     fontSize: 14,
     color: appButtonBorderText,
     letterSpacing: 0,
@@ -191,13 +191,13 @@ abstract class AppTextStyle {
 
   static TextStyle primaryButtonText = TextStyle(
     fontWeight: bold,
-    fontSize: 21,
+    fontSize: 18,
     color: appWhite
   );
 
   static TextStyle secondaryButtonText = TextStyle(
     fontWeight: bold,
-    fontSize: 21,
+    fontSize: 18,
     color: appButtonBorderText
   );
 
@@ -256,7 +256,7 @@ abstract class AppTextStyle {
   );
 
   static TextStyle tabletPortraitButtonText = const TextStyle(
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w600,
     fontSize: 22,
     color: appWhite,
     letterSpacing: 0.5,
@@ -270,7 +270,7 @@ abstract class AppTextStyle {
   );
 
   static TextStyle tabletPortraitCommunityRegClientText = const TextStyle(
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w600,
     fontSize: 36,
     color: appWhite,
     letterSpacing: 0.5,
@@ -284,14 +284,14 @@ abstract class AppTextStyle {
   );
 
   static TextStyle tabletPortraitForgotPasswordText = const TextStyle(
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w600,
     fontSize: 22,
     color: appSolidPrimary,
     letterSpacing: 0.5,
   );
 
   static TextStyle tabletPortraitBackButtonText = const TextStyle(
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w600,
     fontSize: 22,
     color: appButtonBorderText,
     letterSpacing: 0.5,
