@@ -423,5 +423,7 @@
   "liveness_open_settings": "ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ",
   "liveness_starting": "ಮುಖ ಪರಿಶೀಲನೆ ಪ್ರಾರಂಭವಾಗುತ್ತಿದೆ",
   "liveness_challenge_number": "ಸವಾಲು {number}",
-  "liveness_challenge_next": "ಕ್ರಿಯೆ ಪತ್ತೆಯಾಗಿದೆ. ಸವಾಲು {number}"
+  "liveness_challenge_next": "ಕ್ರಿಯೆ ಪತ್ತೆಯಾಗಿದೆ. ಸವಾಲು {number}",
+  "ui_packets_empty_title": "ತೋರಿಸಲು ಯಾವುದೇ ಪ್ಯಾಕೆಟ್‌ಗಳಿಲ್ಲ",
+  "ui_packets_empty_message": "ಪೂರ್ಣಗೊಂಡ ನೋಂದಣಿಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ. ನೀವು ಹುಡುಕಾಟ ಅಥವಾ ಫಿಲ್ಟರ್ ಬಳಸಿದ್ದರೆ, ಎಲ್ಲಾ ಪ್ಯಾಕೆಟ್‌ಗಳನ್ನು ನೋಡಲು ಅದನ್ನು ತೆರವುಗೊಳಿಸಿ."
 }

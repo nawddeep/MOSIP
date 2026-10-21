@@ -423,5 +423,7 @@
   "liveness_open_settings": "Ouvrir les paramètres",
   "liveness_starting": "Démarrage de la vérification du visage",
   "liveness_challenge_number": "Défi {number}",
-  "liveness_challenge_next": "Action détectée. Défi {number}"
+  "liveness_challenge_next": "Action détectée. Défi {number}",
+  "ui_packets_empty_title": "Aucun paquet à afficher",
+  "ui_packets_empty_message": "Les enregistrements terminés apparaissent ici. Si vous avez effectué une recherche ou appliqué un filtre, effacez-le pour voir tous les paquets."
 }

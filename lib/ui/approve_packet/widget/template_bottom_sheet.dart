@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/utils/secure_storage.dart';
@@ -40,7 +41,7 @@ class TemplateBottomSheet {
         return Container(
           height: MediaQuery.of(context).size.height * 0.85,
           decoration: const BoxDecoration(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(RegistrationTheme.rLg)),
           ),
           child: Column(
             children: [
@@ -50,7 +51,7 @@ class TemplateBottomSheet {
                 margin: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(28),
-                  color: Colors.black26,
+                  color: RegistrationTheme.lineStrong,
                 ),
               ),
               Expanded(
@@ -93,13 +94,13 @@ class TemplateBottomSheet {
                             elevation: 0,
                             shape: CircleBorder(
                               side: BorderSide(
-                                color: (currentInd > 1) ? solidPrimary : Colors.grey,
+                                color: (currentInd > 1) ? solidPrimary : RegistrationTheme.muted,
                               ),
                             ),
                             child: IconButton(
                               icon: Icon(
                                 Icons.arrow_back,
-                                color: (currentInd > 1) ? solidPrimary : Colors.grey,
+                                color: (currentInd > 1) ? solidPrimary : RegistrationTheme.muted,
                               ),
                               onPressed: (currentInd > 1)
                                   ? () {
@@ -130,7 +131,7 @@ class TemplateBottomSheet {
                                     backgroundColor: solidPrimary,
                                     padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
                                   ),
-                                  icon: const Icon(Icons.check_outlined, color: Colors.white),
+                                  icon: const Icon(Icons.check_outlined, color: RegistrationTheme.card),
                                   label: Text(
                                     AppLocalizations.of(context)!.approve,
                                     style: const TextStyle(fontWeight: FontWeight.bold),
@@ -169,9 +170,9 @@ class TemplateBottomSheet {
                                     style: const TextStyle(fontWeight: FontWeight.bold),
                                   ),
                                   style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.red,
+                                    foregroundColor: RegistrationTheme.err,
                                     padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
-                                    side: const BorderSide(color: Colors.red, width: 2),
+                                    side: const BorderSide(color: RegistrationTheme.err, width: 2),
                                   ),
                                   onPressed: reviewStatus == ReviewStatus.REJECTED.name
                                       ? null
@@ -214,7 +215,7 @@ class TemplateBottomSheet {
                                   width: 190.sp,
                                   child: OutlinedButton(
                                     style: OutlinedButton.styleFrom(
-                                      backgroundColor: Colors.white,
+                                      backgroundColor: RegistrationTheme.card,
                                       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
                                       side: BorderSide(color: Colors.transparent, width: 2),
                                     ).copyWith(
@@ -255,7 +256,7 @@ class TemplateBottomSheet {
                                           .matchingPackets
                                           .length)
                                       ? solidPrimary
-                                      : Colors.grey,
+                                      : RegistrationTheme.muted,
                                 )),
                             child: IconButton(
                               icon: Icon(
@@ -266,7 +267,7 @@ class TemplateBottomSheet {
                                         .matchingPackets
                                         .length)
                                     ? solidPrimary
-                                    : Colors.grey,
+                                    : RegistrationTheme.muted,
                                 size: 24,
                               ),
                               onPressed: currentInd <
@@ -306,12 +307,12 @@ class TemplateBottomSheet {
                     elevation: 0,
                     shape: CircleBorder(
                         side: BorderSide(
-                          color: (currentInd > 1) ? solidPrimary : Colors.grey,
+                          color: (currentInd > 1) ? solidPrimary : RegistrationTheme.muted,
                         )),
                     child: IconButton(
                       icon: Icon(
                         Icons.arrow_back,
-                        color: (currentInd > 1) ? solidPrimary : Colors.grey,
+                        color: (currentInd > 1) ? solidPrimary : RegistrationTheme.muted,
                       ),
                       onPressed: (currentInd > 1)
                           ? () {
@@ -338,14 +339,14 @@ class TemplateBottomSheet {
                     children: [
                       ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          disabledForegroundColor: Colors.white,
-                          disabledBackgroundColor: Colors.grey.withOpacity(0.5),
+                          disabledForegroundColor: RegistrationTheme.card,
+                          disabledBackgroundColor: RegistrationTheme.sunken,
                           padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 18),
                         ),
                         icon: const Icon(
                           Icons.check_outlined,
-                          color: Colors.white,
+                          color: RegistrationTheme.card,
                         ),
                         onPressed: reviewStatus == ReviewStatus.APPROVED.name
                             ? null
@@ -416,15 +417,15 @@ class TemplateBottomSheet {
                               });
                         },
                         style: OutlinedButton.styleFrom(
-                          disabledForegroundColor: Colors.white,
-                          disabledBackgroundColor: Colors.grey.withOpacity(0.5),
-                          foregroundColor: Colors.red,
+                          disabledForegroundColor: RegistrationTheme.card,
+                          disabledBackgroundColor: RegistrationTheme.sunken,
+                          foregroundColor: RegistrationTheme.err,
                           padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 18),
                           side: BorderSide(
                               color: reviewStatus == ReviewStatus.REJECTED.name
                                   ? Colors.transparent
-                                  : Colors.red,
+                                  : RegistrationTheme.err,
                               width: 2),
                         ),
                         label: Text(
@@ -441,7 +442,7 @@ class TemplateBottomSheet {
                         shape: CircleBorder(
                             side: BorderSide(
                               color: reviewStatus == ReviewStatus.NOACTIONTAKEN.name
-                                  ? Colors.grey
+                                  ? RegistrationTheme.muted
                                   : solidPrimary,
                             )),
                         child: IconButton(
@@ -457,7 +458,7 @@ class TemplateBottomSheet {
                             Icons.refresh_outlined,
                             color:
                             reviewStatus == ReviewStatus.NOACTIONTAKEN.name
-                                ? Colors.grey
+                                ? RegistrationTheme.muted
                                 : solidPrimary,
                             size: 28,
                           ),
@@ -476,7 +477,7 @@ class TemplateBottomSheet {
                                   .matchingPackets
                                   .length)
                               ? solidPrimary
-                              : Colors.grey,
+                              : RegistrationTheme.muted,
                         )),
                     child: IconButton(
                       icon: Icon(
@@ -487,7 +488,7 @@ class TemplateBottomSheet {
                                 .matchingPackets
                                 .length)
                             ? solidPrimary
-                            : Colors.grey,
+                            : RegistrationTheme.muted,
                         size: 24,
                       ),
                       onPressed: currentInd <

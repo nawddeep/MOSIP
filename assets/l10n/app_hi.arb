@@ -423,5 +423,7 @@
   "liveness_open_settings": "सेटिंग्स खोलें",
   "liveness_starting": "चेहरा सत्यापन शुरू हो रहा है",
   "liveness_challenge_number": "चुनौती {number}",
-  "liveness_challenge_next": "क्रिया पहचानी गई। चुनौती {number}"
+  "liveness_challenge_next": "क्रिया पहचानी गई। चुनौती {number}",
+  "ui_packets_empty_title": "दिखाने के लिए कोई पैकेट नहीं",
+  "ui_packets_empty_message": "पूरे हो चुके पंजीकरण यहाँ दिखाई देते हैं। यदि आपने खोज या फ़िल्टर लगाया है, तो सभी पैकेट देखने के लिए उसे साफ़ करें।"
 }

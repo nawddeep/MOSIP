@@ -4,6 +4,7 @@ import 'package:registration_client/model/face_liveness_event.dart';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/approve_packets_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -130,7 +131,7 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
     const double width = 600;
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
       ),
       child: SingleChildScrollView(
         child: Padding(
@@ -164,7 +165,7 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                     AppLocalizations.of(context)!.supervisor_auth_heading,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                        fontSize: 28.0, fontWeight: FontWeight.bold),
+                        fontSize: RegistrationTheme.fsDisplay, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16.0),
                   SizedBox(
@@ -173,7 +174,7 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                       AppLocalizations.of(context)!.supervisor_auth_subheading,
                       textAlign: TextAlign.center,
                       softWrap: true,
-                      style: const TextStyle(fontSize: 18),
+                      style: const TextStyle(fontSize: RegistrationTheme.fsHeading),
                     ),
                   ),
                   const SizedBox(height: 24.0),
@@ -189,11 +190,11 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                             Text(
                               "${AppLocalizations.of(context)!.username} ",
                               style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w500),
+                                  fontSize: RegistrationTheme.fsHeading, fontWeight: FontWeight.w500),
                             ),
                             const Text(
                               "*",
-                              style: TextStyle(color: Colors.red, fontSize: 18),
+                              style: TextStyle(color: RegistrationTheme.err, fontSize: RegistrationTheme.fsHeading),
                             )
                           ],
                         ),
@@ -219,14 +220,14 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderSide: const BorderSide(
-                                color: Colors.black26,
+                                color: RegistrationTheme.lineStrong,
                               ),
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 22),
                           ),
-                          style: const TextStyle(fontSize: 18),
+                          style: const TextStyle(fontSize: RegistrationTheme.fsHeading),
                         ),
                       ],
                     ),
@@ -245,11 +246,11 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                             Text(
                               "${AppLocalizations.of(context)!.password} ",
                               style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w500),
+                                  fontSize: RegistrationTheme.fsHeading, fontWeight: FontWeight.w500),
                             ),
                             const Text(
                               "*",
-                              style: TextStyle(color: Colors.red, fontSize: 18),
+                              style: TextStyle(color: RegistrationTheme.err, fontSize: RegistrationTheme.fsHeading),
                             )
                           ],
                         ),
@@ -275,14 +276,14 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                             ),
                             border: OutlineInputBorder(
                               borderSide: const BorderSide(
-                                color: Colors.black26,
+                                color: RegistrationTheme.lineStrong,
                               ),
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 22),
                           ),
-                          style: const TextStyle(fontSize: 18),
+                          style: const TextStyle(fontSize: RegistrationTheme.fsHeading),
                         ),
                       ],
                     ),
@@ -301,8 +302,8 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                           ? Text(
                               loginError,
                               style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.red[900],
+                                fontSize: RegistrationTheme.fsBody,
+                                color: RegistrationTheme.err,
                               ),
                             )
                           : const SizedBox(
@@ -319,7 +320,7 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                               await submitReviews();
                             } : (){},
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: validateForm() ? solidPrimary : Colors.grey,
+                                backgroundColor: validateForm() ? solidPrimary : RegistrationTheme.muted,
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 16, horizontal: 32)),
                             child: loading
@@ -327,12 +328,12 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                                     padding:
                                         EdgeInsets.symmetric(horizontal: 20),
                                     child: CircularProgressIndicator(
-                                      color: Colors.white,
+                                      color: RegistrationTheme.card,
                                     ),
                                   )
                                 : Text(
                                     AppLocalizations.of(context)!.submit,
-                                    style: const TextStyle(fontSize: 18),
+                                    style: const TextStyle(fontSize: RegistrationTheme.fsHeading),
                                   )),
                       ),
                     ],

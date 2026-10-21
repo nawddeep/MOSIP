@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/approve_packets_provider.dart';
@@ -10,7 +11,7 @@ Widget dialogBox(callback, BuildContext context) {
 
   return Dialog(
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
     ),
     child: SingleChildScrollView(
       child: Padding(
@@ -29,7 +30,7 @@ Widget dialogBox(callback, BuildContext context) {
               Text(
                 AppLocalizations.of(context)!.reject_dialog_heading,
                 style: const TextStyle(
-                    fontSize: 28.0, fontWeight: FontWeight.bold),
+                    fontSize: RegistrationTheme.fsDisplay, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16.0),
               SizedBox(
@@ -38,7 +39,7 @@ Widget dialogBox(callback, BuildContext context) {
                   AppLocalizations.of(context)!.reject_dialog_subheading,
                   textAlign: TextAlign.center,
                   softWrap: true,
-                  style: const TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: RegistrationTheme.fsHeading),
                 ),
               ),
               const SizedBox(height: 40.0),
@@ -52,11 +53,11 @@ Widget dialogBox(callback, BuildContext context) {
                         Text(
                           "${AppLocalizations.of(context)!.reason_rejection} ",
                           style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: RegistrationTheme.fsHeading, fontWeight: FontWeight.w500),
                         ),
                         const Text(
                           "*",
-                          style: TextStyle(color: Colors.red, fontSize: 18),
+                          style: TextStyle(color: RegistrationTheme.err, fontSize: RegistrationTheme.fsHeading),
                         )
                       ],
                     ),
@@ -64,8 +65,8 @@ Widget dialogBox(callback, BuildContext context) {
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black26),
-                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: RegistrationTheme.lineStrong),
+                        borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
@@ -114,8 +115,8 @@ Widget dialogBox(callback, BuildContext context) {
                       ? Text(
                           AppLocalizations.of(context)!.no_reason_selected,
                           style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.red[900],
+                            fontSize: RegistrationTheme.fsBody,
+                            color: RegistrationTheme.err,
                           ),
                         )
                       : const SizedBox(
@@ -143,7 +144,7 @@ Widget dialogBox(callback, BuildContext context) {
                               vertical: 16, horizontal: 32)),
                       child: Text(
                         AppLocalizations.of(context)!.reject,
-                        style: const TextStyle(fontSize: 18),
+                        style: const TextStyle(fontSize: RegistrationTheme.fsHeading),
                       )),
                 ],
               )

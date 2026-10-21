@@ -423,5 +423,7 @@
   "liveness_open_settings": "فتح الإعدادات",
   "liveness_starting": "جارٍ بدء التحقق من الوجه",
   "liveness_challenge_number": "التحدي {number}",
-  "liveness_challenge_next": "تم اكتشاف الإجراء. التحدي {number}"
+  "liveness_challenge_next": "تم اكتشاف الإجراء. التحدي {number}",
+  "ui_packets_empty_title": "لا توجد حزم لعرضها",
+  "ui_packets_empty_message": "تظهر هنا عمليات التسجيل المكتملة. إذا استخدمت البحث أو عامل تصفية، فامسحه لعرض جميع الحزم."
 }

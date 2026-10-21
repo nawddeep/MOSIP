@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/components.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -75,7 +77,7 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
             style: Theme.of(context)
                 .textTheme
                 .titleLarge
-                ?.copyWith(color: Colors.white, fontSize: 17),
+                ?.copyWith(color: RegistrationTheme.card, fontSize: RegistrationTheme.fsHeading),
           ),
         ),
       ),
@@ -96,7 +98,7 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
             margin: const EdgeInsets.all(14),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withOpacity(0.2),
+                  backgroundColor: RegistrationTheme.card.withOpacity(0.2),
                   padding: const EdgeInsets.all(4)),
               child: const Icon(
                 Icons.arrow_back,
@@ -171,7 +173,7 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleLarge
-                                      ?.copyWith(fontSize: 20),
+                                      ?.copyWith(fontSize: RegistrationTheme.fsTitle),
                                 )
                               : Text(
                                   AppLocalizations.of(context)!
@@ -182,7 +184,7 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleLarge
-                                      ?.copyWith(fontSize: 20),
+                                      ?.copyWith(fontSize: RegistrationTheme.fsTitle),
                                 ),
                           const SizedBox(
                             width: 50,
@@ -200,14 +202,31 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
             Expanded(
               child: Card(
                 margin: EdgeInsets.zero,
-                elevation: 2,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: ApproveTable(
-                    matchingPackets:
-                        context.watch<ApprovePacketsProvider>().matchingPackets,
-                  ),
-                ),
+                elevation: 0,
+                child: context
+                        .watch<ApprovePacketsProvider>()
+                        .matchingPackets
+                        .isEmpty
+                    // Explain the empty list instead of an empty table.
+                    ? Center(
+                        child: SingleChildScrollView(
+                          child: EmptyState(
+                            icon: Icons.inventory_2_outlined,
+                            title: AppLocalizations.of(context)!
+                                .ui_packets_empty_title,
+                            message: AppLocalizations.of(context)!
+                                .ui_packets_empty_message,
+                          ),
+                        ),
+                      )
+                    : SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: ApproveTable(
+                          matchingPackets: context
+                              .watch<ApprovePacketsProvider>()
+                              .matchingPackets,
+                        ),
+                      ),
               ),
             )
           ],

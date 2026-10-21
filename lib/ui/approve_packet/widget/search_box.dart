@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
@@ -11,7 +12,7 @@ class SearchBoxApprove extends StatelessWidget {
   Widget build(BuildContext context) {
     return  Container(
       height: 60,
-      color: Colors.white,
+      color: RegistrationTheme.card,
       child: TextField(
         onTapOutside: (pointer){FocusScope.of(context).unfocus();},
         decoration:   InputDecoration(

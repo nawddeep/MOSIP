@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/components.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -24,10 +26,10 @@ class _ApproveTableState extends State<ApproveTable> {
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        backgroundColor: Colors.white,
+        backgroundColor: RegistrationTheme.card,
         elevation: 4,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(RegistrationTheme.rLg)),
         ),
         builder: (_) {
           return TemplateBottomSheet().bottomSheet(context);
@@ -41,11 +43,12 @@ class _ApproveTableState extends State<ApproveTable> {
     TextStyle? textTheme = Theme.of(context)
         .textTheme
         .bodySmall
-        ?.copyWith(fontSize: 16, fontWeight: FontWeight.w900);
-    Map<String, Color> reviewColor = {
-      ReviewStatus.APPROVED.name: Colors.green,
-      ReviewStatus.REJECTED.name: Colors.red,
-      ReviewStatus.NOACTIONTAKEN.name: Colors.black45
+        ?.copyWith(fontSize: RegistrationTheme.fsBody, fontWeight: FontWeight.w600);
+    // Status shown as a badge: icon + the existing word, never colour alone.
+    Map<String, StatusTone> reviewTone = {
+      ReviewStatus.APPROVED.name: StatusTone.ok,
+      ReviewStatus.REJECTED.name: StatusTone.err,
+      ReviewStatus.NOACTIONTAKEN.name: StatusTone.warn
     };
     return SizedBox(
       width: tableWidth,
@@ -56,7 +59,7 @@ class _ApproveTableState extends State<ApproveTable> {
             return Column(
               children: [
                 Container(
-                  color: Colors.white,
+                  color: RegistrationTheme.card,
                   child: ListTile(
                     horizontalTitleGap: 0,
                     leading: Checkbox(
@@ -128,7 +131,7 @@ class _ApproveTableState extends State<ApproveTable> {
                     },
                   ),
                 ),
-                Container(height: 1.25, color: Colors.grey.shade200),
+                Container(height: 1.25, color: RegistrationTheme.line),
               ],
             );
           }
@@ -160,8 +163,8 @@ class _ApproveTableState extends State<ApproveTable> {
             tileColor: context
                     .watch<ApprovePacketsProvider>()
                     .matchingSelected[index - 1]
-                ? const Color(0XFFF0F5FF)
-                : Colors.white,
+                ? RegistrationTheme.accentTint
+                : RegistrationTheme.card,
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -204,16 +207,13 @@ class _ApproveTableState extends State<ApproveTable> {
                     )),
                 SizedBox(
                   width: tableWidth / 8,
-                  child: Text(
-                    reviewStatus == "NOACTIONTAKEN"
-                        ? "Pending"
-                        : "${reviewStatus[0].toUpperCase()}${reviewStatus.substring(1).toLowerCase()}",
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    style: TextStyle(
-                        color: reviewColor[reviewStatus],
-                        fontWeight: FontWeight.bold),
+                  child: Center(
+                    child: StatusBadge(
+                      reviewStatus == "NOACTIONTAKEN"
+                          ? "Pending"
+                          : "${reviewStatus[0].toUpperCase()}${reviewStatus.substring(1).toLowerCase()}",
+                      tone: reviewTone[reviewStatus] ?? StatusTone.neutral,
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -236,8 +236,8 @@ class _ApproveTableState extends State<ApproveTable> {
             height: 1,
             color:
                 context.watch<ApprovePacketsProvider>().matchingSelected[index]
-                    ? Colors.white
-                    : const Color(0XFFF0F5FF),
+                    ? RegistrationTheme.card
+                    : RegistrationTheme.accentTint,
           );
         },
       ),

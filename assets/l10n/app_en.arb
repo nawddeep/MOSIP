@@ -471,5 +471,7 @@
   "liveness_challenge_number": "Challenge {number}",
   "@liveness_challenge_number": {"placeholders": {"number": {"type": "int"}}},
   "liveness_challenge_next": "Action detected. Challenge {number}",
-  "@liveness_challenge_next": {"placeholders": {"number": {"type": "int"}}}
+  "@liveness_challenge_next": {"placeholders": {"number": {"type": "int"}}},
+  "ui_packets_empty_title": "No packets to show",
+  "ui_packets_empty_message": "Completed registrations appear here. If you searched or filtered, clear it to see all packets."
 }

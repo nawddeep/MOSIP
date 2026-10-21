@@ -432,5 +432,7 @@
   "liveness_open_settings": "அமைப்புகளைத் திற",
   "liveness_starting": "முக சரிபார்ப்பு தொடங்குகிறது",
   "liveness_challenge_number": "சவால் {number}",
-  "liveness_challenge_next": "செயல் கண்டறியப்பட்டது. சவால் {number}"
+  "liveness_challenge_next": "செயல் கண்டறியப்பட்டது. சவால் {number}",
+  "ui_packets_empty_title": "காட்ட பாக்கெட்டுகள் எதுவும் இல்லை",
+  "ui_packets_empty_message": "முடிந்த பதிவுகள் இங்கே தோன்றும். நீங்கள் தேடல் அல்லது வடிகட்டியைப் பயன்படுத்தியிருந்தால், அனைத்து பாக்கெட்டுகளையும் பார்க்க அதை அழிக்கவும்."
 }
