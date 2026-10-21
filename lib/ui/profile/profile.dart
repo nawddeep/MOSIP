@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/ui/profile/logout_alert.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -88,8 +89,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     Text(
                       authProvider.username,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Colors.black,
-                          fontSize: 16,
+                          color: RegistrationTheme.ink,
+                          fontSize: RegistrationTheme.fsBody,
                           fontWeight: semiBold),
                     ),
                     SizedBox(
@@ -102,8 +103,8 @@ class _ProfilePageState extends State<ProfilePage> {
                               ? appLocalizations.operator
                               : appLocalizations.supervisor,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: const Color(0xFF6F6F6F),
-                          fontSize: 16,
+                          color: RegistrationTheme.muted,
+                          fontSize: RegistrationTheme.fsBody,
                           fontWeight: semiBold),
                     ),
                   ],
@@ -113,7 +114,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const Divider(color: appBlueShade, height: 4),
           const SizedBox(height: 15),
-          const Divider(color: Color(0xFFF5F8FF), height: 4),
+          const Divider(color: RegistrationTheme.line, height: 4),
           const SizedBox(height: 15),
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16),
@@ -131,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Text(
                       context.watch<GlobalProvider>().machineName.toUpperCase(),
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: const Color(0xff333333), fontWeight: semiBold),
+                          color: RegistrationTheme.ink, fontWeight: semiBold),
                     ),
                   ],
                 ),
@@ -140,8 +141,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     Icon(
                       Icons.circle,
                       color: context.watch<ConnectivityProvider>().isConnected
-                          ? const Color(0xff1A9B42)
-                          : Colors.grey,
+                          ? RegistrationTheme.ok
+                          : RegistrationTheme.muted,
                       size: 12,
                     ),
                     const SizedBox(width: 10),
@@ -150,14 +151,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           ? appLocalizations.online
                           : appLocalizations.offline,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: const Color(0xff333333), fontWeight: semiBold),
+                          color: RegistrationTheme.ink, fontWeight: semiBold),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          const Divider(color: Color(0xFFF5F8FF), height: 4),
+          const Divider(color: RegistrationTheme.line, height: 4),
           const SizedBox(height: 15),
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16),
@@ -175,7 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Text(
                       "GPS",
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: const Color(0xff333333), fontWeight: semiBold),
+                          color: RegistrationTheme.ink, fontWeight: semiBold),
                     ),
                   ],
                 ),
@@ -184,8 +185,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     Icon(
                       Icons.circle,
                       color: context.watch<ConnectivityProvider>().isGPSEnabled
-                          ? const Color(0xff1A9B42)
-                          : Colors.red,
+                          ? RegistrationTheme.ok
+                          : RegistrationTheme.err,
                       size: 12,
                     ),
                     const SizedBox(width: 10),
@@ -194,7 +195,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ? appLocalizations.enabled
                           : appLocalizations.disabled,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: const Color(0xff333333), fontWeight: semiBold),
+                          color: RegistrationTheme.ink, fontWeight: semiBold),
                     ),
                   ],
                 ),
@@ -202,7 +203,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           const SizedBox(height: 15),
-          const Divider(color: Color(0xFFF5F8FF), height: 4),
+          const Divider(color: RegistrationTheme.line, height: 4),
           const SizedBox(height: 15),
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16),
@@ -219,13 +220,13 @@ class _ProfilePageState extends State<ProfilePage> {
                 Text(
                   context.watch<GlobalProvider>().centerName,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: const Color(0xff333333), fontWeight: semiBold),
+                      color: RegistrationTheme.ink, fontWeight: semiBold),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 15),
-          const Divider(color: Color(0xFFF5F8FF), height: 4),
+          const Divider(color: RegistrationTheme.line, height: 4),
           const SizedBox(height: 15),
           InkWell(
             onTap: () async {
@@ -255,14 +256,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   Text(
                     appLocalizations.reset_password,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: const Color(0xff333333), fontWeight: semiBold),
+                        color: RegistrationTheme.ink, fontWeight: semiBold),
                   ),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 15),
-          const Divider(color: Color(0xFFF5F8FF), height: 4),
+          const Divider(color: RegistrationTheme.line, height: 4),
           const SizedBox(height: 15),
           GestureDetector(
             onTap: () async {
@@ -291,7 +292,7 @@ class _ProfilePageState extends State<ProfilePage> {
               appLocalizations.logout,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: const Color(0xFFC70000), fontWeight: semiBold),
+                  color: RegistrationTheme.err, fontWeight: semiBold),
             ),
           ),
           const SizedBox(height: 15),
