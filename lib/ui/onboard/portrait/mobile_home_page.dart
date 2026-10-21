@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/components.dart';
 import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/model/process.dart';
@@ -87,22 +88,25 @@ class _MobileHomePageState extends State<MobileHomePage> {
             appBar: AppBar(
                 title: Text(AppLocalizations.of(context)!.community_reg_text),
                 leading: Padding(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(RegistrationTheme.s3),
                     child: Image.asset(appIconLogoOnly)),
                 actions: [
                   IconButton(
                       tooltip: AppLocalizations.of(context)!.profile,
                       onPressed: () => changeTab(3),
                       icon: const Icon(Icons.account_circle_outlined)),
-                  const SizedBox(width: 8)
+                  const SizedBox(width: RegistrationTheme.s2)
                 ]),
             bottomNavigationBar: _getBottomNavigationBar(),
-            body: Column(
-              children: [
-                Expanded(
-                  child: bottomNavPages[selectedTab],
-                ),
-              ],
+            // Fades in once after login (motion moment 1).
+            body: FadeRise(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: bottomNavPages[selectedTab],
+                  ),
+                ],
+              ),
             ),
           ),
         ));
@@ -110,29 +114,33 @@ class _MobileHomePageState extends State<MobileHomePage> {
 
   _getBottomNavigationBar() {
     final l = AppLocalizations.of(context)!;
-    return NavigationBar(
-      selectedIndex: selectedTab,
-      onDestinationSelected: changeTab,
-      backgroundColor: Colors.white,
-      indicatorColor: RegistrationTheme.softBlue,
-      elevation: 0,
-      height: 76,
-      destinations: [
-        NavigationDestination(
-            icon: const Icon(Icons.dashboard_outlined),
-            selectedIcon: const Icon(Icons.dashboard_rounded),
-            label: l.dashboard),
-        NavigationDestination(
-            icon: const Icon(Icons.tune_rounded), label: l.settings),
-        NavigationDestination(
-            icon: const Icon(Icons.workspaces_outline),
-            selectedIcon: const Icon(Icons.workspaces_rounded),
-            label: l.registration_tasks),
-        NavigationDestination(
-            icon: const Icon(Icons.person_outline_rounded),
-            selectedIcon: const Icon(Icons.person_rounded),
-            label: l.profile),
-      ],
+    // Colours come from the theme; hairline on top like Desktop panels.
+    // 76 tall leaves room for two-line translated labels.
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+          border: Border(top: BorderSide(color: RegistrationTheme.line))),
+      child: NavigationBar(
+        selectedIndex: selectedTab,
+        onDestinationSelected: changeTab,
+        elevation: 0,
+        height: 76,
+        destinations: [
+          NavigationDestination(
+              icon: const Icon(Icons.dashboard_outlined),
+              selectedIcon: const Icon(Icons.dashboard_rounded),
+              label: l.dashboard),
+          NavigationDestination(
+              icon: const Icon(Icons.tune_rounded), label: l.settings),
+          NavigationDestination(
+              icon: const Icon(Icons.workspaces_outline),
+              selectedIcon: const Icon(Icons.workspaces_rounded),
+              label: l.registration_tasks),
+          NavigationDestination(
+              icon: const Icon(Icons.person_outline_rounded),
+              selectedIcon: const Icon(Icons.person_rounded),
+              label: l.profile),
+        ],
+      ),
     );
   }
 }

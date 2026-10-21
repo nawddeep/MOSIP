@@ -12,7 +12,6 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/onboard/portrait/operational_tasks.dart';
 import 'package:registration_client/ui/onboard/portrait/registration_tasks.dart';
-import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TasksPage extends StatefulWidget {
@@ -46,12 +45,14 @@ class _TasksPageState extends State<TasksPage> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+            padding: const EdgeInsets.fromLTRB(RegistrationTheme.gutterPhone,
+                RegistrationTheme.s2, RegistrationTheme.gutterPhone, 0),
+            // Desktop segmented control: sunken track, white selected segment.
             child: Container(
-              padding: const EdgeInsets.all(5),
+              padding: const EdgeInsets.all(RegistrationTheme.s1),
               decoration: BoxDecoration(
-                  color: const Color(0xFFE8EDF6),
-                  borderRadius: BorderRadius.circular(16)),
+                  color: RegistrationTheme.sunken,
+                  borderRadius: BorderRadius.circular(RegistrationTheme.rLg)),
               child: LayoutBuilder(
                   builder: (context, constraints) => Wrap(
                       children: List.generate(
@@ -73,16 +74,22 @@ class _TasksPageState extends State<TasksPage> {
                                       setState(() => currentIndex = index);
                                     },
                                     style: TextButton.styleFrom(
-                                        minimumSize: const Size(48, 52),
+                                        minimumSize: const Size(
+                                            RegistrationTheme.minTouch,
+                                            RegistrationTheme.minTouch),
                                         backgroundColor: currentIndex == index
-                                            ? Colors.white
+                                            ? RegistrationTheme.card
                                             : Colors.transparent,
                                         foregroundColor: currentIndex == index
-                                            ? appSolidPrimary
+                                            ? RegistrationTheme.ink
                                             : RegistrationTheme.muted,
+                                        side: currentIndex == index
+                                            ? const BorderSide(
+                                                color: RegistrationTheme.line)
+                                            : BorderSide.none,
                                         shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12))),
+                                            borderRadius: BorderRadius.circular(
+                                                RegistrationTheme.r))),
                                     child: Text(
                                         index == 0
                                             ? AppLocalizations.of(context)!
@@ -90,9 +97,12 @@ class _TasksPageState extends State<TasksPage> {
                                             : AppLocalizations.of(context)!
                                                 .operation_tasks,
                                         textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600)),
+                                        style: RegistrationTheme.small
+                                            .copyWith(
+                                                fontWeight: FontWeight.w600,
+                                                color: currentIndex == index
+                                                    ? RegistrationTheme.ink
+                                                    : RegistrationTheme.muted)),
                                   ),
                                 ),
                               )))),
@@ -110,9 +120,7 @@ class _TasksPageState extends State<TasksPage> {
               : OperationalTasks(
                   operationalTasks: widget.operationalTasks,
                 ),
-          SizedBox(
-            height: 24,
-          ),
+          const SizedBox(height: RegistrationTheme.s6),
         ],
       ),
     );

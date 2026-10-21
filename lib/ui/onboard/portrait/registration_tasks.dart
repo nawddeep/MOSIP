@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
+import 'package:registration_client/provider/sync_provider.dart';
+import 'package:registration_client/ui/theme/components.dart';
 import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 import 'package:registration_client/ui/theme/registration_theme.dart';
-import 'package:registration_client/utils/app_config.dart';
 
 class RegistrationTasks extends StatelessWidget {
   const RegistrationTasks(
@@ -22,34 +22,30 @@ class RegistrationTasks extends StatelessWidget {
     final language = context.watch<GlobalProvider>().selectedLanguage;
     final l = AppLocalizations.of(context)!;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+      padding: const EdgeInsets.fromLTRB(
+          RegistrationTheme.gutterPhone,
+          RegistrationTheme.s5,
+          RegistrationTheme.gutterPhone,
+          RegistrationTheme.s3),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         HomePageCard(
             index: 0,
-            icon: SvgPicture.asset(syncDataIcon),
+            // Turns while a global sync runs (motion moment 6).
+            icon: SyncSpinner(
+                active: context.watch<SyncProvider>().isGlobalSyncInProgress),
             title: l.synchronize_data,
             subtitle: null,
             ontap: () => syncData(context)),
-        const SizedBox(height: 8),
+        const SizedBox(height: RegistrationTheme.s2),
         if (entries.isEmpty)
-          Container(
-              padding: const EdgeInsets.all(24),
-              decoration: RegistrationTheme.surface(),
-              child: Column(children: [
-                const Icon(Icons.workspaces_outline,
-                    size: 32, color: RegistrationTheme.muted),
-                const SizedBox(height: 12),
-                Text(l.registration_tasks,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: RegistrationTheme.ink)),
-                const SizedBox(height: 8),
-                Text(l.synchronize_data,
-                    style: const TextStyle(color: RegistrationTheme.muted)),
-              ])),
+          Panel(
+              child: EmptyState(
+                  icon: Icons.workspaces_outline,
+                  title: l.registration_tasks,
+                  message: l.synchronize_data)),
         LayoutBuilder(
             builder: (context, constraints) => Wrap(
-                  spacing: 16,
+                  spacing: RegistrationTheme.s4,
                   children: List.generate(entries.length, (index) {
                     final process =
                         Process.fromJson(jsonDecode(entries[index].toString()));
@@ -61,12 +57,12 @@ class RegistrationTasks extends StatelessWidget {
                             : l.registration_tasks);
                     return SizedBox(
                         width: constraints.maxWidth >= 620
-                            ? (constraints.maxWidth - 16) / 2
+                            ? (constraints.maxWidth - RegistrationTheme.s4) /
+                                2
                             : constraints.maxWidth,
                         child: HomePageCard(
                             index: index + 1,
-                            icon: Icon(_processIcon(process.flow),
-                                color: appSolidPrimary),
+                            icon: Icon(_processIcon(process.flow)),
                             title: title,
                             subtitle: null,
                             ontap: () => getProcessUI(context, process)));
