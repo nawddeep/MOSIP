@@ -14,6 +14,9 @@ class FakeDemo implements DemoAccountService {
   Future<bool> isAvailable() async => available;
 
   @override
+  Future<bool> exists(String username) async => created.containsKey(username);
+
+  @override
   Future<void> create({required String username, required String fullName, required String password}) async {
     if (created.containsKey(username)) throw PlatformException(code: 'EXISTS');
     created[username] = password;

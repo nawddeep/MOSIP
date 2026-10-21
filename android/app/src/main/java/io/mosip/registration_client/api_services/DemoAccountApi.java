@@ -47,8 +47,35 @@ public class DemoAccountApi implements MethodChannel.MethodCallHandler {
     private final SharedPreferences prefs;
     private final SecureRandom random = new SecureRandom();
 
+    /** Built-in tester account, created on first launch of a debug build only. */
+    static final String DEFAULT_USERNAME = "demo";
+    static final String DEFAULT_PASSWORD = "demo@1234";
+
     public DemoAccountApi(Context context) {
         this.prefs = context.getApplicationContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        if (BuildConfig.DEBUG) seedDefaultAccount();
+    }
+
+    /** Debug builds: make sure the default tester account exists so the app can be tried at once. */
+    private void seedDefaultAccount() {
+        if (prefs.contains(KEY_PREFIX + DEFAULT_USERNAME)) return;
+        try {
+            prefs.edit().putString(KEY_PREFIX + DEFAULT_USERNAME,
+                    record("Demo Officer", DEFAULT_PASSWORD).toString()).apply();
+        } catch (Exception ignored) {
+            // Seeding is a convenience; Sign up still works if it fails.
+        }
+    }
+
+    private JSONObject record(String fullName, String password) throws Exception {
+        byte[] salt = new byte[SALT_BYTES];
+        random.nextBytes(salt);
+        JSONObject o = new JSONObject();
+        o.put("fullName", fullName);
+        o.put("salt", Base64.encodeToString(salt, Base64.NO_WRAP));
+        o.put("hash", Base64.encodeToString(hash(password, salt, ITERATIONS), Base64.NO_WRAP));
+        o.put("iterations", ITERATIONS);
+        return o;
     }
 
     public void setup(BinaryMessenger messenger) {
@@ -90,13 +117,8 @@ public class DemoAccountApi implements MethodChannel.MethodCallHandler {
             return;
         }
         try {
-            byte[] salt = new byte[SALT_BYTES];
-            random.nextBytes(salt);
-            JSONObject o = new JSONObject();
-            o.put("fullName", fullName == null || fullName.trim().isEmpty() ? username : fullName.trim());
-            o.put("salt", Base64.encodeToString(salt, Base64.NO_WRAP));
-            o.put("hash", Base64.encodeToString(hash(password, salt, ITERATIONS), Base64.NO_WRAP));
-            o.put("iterations", ITERATIONS);
+            JSONObject o = record(
+                    fullName == null || fullName.trim().isEmpty() ? username : fullName.trim(), password);
             prefs.edit().putString(KEY_PREFIX + username, o.toString()).apply();
             result.success(true);
         } catch (Exception e) {

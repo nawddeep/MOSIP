@@ -178,6 +178,13 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       return;
     }
 
+    // Debug builds only: a local demo account has no MOSIP server record,
+    // so go straight to the password step (verified locally at login).
+    if (kDebugMode && await DemoAccountService.instance.exists(username)) {
+      authProvider.setIsValidUser(true);
+      return;
+    }
+
     String langCode = globalProvider.selectedLanguage;
     await authProvider.validateUser(username, langCode);
 

@@ -34,6 +34,20 @@ class DemoAccountService {
     }
   }
 
+  /// True when [username] is a local demo account (debug builds only).
+  Future<bool> exists(String username) async {
+    if (!kDebugMode) return false;
+    try {
+      return (await _channel.invokeMethod<bool>(
+              'exists', <String, String>{'username': username})) ??
+          false;
+    } on PlatformException {
+      return false;
+    } on MissingPluginException {
+      return false;
+    }
+  }
+
   /// Throws [PlatformException] with code EXISTS / INVALID / NOT_AVAILABLE on failure.
   Future<void> create({required String username, required String fullName, required String password}) async {
     await _channel.invokeMethod<bool>('create', <String, String>{
