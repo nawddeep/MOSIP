@@ -211,10 +211,10 @@ class _SignupPageState extends State<SignupPage> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                             color: RegistrationTheme.softBlue,
-                            borderRadius: BorderRadius.circular(16)),
+                            borderRadius: BorderRadius.circular(RegistrationTheme.rLg)),
                         child: Text(l.signup_intro,
                             style: const TextStyle(
-                                fontSize: 15,
+                                fontSize: RegistrationTheme.fsSmall,
                                 height: 1.5,
                                 color: RegistrationTheme.ink))),
                     const SizedBox(height: 20),
@@ -277,12 +277,12 @@ class _SignupPageState extends State<SignupPage> {
                                 backgroundColor: appSolidPrimary,
                                 foregroundColor: appWhite,
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(14)),
+                                    borderRadius: BorderRadius.circular(RegistrationTheme.rLg)),
                               ),
                               onPressed: _busy ? null : _sendRequest,
                               child: Text(l.signup_send,
                                   style: const TextStyle(
-                                      fontSize: 16,
+                                      fontSize: RegistrationTheme.fsBody,
                                       fontWeight: FontWeight.w600)),
                             ),
                           ),
@@ -306,9 +306,9 @@ class _SignupPageState extends State<SignupPage> {
       key: const ValueKey<String>('demo-section'),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFFAEF),
-        border: Border.all(color: const Color(0xFFEEDDB5)),
-        borderRadius: BorderRadius.circular(20),
+        color: RegistrationTheme.warnTint,
+        border: Border.all(color: RegistrationTheme.warnLine),
+        borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
       ),
       child: Form(
         key: _demoForm,
@@ -316,12 +316,12 @@ class _SignupPageState extends State<SignupPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Row(children: <Widget>[
-              const Icon(Icons.science_outlined, color: Color(0xFF8A6100)),
+              const Icon(Icons.science_outlined, color: RegistrationTheme.warn),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(l.signup_demo_title,
                     style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: RegistrationTheme.fsBody,
                         fontWeight: FontWeight.w600,
                         color: appBlack)),
               ),
@@ -329,7 +329,7 @@ class _SignupPageState extends State<SignupPage> {
             const SizedBox(height: 8),
             Text(l.signup_demo_body,
                 style: const TextStyle(
-                    fontSize: 14, height: 1.4, color: appBlack)),
+                    fontSize: RegistrationTheme.fsSmall, height: 1.4, color: appBlack)),
             const SizedBox(height: 14),
             _field(_password, l.signup_password,
                 obscure: _obscure,
@@ -354,12 +354,12 @@ class _SignupPageState extends State<SignupPage> {
                   foregroundColor: appSolidPrimary,
                   side: const BorderSide(color: appSolidPrimary),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
+                      borderRadius: BorderRadius.circular(RegistrationTheme.rLg)),
                 ),
                 onPressed: _busy ? null : _createDemo,
                 child: Text(l.signup_create_demo,
                     style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w600)),
+                        fontSize: RegistrationTheme.fsBody, fontWeight: FontWeight.w600)),
               ),
             ),
           ],
@@ -369,17 +369,10 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   InputDecoration _decoration(String label, {Widget? suffix}) =>
+      // Borders, fill and padding come from the theme (3:1 field outline).
       InputDecoration(
         labelText: label,
         suffixIcon: suffix,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
-        enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: const BorderSide(color: RegistrationTheme.line)),
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
       );
 
   Widget _field(
