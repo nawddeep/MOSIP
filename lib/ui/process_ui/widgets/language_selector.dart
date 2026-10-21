@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
@@ -158,7 +159,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
       title: Text(
         AppLocalizations.of(context)!.select_language,
         style: TextStyle(
-            fontSize: isMobile && !isMobileSize ? 24 : 18,
+            fontSize: isMobile && !isMobileSize ? RegistrationTheme.fsTitle : RegistrationTheme.fsHeading,
             fontWeight: FontWeight.bold),
       ),
       contentPadding: EdgeInsets.symmetric(
@@ -176,7 +177,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 title: Text(
                   AppLocalizations.of(context)!.select_two_languages,
                   style: TextStyle(
-                    fontSize: isMobileSize ? 14 : 22,
+                    fontSize: isMobileSize ? RegistrationTheme.fsSmall : RegistrationTheme.fsTitle,
                   ),
                 ),
                 leading: const Icon(
@@ -191,7 +192,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                   AppLocalizations.of(context)!
                       .language_mandatory(mandatoryLanguage!),
                   style: TextStyle(
-                    fontSize: isMobileSize ? 14 : 22,
+                    fontSize: isMobileSize ? RegistrationTheme.fsSmall : RegistrationTheme.fsTitle,
                   ),
                 ),
                 leading: const Icon(
@@ -210,7 +211,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 child: Text(
                   _getDataEntryLabel(),
                   style: TextStyle(
-                    fontSize: isMobileSize ? 10 : 16,
+                    fontSize: isMobileSize ? RegistrationTheme.fsXs : RegistrationTheme.fsBody,
                     fontWeight: semiBold,
                   ),
                 ),
@@ -264,7 +265,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 child: Text(
                   _getNotificationLabel(),
                   style: TextStyle(
-                    fontSize: isMobileSize ? 10 : 16,
+                    fontSize: isMobileSize ? RegistrationTheme.fsXs : RegistrationTheme.fsBody,
                     fontWeight: semiBold,
                   ),
                 ),
@@ -310,14 +311,14 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 padding: const EdgeInsets.all(12),
                 width: double.infinity,
                 margin: const EdgeInsets.symmetric(horizontal: 16),
-                color: const Color(0xffFFFAF0),
+                color: RegistrationTheme.warnTint,
                 child: Text(
                   AppLocalizations.of(context)!.language_selector_note,
                   style: TextStyle(
                     color: const Color(
                       0xff764B00,
                     ),
-                    fontSize: isMobileSize ? 14 : 22,
+                    fontSize: isMobileSize ? RegistrationTheme.fsSmall : RegistrationTheme.fsTitle,
                   ),
                 ),
               ),
@@ -353,7 +354,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                     child: Text(
                       AppLocalizations.of(context)!.cancel,
                       style: TextStyle(
-                        fontSize: isMobile && !isMobileSize ? 18 : 14,
+                        fontSize: isMobile && !isMobileSize ? RegistrationTheme.fsHeading : RegistrationTheme.fsSmall,
                       ),
                     ),
                   ),
@@ -379,7 +380,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                               globalProvider.fieldInputValue["preferredLang"] !=
                                   null)
                           ? MaterialStateProperty.all<Color>(solidPrimary)
-                          : MaterialStateProperty.all<Color>(Colors.grey),
+                          : MaterialStateProperty.all<Color>(RegistrationTheme.muted),
                 ),
                 child: SizedBox(
                   height: isMobile && !isMobileSize ? 62.h : 37.h,
@@ -387,7 +388,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                     child: Text(
                       AppLocalizations.of(context)!.submit,
                       style: TextStyle(
-                        fontSize: isMobile && !isMobileSize ? 18 : 14,
+                        fontSize: isMobile && !isMobileSize ? RegistrationTheme.fsHeading : RegistrationTheme.fsSmall,
                       ),
                     ),
                   ),
@@ -405,7 +406,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
       ],
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
-          Radius.circular(12),
+          Radius.circular(RegistrationTheme.rLg),
         ),
       ),
     );

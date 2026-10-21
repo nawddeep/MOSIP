@@ -90,6 +90,14 @@ class RegistrationTheme {
   // ---- Type (IBM Plex Sans; Desktop sizes/weights) -------------------------
   static const String fontFamily = 'IBMPlexSans';
 
+  /// Type-scale sizes, for widgets that build their own TextStyle.
+  static const double fsXs = 12.5;
+  static const double fsSmall = 14.5;
+  static const double fsBody = 16;
+  static const double fsHeading = 17;
+  static const double fsTitle = 21;
+  static const double fsDisplay = 28;
+
   static const TextStyle display = TextStyle(
       fontFamily: fontFamily,
       fontSize: 28,

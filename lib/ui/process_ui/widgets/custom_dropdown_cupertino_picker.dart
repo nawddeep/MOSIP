@@ -7,6 +7,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:registration_client/pigeon/document_category_pigeon.dart';
 import 'package:registration_client/utils/app_config.dart';
 
@@ -182,7 +183,7 @@ class _CustomCupertinoDropDownPickerState
           trailing: Icon(
             Icons.check,
             size: 28,
-            color: index == _selectedIndex ? dropDownSelector : Colors.white,
+            color: index == _selectedIndex ? dropDownSelector : RegistrationTheme.card,
           ),
         );
       },

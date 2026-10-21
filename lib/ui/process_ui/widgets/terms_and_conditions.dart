@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
@@ -50,12 +51,12 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
                           .chooseLanguage(widget.field.label!),
                       style: TextStyle(
                         color: blackShade1,
-                        fontSize: isPortrait ? 18 : 14,
+                        fontSize: isPortrait ? RegistrationTheme.fsHeading : RegistrationTheme.fsSmall,
                       ),
                       children: const [
                         TextSpan(
                           text: " *",
-                          style: TextStyle(color: Colors.red, fontSize: 14),
+                          style: TextStyle(color: RegistrationTheme.err, fontSize: RegistrationTheme.fsSmall),
                         )
                       ],
                     ))

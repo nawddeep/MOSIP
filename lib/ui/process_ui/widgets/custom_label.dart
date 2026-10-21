@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -31,7 +32,7 @@ class CustomLabel extends StatelessWidget {
           Text(
             globalProvider.chooseLanguage(field.label!),
             style: TextStyle(
-                fontSize: isPortrait && !isMobileSize ? 18 : 14,
+                fontSize: isPortrait && !isMobileSize ? RegistrationTheme.fsHeading : RegistrationTheme.fsSmall,
                 fontWeight: semiBold),
           ),
           const SizedBox(
@@ -44,8 +45,8 @@ class CustomLabel extends StatelessWidget {
             Text(
               "*",
               style: TextStyle(
-                  color: Colors.red,
-                  fontSize: isPortrait && !isMobileSize ? 18 : 14),
+                  color: RegistrationTheme.err,
+                  fontSize: isPortrait && !isMobileSize ? RegistrationTheme.fsHeading : RegistrationTheme.fsSmall),
             )
         ],
       ),

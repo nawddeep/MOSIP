@@ -8,6 +8,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
@@ -255,9 +256,9 @@ class _CustomDropDownState extends State<DropDownControl> {
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 16.0),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+                    borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
                     borderSide: const BorderSide(
-                      color: Colors.grey,
+                      color: RegistrationTheme.muted,
                       width: 1.0,
                     ),
                   ),
@@ -266,7 +267,7 @@ class _CustomDropDownState extends State<DropDownControl> {
                     color: appBlackShade3,
                   ),
                   suffixIcon: const Icon(Icons.keyboard_arrow_down,
-                      color: Colors.grey),
+                      color: RegistrationTheme.muted),
                 ),
                 items: list
                     .map((option) => DropdownMenuItem(

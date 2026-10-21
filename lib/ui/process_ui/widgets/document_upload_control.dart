@@ -9,6 +9,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
@@ -95,7 +96,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
 
   _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message), backgroundColor: Colors.red));
+        SnackBar(content: Text(message), backgroundColor: RegistrationTheme.err));
   }
 
 
@@ -474,9 +475,9 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                           decoration: InputDecoration(
                                             border: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(8.0),
+                                                  BorderRadius.circular(RegistrationTheme.rLg),
                                               borderSide: const BorderSide(
-                                                  color: Colors.grey, width: 1),
+                                                  color: RegistrationTheme.muted, width: 1),
                                             ),
                                             contentPadding:
                                                 EdgeInsets.symmetric(
@@ -484,11 +485,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                                     horizontal: 16.w),
                                             hintText: "Select Value",
                                             hintStyle: const TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 14),
+                                                color: RegistrationTheme.muted,
+                                                fontSize: RegistrationTheme.fsSmall),
                                             suffixIcon: const Icon(
                                                 Icons.keyboard_arrow_down,
-                                                color: Colors.grey),
+                                                color: RegistrationTheme.muted),
                                           ),
                                         )
                                       : const SizedBox.shrink(),
@@ -525,7 +526,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               textAlign: TextAlign.left,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
                                   borderSide: const BorderSide(
                                       color: appGreyShade, width: 1),
                                 ),
@@ -534,7 +535,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                 hintText: AppLocalizations.of(context)!
                                     .reference_number,
                                 hintStyle: const TextStyle(
-                                    color: appBlackShade3, fontSize: 14),
+                                    color: appBlackShade3, fontSize: RegistrationTheme.fsSmall),
                               ),
                             ),
                           ],
@@ -577,14 +578,14 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                   children: [
                                     const Icon(
                                       Icons.crop_free_sharp,
-                                      color: Colors.white,
+                                      color: RegistrationTheme.card,
                                       size: 14,
                                     ),
                                     SizedBox(width: 5.w),
                                     Text(
                                       AppLocalizations.of(context)!.scan,
                                       style: const TextStyle(
-                                          fontSize: 16, color: Colors.white),
+                                          fontSize: RegistrationTheme.fsBody, color: RegistrationTheme.card),
                                     ),
                                   ],
                                 ),
@@ -625,7 +626,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                       SizedBox(height: 2.h),
                                       Text(
                                         'Size: ${getReadableFileSize(item.length)}',
-                                        style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                                        style: TextStyle(fontSize: RegistrationTheme.fsXs.sp, color: RegistrationTheme.muted),
                                       ),
                                       SizedBox(height: 2.h),
                                       GestureDetector(
@@ -642,7 +643,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                           children: [
                                             const Icon(
                                               Icons.delete_forever_outlined,
-                                              color: Colors.red,
+                                              color: RegistrationTheme.err,
                                               size: 14,
                                             ),
                                             SizedBox(width: 5.w),
@@ -650,8 +651,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                                 AppLocalizations.of(context)!
                                                     .delete,
                                                 style: const TextStyle(
-                                                    fontSize: 13,
-                                                    color: Colors.red)),
+                                                    fontSize: RegistrationTheme.fsXs,
+                                                    color: RegistrationTheme.err)),
                                           ],
                                         ),
                                       )
@@ -745,7 +746,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                                           BorderRadius.circular(
                                                               8.0),
                                                       borderSide: BorderSide(
-                                                          color: Colors.grey,
+                                                          color: RegistrationTheme.muted,
                                                           width: 1.w),
                                                     ),
                                                     contentPadding:
@@ -754,12 +755,12 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                                             horizontal: 16.w),
                                                     hintText: "Select Value",
                                                     hintStyle: const TextStyle(
-                                                        color: Colors.grey,
-                                                        fontSize: 14),
+                                                        color: RegistrationTheme.muted,
+                                                        fontSize: RegistrationTheme.fsSmall),
                                                     suffixIcon: const Icon(
                                                         Icons
                                                             .keyboard_arrow_down,
-                                                        color: Colors.grey),
+                                                        color: RegistrationTheme.muted),
                                                     helperText: "",
                                                   ),
                                                 )
@@ -801,7 +802,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     decoration: InputDecoration(
                                       border: OutlineInputBorder(
                                         borderRadius:
-                                            BorderRadius.circular(8.0),
+                                            BorderRadius.circular(RegistrationTheme.rLg),
                                         borderSide: BorderSide(
                                             color: appGreyShade, width: 1.w),
                                       ),
@@ -810,7 +811,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                       hintText: AppLocalizations.of(context)!
                                           .reference_number,
                                       hintStyle: const TextStyle(
-                                          color: appBlackShade3, fontSize: 14),
+                                          color: appBlackShade3, fontSize: RegistrationTheme.fsSmall),
                                       helperText: "",
                                     ),
                                   ),
@@ -847,14 +848,14 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                 children: [
                                   const Icon(
                                     Icons.crop_free_sharp,
-                                    color: Colors.white,
+                                    color: RegistrationTheme.card,
                                     size: 14,
                                   ),
                                   SizedBox(width: 5.w),
                                   Text(
                                     AppLocalizations.of(context)!.scan,
                                     style: const TextStyle(
-                                        fontSize: 16, color: Colors.white),
+                                        fontSize: RegistrationTheme.fsBody, color: RegistrationTheme.card),
                                   ),
                                 ],
                               ),
@@ -894,7 +895,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                       SizedBox(height: 10.h),
                                       Text(
                                         'Size: ${getReadableFileSize(item.length)}',
-                                        style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                                        style: TextStyle(fontSize: RegistrationTheme.fsXs.sp, color: RegistrationTheme.muted),
                                       ),
                                       SizedBox(height: 10.h),
                                       GestureDetector(
@@ -911,7 +912,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                           children: [
                                             const Icon(
                                               Icons.delete_forever_outlined,
-                                              color: Colors.red,
+                                              color: RegistrationTheme.err,
                                               size: 14,
                                             ),
                                             SizedBox(width: 5.w),
@@ -919,8 +920,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                                 AppLocalizations.of(context)!
                                                     .delete,
                                                 style: const TextStyle(
-                                                    fontSize: 13,
-                                                    color: Colors.red)),
+                                                    fontSize: RegistrationTheme.fsXs,
+                                                    color: RegistrationTheme.err)),
                                           ],
                                         ),
                                       )
@@ -944,8 +945,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topRight: Radius.circular(15),
-          topLeft: Radius.circular(15),
+          topRight: Radius.circular(RegistrationTheme.rLg),
+          topLeft: Radius.circular(RegistrationTheme.rLg),
         ),
       ),
       builder: (BuildContext context) {
@@ -953,10 +954,10 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
           width: MediaQuery.of(context).size.width,
           height: snapshot!.data.length <= 1 ? 200.h : 350.h,
           decoration: const BoxDecoration(
-              color: Colors.white,
+              color: RegistrationTheme.card,
               borderRadius: BorderRadius.only(
-                topRight: Radius.circular(15),
-                topLeft: Radius.circular(15),
+                topRight: Radius.circular(RegistrationTheme.rLg),
+                topLeft: Radius.circular(RegistrationTheme.rLg),
               )),
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -978,7 +979,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         child: Text(AppLocalizations.of(context)!.clear,
                             style: const TextStyle(
                                 color: appRed,
-                                fontSize: 22,
+                                fontSize: RegistrationTheme.fsTitle,
                                 fontWeight: FontWeight.w500)),
                       )),
                   Expanded(
@@ -991,7 +992,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 24.0,
+                          fontSize: RegistrationTheme.fsTitle,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -1005,7 +1006,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         padding: EdgeInsets.all(12.0),
                         child: Icon(
                           Icons.clear,
-                          color: Colors.black,
+                          color: RegistrationTheme.ink,
                           size: 35,
                         ),
                       ))
@@ -1031,11 +1032,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                   selectedStyle: TextStyle(
                     color: solidPrimary,
                     fontWeight: FontWeight.w600,
-                    fontSize: 22,
+                    fontSize: RegistrationTheme.fsTitle,
                   ),
                   unselectedStyle: TextStyle(
-                    color: Colors.grey[800],
-                    fontSize: 21,
+                    color: RegistrationTheme.ink,
+                    fontSize: RegistrationTheme.fsTitle,
                   ),
                   initialValue: documentController.text,
                   onSelectedItemChanged: (label, code) {

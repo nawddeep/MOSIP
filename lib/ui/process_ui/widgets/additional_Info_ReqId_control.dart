@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
@@ -37,7 +38,7 @@ class _AdditionalInfoReqIdControlState extends State<AdditionalInfoReqIdControl>
       elevation: 5,
       color: pureWhite,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(6.0),
+        borderRadius: BorderRadius.circular(RegistrationTheme.r),
       ),
       margin: EdgeInsets.symmetric(
           vertical: 20.h, horizontal: isPortrait ? 16.w : 0),
@@ -49,7 +50,7 @@ class _AdditionalInfoReqIdControlState extends State<AdditionalInfoReqIdControl>
             Text(
               AppLocalizations.of(context)!.additional_info_req_id,
               style: TextStyle(
-                  fontSize: isPortrait ? 18 : 14),
+                  fontSize: isPortrait ? RegistrationTheme.fsHeading : RegistrationTheme.fsSmall),
             ),
             SizedBox(height: 10.h),
             Row(
@@ -66,12 +67,12 @@ class _AdditionalInfoReqIdControlState extends State<AdditionalInfoReqIdControl>
                     textAlign: TextAlign.left,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
                         borderSide: const BorderSide(color: appGreyShade, width: 1),
                       ),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       hintText: AppLocalizations.of(context)!.enter_additional_info_req_id,
-                      hintStyle: const TextStyle(color: appBlackShade3, fontSize: 14),
+                      hintStyle: const TextStyle(color: appBlackShade3, fontSize: RegistrationTheme.fsSmall),
                     ),
                   ),
                 ),

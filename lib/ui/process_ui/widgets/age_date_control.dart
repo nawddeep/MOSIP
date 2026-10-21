@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -163,11 +164,11 @@ class _AgeDateControlState extends State<AgeDateControl> {
     final localMaxAge = maxAge;
 
     showModalBottomSheet(
-        backgroundColor: Colors.white,
+        backgroundColor: RegistrationTheme.card,
         context: context,
         enableDrag: true,
         elevation: 5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RegistrationTheme.rLg)),
         builder: (context) {
           return ListView(
             primary: false,
@@ -224,15 +225,15 @@ class _AgeDateControlState extends State<AgeDateControl> {
                 selectedStyle: TextStyle(
                   color: solidPrimary,
                   fontWeight: FontWeight.w600,
-                  fontSize: 16,
+                  fontSize: RegistrationTheme.fsBody,
                 ),
                 unselectedStyle: TextStyle(
-                  color: Colors.grey[800],
-                  fontSize: 15,
+                  color: RegistrationTheme.ink,
+                  fontSize: RegistrationTheme.fsSmall,
                 ),
                 disabledStyle: TextStyle(
-                  color: Colors.grey[400],
-                  fontSize: 15,
+                  color: RegistrationTheme.lineStrong,
+                  fontSize: RegistrationTheme.fsSmall,
                 ),
                 onSelectedItemChanged: (selectedDate) {
                   String targetDateString = (widget.field.format == null ||
@@ -323,7 +324,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                               vertical: 14, horizontal: 16),
                           hintStyle: const TextStyle(
                             color: appBlackShade3,
-                            fontSize: 14,
+                            fontSize: RegistrationTheme.fsSmall,
                           ),
                           hintText: widget.field.format == null ||
                                   widget.field.format!.toLowerCase() == "none"
@@ -334,9 +335,9 @@ class _AgeDateControlState extends State<AgeDateControl> {
                             color: solidPrimary,
                           ),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
                             borderSide: const BorderSide(
-                                color: Color(0xff9B9B9F), width: 1),
+                                color: RegistrationTheme.inputBorder, width: 1),
                           ),
                         ),
                       ),
@@ -373,12 +374,12 @@ class _AgeDateControlState extends State<AgeDateControl> {
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 14, horizontal: 16),
                           hintStyle: const TextStyle(
-                              color: appBlackShade3, fontSize: 14),
+                              color: appBlackShade3, fontSize: RegistrationTheme.fsSmall),
                           hintText: '0',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
                             borderSide: const BorderSide(
-                                color: Color(0xff9B9B9F), width: 1),
+                                color: RegistrationTheme.inputBorder, width: 1),
                           ),
                         ),
                       ),

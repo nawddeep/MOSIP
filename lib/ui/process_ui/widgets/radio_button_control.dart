@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -247,8 +248,8 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
                       ? Text(
                           "* ${AppLocalizations.of(context)!.select_option}",
                           style: const TextStyle(
-                              color: Color.fromARGB(255, 159, 21, 11),
-                              fontSize: 12),
+                              color: RegistrationTheme.err,
+                              fontSize: RegistrationTheme.fsXs),
                         )
                       : const SizedBox.shrink(),
                 ],
@@ -278,8 +279,8 @@ class SelectableCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      color: groupValue == value ? solidPrimary : Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RegistrationTheme.rLg)),
+      color: groupValue == value ? solidPrimary : RegistrationTheme.card,
       elevation: 0,
       child: InkWell(
         onTap: () {
@@ -291,7 +292,7 @@ class SelectableCard extends StatelessWidget {
           height: 50,
           width: 150,
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
               border: Border.all(
                 color: solidPrimary,
                 width: 1,
@@ -303,8 +304,8 @@ class SelectableCard extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 14,
-                  color: value == groupValue ? Colors.white : appBlackShade1,
+                  fontSize: RegistrationTheme.fsSmall,
+                  color: value == groupValue ? RegistrationTheme.card : appBlackShade1,
                   fontWeight: regular,
                 ),
               ),

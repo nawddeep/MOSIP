@@ -9,6 +9,8 @@ import 'package:registration_client/ui/widgets/password_visibility_toggle.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
+import 'package:registration_client/ui/theme/components.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -813,7 +815,7 @@ class _GenericProcessState extends State<GenericProcess>
       onWillPop: () => onWillPop(process),
       child: SafeArea(
         child: Scaffold(
-          backgroundColor: secondaryColors.elementAt(10),
+          backgroundColor: RegistrationTheme.canvas,
           bottomNavigationBar: _buildBottomNavigationBar(size, process, isPortrait, isMobile),
           body: _buildBody(size, process, isPortrait, isMobile, w),
         ),
@@ -833,8 +835,8 @@ class _GenericProcessState extends State<GenericProcess>
         color: pureWhite,
       ),
       padding: EdgeInsets.symmetric(
-        horizontal: isPortrait ? 20.w : 60.w,
-        vertical: 16.h,
+        horizontal: isPortrait ? RegistrationTheme.gutterPhone : 60.w,
+        vertical: RegistrationTheme.s3,
       ),
       child: globalProvider.newProcessTabIndex == 0
           ? _buildFirstScreenButtons(size, process, isPortrait, isMobile)
@@ -850,13 +852,10 @@ class _GenericProcessState extends State<GenericProcess>
           child: (isUpdate && fieldSelectionCompleted)
               ? OutlinedButton(
                   child: SizedBox(
-                    height: isPortrait && !isMobileSize ? 68.h : 52.h,
+                    height: RegistrationTheme.buttonHeight,
                     child: Center(
                       child: Text(
                         appLocalizations.go_back,
-                        style: TextStyle(
-                          fontSize: isPortrait && !isMobileSize ? 22 : 14,
-                        ),
                       ),
                     ),
                   ),
@@ -869,13 +868,10 @@ class _GenericProcessState extends State<GenericProcess>
               : (!isUpdate
                   ? OutlinedButton(
                       child: SizedBox(
-                        height: isPortrait && !isMobileSize ? 68.h : 52.h,
+                        height: RegistrationTheme.buttonHeight,
                         child: Center(
                           child: Text(
                             appLocalizations.go_back,
-                            style: TextStyle(
-                              fontSize: isPortrait && !isMobileSize ? 22 : 14,
-                            ),
                           ),
                         ),
                       ),
@@ -885,23 +881,19 @@ class _GenericProcessState extends State<GenericProcess>
                     )
                   : const SizedBox()),
         ),
-        SizedBox(
-          width: 10.w,
-        ),
+        const SizedBox(width: RegistrationTheme.s3),
         Expanded(
           child: ElevatedButton(
             style: isUpdate
                 ? ButtonStyle(
-                    maximumSize: MaterialStateProperty.all<Size>(
-                        const Size(209, 52)),
                     minimumSize: MaterialStateProperty.all<Size>(
-                        const Size(209, 52)),
+                        const Size(160, RegistrationTheme.buttonHeight)),
                     backgroundColor: MaterialStateProperty.all<Color>(
                         !fieldSelectionCompleted
                             ? (continueButton)
-                                ? solidPrimary
-                                : Colors.grey
-                            : solidPrimary),
+                                ? RegistrationTheme.accent
+                                : RegistrationTheme.muted
+                            : RegistrationTheme.accent),
                   )
                 : null,
             onPressed: _isContinueProcessing
@@ -921,7 +913,7 @@ class _GenericProcessState extends State<GenericProcess>
                     continueButtonTap(size, process);
                   },
             child: SizedBox(
-              height: isPortrait && !isMobileSize ? 68.h : 52.h,
+              height: RegistrationTheme.buttonHeight,
               child: Center(
                 child: Text(
                   isUpdate && fieldSelectionCompleted
@@ -929,9 +921,7 @@ class _GenericProcessState extends State<GenericProcess>
                       : (isUpdate
                           ? appLocalizations.continue_text
                           : appLocalizations.informed),
-                  style: TextStyle(
-                    fontSize: isPortrait && !isMobileSize ? 22 : 14,
-                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
@@ -949,30 +939,39 @@ class _GenericProcessState extends State<GenericProcess>
           child: SizedBox(),
         ),
         ElevatedButton(
+          // No maximum size: the label must be able to grow at 200% text.
           style: ButtonStyle(
-            maximumSize: MaterialStateProperty.all<Size>(const Size(209, 52)),
-            minimumSize: MaterialStateProperty.all<Size>(const Size(209, 52)),
+            minimumSize: MaterialStateProperty.all<Size>(
+                const Size(160, RegistrationTheme.buttonHeight)),
             backgroundColor: MaterialStateProperty.all<Color>(
                 (continueButton &&
                         context.read<GlobalProvider>().newProcessTabIndex <= size)
-                    ? solidPrimary
+                    ? RegistrationTheme.accent
                     : authButton
-                        ? solidPrimary
-                        : Colors.grey),
+                        ? RegistrationTheme.accent
+                        : RegistrationTheme.muted),
           ),
           onPressed: _isContinueProcessing
               ? null
               : () async {
                   await continueButtonTap(size, process);
                 },
-          child: Text(
-            context.read<GlobalProvider>().newProcessTabIndex <= size
-                ? appLocalizations.continue_text
-                : globalProvider.newProcessTabIndex == size + 1
-                    ? appLocalizations.authenticate
-                    : appLocalizations.go_to_home,
-            style: const TextStyle(color: appWhite),
-          ),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Flexible(
+              child: Text(
+                context.read<GlobalProvider>().newProcessTabIndex <= size
+                    ? appLocalizations.continue_text
+                    : globalProvider.newProcessTabIndex == size + 1
+                        ? appLocalizations.authenticate
+                        : appLocalizations.go_to_home,
+                style: const TextStyle(color: RegistrationTheme.onAccent),
+              ),
+            ),
+            const SizedBox(width: RegistrationTheme.s2),
+            const Icon(Icons.arrow_forward_rounded,
+                size: RegistrationTheme.iconInline,
+                color: RegistrationTheme.onAccent),
+          ]),
         ),
       ],
     );
@@ -991,12 +990,11 @@ class _GenericProcessState extends State<GenericProcess>
               padding: isMobile && !isMobileSize
                   ? const EdgeInsets.fromLTRB(0, 46, 0, 0)
                   : const EdgeInsets.fromLTRB(0, 0, 0, 0),
+              // Desktop form header: white, hairline below, ink title.
               decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0xff214FBF), Color(0xff1C43A1)],
-                ),
+                color: RegistrationTheme.card,
+                border: Border(
+                    bottom: BorderSide(color: RegistrationTheme.line)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1013,21 +1011,25 @@ class _GenericProcessState extends State<GenericProcess>
                       process.label![context
                           .read<GlobalProvider>()
                           .selectedLanguage]!,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: pureWhite,
-                          fontWeight: semiBold,
-                          fontSize: isPortrait ? 24 : 21),
+                      style: RegistrationTheme.title,
                     ),
                   ),
-                  SizedBox(
-                    height: 30.h,
-                  ),
+                  const SizedBox(height: RegistrationTheme.s3),
                   if (process.id != "UPDATE" ||
                       fieldSelectionCompleted)
-                    Divider(
-                      height: 12.h,
-                      thickness: 1,
-                      color: secondaryColors.elementAt(2),
+                    Padding(
+                      padding: isPortrait
+                          ? const EdgeInsets.symmetric(
+                              horizontal: RegistrationTheme.gutterPhone)
+                          : EdgeInsets.fromLTRB(60.w, 0, 60.w, 0),
+                      child: StepProgress(
+                        total: process.screens!.length + 3,
+                        current: context
+                            .watch<GlobalProvider>()
+                            .newProcessTabIndex
+                            .clamp(0, process.screens!.length + 2)
+                            .toInt(),
+                      ),
                     ),
                   if (process.id != "UPDATE" ||
                       fieldSelectionCompleted)
@@ -1098,9 +1100,9 @@ class _GenericProcessState extends State<GenericProcess>
                                                 .watch<GlobalProvider>()
                                                 .newProcessTabIndex ==
                                             index)
-                                        ? pureWhite
+                                        ? RegistrationTheme.accent
                                         : Colors.transparent,
-                                    width: 3),
+                                    width: 2),
                               ),
                             ),
                             child: Row(
@@ -1109,24 +1111,24 @@ class _GenericProcessState extends State<GenericProcess>
                                         context
                                             .watch<GlobalProvider>()
                                             .newProcessTabIndex)
-                                    ? Icon(
+                                    ? const Icon(
                                         Icons.check_circle,
-                                        size: 17,
-                                        color: secondaryColors.elementAt(11),
+                                        size: RegistrationTheme.iconInline,
+                                        color: RegistrationTheme.ok,
                                       )
                                     : (context
                                                 .watch<GlobalProvider>()
                                                 .newProcessTabIndex ==
                                             index)
-                                        ? Icon(
-                                            Icons.circle,
-                                            color: pureWhite,
-                                            size: 17,
+                                        ? const Icon(
+                                            Icons.radio_button_checked,
+                                            color: RegistrationTheme.accent,
+                                            size: RegistrationTheme.iconInline,
                                           )
-                                        : Icon(
+                                        : const Icon(
                                             Icons.circle_outlined,
-                                            size: 17,
-                                            color: secondaryColors.elementAt(9),
+                                            size: RegistrationTheme.iconInline,
+                                            color: RegistrationTheme.muted,
                                           ),
                                 SizedBox(
                                   width: 6.w,
@@ -1145,10 +1147,10 @@ class _GenericProcessState extends State<GenericProcess>
                                                       .watch<GlobalProvider>()
                                                       .newProcessTabIndex ==
                                                   index)
-                                              ? pureWhite
-                                              : secondaryColors.elementAt(9),
+                                              ? RegistrationTheme.ink
+                                              : RegistrationTheme.muted,
                                           fontWeight: semiBold,
-                                          fontSize: 14),
+                                          fontSize: RegistrationTheme.fsSmall),
                                 ),
                               ],
                             ),
@@ -1167,11 +1169,11 @@ class _GenericProcessState extends State<GenericProcess>
               height: 36.h,
               width: 25.w,
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-              color: solidPrimary,
-              child: Icon(
+              color: RegistrationTheme.card,
+              child: const Icon(
                 Icons.arrow_forward_ios_outlined,
-                color: pureWhite,
-                size: 17,
+                color: RegistrationTheme.muted,
+                size: RegistrationTheme.iconInline - 4,
               ),
             ),
         ],
@@ -1222,7 +1224,7 @@ class _GenericProcessState extends State<GenericProcess>
           ),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(
-              Radius.circular(6),
+              Radius.circular(RegistrationTheme.r),
             ),
             color: pureWhite,
           ),
@@ -1235,7 +1237,7 @@ class _GenericProcessState extends State<GenericProcess>
               Text(
                 appLocalizations.authenticate_using_password,
                 style: TextStyle(
-                    fontSize: isPortrait && !isMobileSize ? 24 : 18,
+                    fontSize: isPortrait && !isMobileSize ? RegistrationTheme.fsTitle : RegistrationTheme.fsHeading,
                     fontWeight: semiBold,
                     color: appBlack),
               ),
@@ -1326,7 +1328,7 @@ class _GenericProcessState extends State<GenericProcess>
           color: appGreyShade,
         ),
         borderRadius: const BorderRadius.all(
-          Radius.circular(6),
+          Radius.circular(RegistrationTheme.r),
         ),
       ),
       child: TextField(
@@ -1338,7 +1340,7 @@ class _GenericProcessState extends State<GenericProcess>
           border: InputBorder.none,
         ),
         style: TextStyle(
-          fontSize: isPortrait && !isMobileSize ? 22 : 14,
+          fontSize: isPortrait && !isMobileSize ? RegistrationTheme.fsTitle : RegistrationTheme.fsSmall,
           color: appBlack,
         ),
         onChanged: (v) {
@@ -1363,7 +1365,7 @@ class _GenericProcessState extends State<GenericProcess>
           color: appGreyShade,
         ),
         borderRadius: const BorderRadius.all(
-          Radius.circular(6),
+          Radius.circular(RegistrationTheme.r),
         ),
       ),
       child: TextField(
@@ -1381,7 +1383,7 @@ class _GenericProcessState extends State<GenericProcess>
           border: InputBorder.none,
         ),
         style: TextStyle(
-          fontSize: isPortrait && !isMobileSize ? 22 : 14,
+          fontSize: isPortrait && !isMobileSize ? RegistrationTheme.fsTitle : RegistrationTheme.fsSmall,
           color: appBlack,
         ),
         onChanged: (v) {

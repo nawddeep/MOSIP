@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
@@ -39,18 +40,18 @@ class ButtonControl extends StatelessWidget {
                     text: TextSpan(
                     text: globalProvider.chooseLanguage(field.label!),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 14, color: blackShade1, fontWeight: semiBold),
+                        fontSize: RegistrationTheme.fsSmall, color: blackShade1, fontWeight: semiBold),
                     children: const [
                       TextSpan(
                         text: " *",
-                        style: TextStyle(color: Colors.red, fontSize: 14),
+                        style: TextStyle(color: RegistrationTheme.err, fontSize: RegistrationTheme.fsSmall),
                       )
                     ],
                   ))
                 : Text(
                     globalProvider.chooseLanguage(field.label!),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 14, color: blackShade1, fontWeight: semiBold),
+                        fontSize: RegistrationTheme.fsSmall, color: blackShade1, fontWeight: semiBold),
                   ),
             const SizedBox(
               height: 15,

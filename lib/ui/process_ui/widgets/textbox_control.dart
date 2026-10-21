@@ -11,6 +11,7 @@ import 'dart:developer';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -238,7 +239,7 @@ class _TextBoxControlState extends State<TextBoxControl>
                       : TextAlign.left,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
                       borderSide:
                           const BorderSide(color: appGreyShade, width: 1),
                     ),
@@ -246,7 +247,7 @@ class _TextBoxControlState extends State<TextBoxControl>
                         vertical: 14, horizontal: 16),
                     hintText: widget.e.label![lang],
                     hintStyle:
-                        const TextStyle(color: appBlackShade3, fontSize: 14),
+                        const TextStyle(color: appBlackShade3, fontSize: RegistrationTheme.fsSmall),
                   ),
                 ),
                 );

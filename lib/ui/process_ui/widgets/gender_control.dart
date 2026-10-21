@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
@@ -236,7 +237,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                               labelStyle: Theme.of(context)
                                                   .textTheme
                                                   .bodySmall,
-                                              backgroundColor: Colors.white,
+                                              backgroundColor: RegistrationTheme.card,
                                             ))
                                         .toList(),
                                   ),
@@ -280,12 +281,12 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                                   fontWeight: isMandatoryLang
                                                       ? FontWeight.w500
                                                       : FontWeight.w400,
-                                                  fontSize: 12,
+                                                  fontSize: RegistrationTheme.fsXs,
                                                   color: chipSelected
                                                       ? isMandatoryLang
-                                                          ? Colors.white
+                                                          ? RegistrationTheme.card
                                                           : solidPrimary
-                                                      : Colors.black),
+                                                      : RegistrationTheme.ink),
                                             ),
                                           ),
                                           labelPadding:
@@ -295,9 +296,9 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                           elevation: 0,
                                           selectedColor: isMandatoryLang
                                               ? solidPrimary
-                                              : const Color(0xffEFF3FF),
-                                          backgroundColor: Colors.white,
-                                          disabledColor: Colors.white,
+                                              : RegistrationTheme.accentTint,
+                                          backgroundColor: RegistrationTheme.card,
+                                          disabledColor: RegistrationTheme.card,
                                           shape: chipSelected
                                               ? null
                                               : RoundedRectangleBorder(

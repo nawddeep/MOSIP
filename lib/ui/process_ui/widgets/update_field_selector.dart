@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
@@ -180,7 +181,7 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                       Text(
                         appLocalizations.uin_number,
                         style: TextStyle(
-                            fontSize: isPortrait && !isMobileSize ? 18 : 14,
+                            fontSize: isPortrait && !isMobileSize ? RegistrationTheme.fsHeading : RegistrationTheme.fsSmall,
                             fontWeight: semiBold),
                       ),
                       const SizedBox(
@@ -189,8 +190,8 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                       Text(
                         "*",
                         style: TextStyle(
-                            color: Colors.red,
-                            fontSize: isPortrait && !isMobileSize ? 18 : 14),
+                            color: RegistrationTheme.err,
+                            fontSize: isPortrait && !isMobileSize ? RegistrationTheme.fsHeading : RegistrationTheme.fsSmall),
                       )
                     ],
                   ),
@@ -230,7 +231,7 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                       },
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
                           borderSide:
                               const BorderSide(color: appGreyShade, width: 1),
                         ),
@@ -238,7 +239,7 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                             vertical: 14, horizontal: 16),
                         hintText: appLocalizations.enter_uin,
                         hintStyle: const TextStyle(
-                            color: appBlackShade3, fontSize: 14),
+                            color: appBlackShade3, fontSize: RegistrationTheme.fsSmall),
                       ),
                     ),
                   ),
@@ -267,7 +268,7 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                       Text(
                         appLocalizations.select_update_attributes,
                         style: TextStyle(
-                            fontSize: isPortrait && !isMobileSize ? 18 : 14,
+                            fontSize: isPortrait && !isMobileSize ? RegistrationTheme.fsHeading : RegistrationTheme.fsSmall,
                             fontWeight: semiBold),
                       ),
                       const SizedBox(
@@ -276,8 +277,8 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                       Text(
                         "*",
                         style: TextStyle(
-                            color: Colors.red,
-                            fontSize: isPortrait && !isMobileSize ? 18 : 14),
+                            color: RegistrationTheme.err,
+                            fontSize: isPortrait && !isMobileSize ? RegistrationTheme.fsHeading : RegistrationTheme.fsSmall),
                       )
                     ],
                   ),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
@@ -239,7 +240,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
       elevation: 5,
       color: pureWhite,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(6.0),
+        borderRadius: BorderRadius.circular(RegistrationTheme.r),
       ),
       margin: EdgeInsets.symmetric(
           vertical: 20.h, horizontal: isPortrait ? 16.w : 0),
@@ -251,7 +252,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
             Text(
               "Application ID",
               style: TextStyle(
-                  fontSize: isPortrait && !isMobileSize ? 18 : 14),
+                  fontSize: isPortrait && !isMobileSize ? RegistrationTheme.fsHeading : RegistrationTheme.fsSmall),
             ),
             SizedBox(
               height: 10.h,
@@ -279,7 +280,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                 },
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
                   ),
                   contentPadding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -292,7 +293,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
         OutlinedButton(
           style: OutlinedButton.styleFrom(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
-            backgroundColor: Colors.white,
+            backgroundColor: RegistrationTheme.card,
             side: BorderSide(width: 1.0, color: solidPrimary),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(2),
@@ -366,7 +367,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                       },
                       child: Text(
                         AppLocalizations.of(context)!.fetch_data,
-                        style: TextStyle(fontSize: isPortrait && !isMobileSize ? 22 : 14, color: solidPrimary,fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: isPortrait && !isMobileSize ? RegistrationTheme.fsTitle : RegistrationTheme.fsSmall, color: solidPrimary,fontWeight: FontWeight.bold),
                       ),
                     ),
 
@@ -374,7 +375,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
         OutlinedButton(
           style: OutlinedButton.styleFrom(
             minimumSize: Size(50.w, 50.h),
-            backgroundColor: Colors.white,
+            backgroundColor: RegistrationTheme.card,
             side: BorderSide(width: 1.0, color: solidPrimary),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(2),

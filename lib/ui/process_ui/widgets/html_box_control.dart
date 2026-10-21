@@ -10,6 +10,7 @@ import 'dart:developer';
 import 'package:intl/intl.dart' as intl;
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_html/flutter_html.dart';
@@ -60,8 +61,8 @@ class HtmlBoxControl extends StatelessWidget {
                             height: 70.h,
                             decoration: BoxDecoration(
                               borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(8),
-                                topRight: Radius.circular(8),
+                                topLeft: Radius.circular(RegistrationTheme.rLg),
+                                topRight: Radius.circular(RegistrationTheme.rLg),
                               ),
                               color: (context
                                           .watch<GlobalProvider>()
@@ -76,7 +77,7 @@ class HtmlBoxControl extends StatelessWidget {
                                   .elementAt(i),
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: RegistrationTheme.fsHeading,
                                   color: (context
                                               .watch<GlobalProvider>()
                                               .htmlBoxTabIndex ==
@@ -99,8 +100,8 @@ class HtmlBoxControl extends StatelessWidget {
                           // width: 116,
                           decoration: BoxDecoration(
                             borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(8),
-                              topRight: Radius.circular(8),
+                              topLeft: Radius.circular(RegistrationTheme.rLg),
+                              topRight: Radius.circular(RegistrationTheme.rLg),
                             ),
                             color: (context
                                         .watch<GlobalProvider>()
@@ -115,7 +116,7 @@ class HtmlBoxControl extends StatelessWidget {
                                 .elementAt(i),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                fontSize: 18,
+                                fontSize: RegistrationTheme.fsHeading,
                                 color: (context
                                             .watch<GlobalProvider>()
                                             .htmlBoxTabIndex ==
