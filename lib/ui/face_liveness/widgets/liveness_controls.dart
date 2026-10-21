@@ -24,7 +24,7 @@ class LivenessPillButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(16));
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(LivenessTheme.radius));
     const size = Size.fromHeight(LivenessTheme.buttonHeight);
     if (primary) {
       return ElevatedButton(
@@ -33,8 +33,9 @@ class LivenessPillButton extends StatelessWidget {
           minimumSize: size,
           shape: shape,
           elevation: 0,
-          backgroundColor: LivenessTheme.text,
-          foregroundColor: LivenessTheme.background,
+          // Desktop primary: accent fill, white label.
+          backgroundColor: LivenessTheme.accent,
+          foregroundColor: LivenessTheme.onAccent,
           textStyle: LivenessTheme.button,
         ),
         child: Text(label),
@@ -46,8 +47,8 @@ class LivenessPillButton extends StatelessWidget {
         minimumSize: size,
         shape: shape,
         foregroundColor: LivenessTheme.text,
-        side: const BorderSide(color: Color(0xFF39424E)),
-        backgroundColor: const Color(0xFF1C232B),
+        side: const BorderSide(color: LivenessTheme.lineStrong),
+        backgroundColor: Colors.transparent,
         textStyle: LivenessTheme.button,
       ),
       child: Text(label),
@@ -114,8 +115,8 @@ class OfflineIndicator extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0x99A5AEB8)),
+        borderRadius: BorderRadius.circular(LivenessTheme.radiusBadge),
+        border: Border.all(color: LivenessTheme.lineStrong),
       ),
       child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
         const Icon(Icons.cloud_off_outlined, size: 14, color: LivenessTheme.textSecondary),

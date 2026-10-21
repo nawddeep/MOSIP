@@ -14,9 +14,11 @@ class LivenessTheme {
 
   // Desktop "ink" theme (website/ :root), see docs/ui/design-system.md.
   static const Color background = Color(0xFF0B0B0C); // ink-0
+  static const Color panel = Color(0xFF111113); // ink-1, camera panel
   static const Color ovalFill = Color(0xFF161618); // ink-2
   static const Color raised = Color(0xFF1C1C1F); // ink-3
   static const Color line = Color(0x1CF5F5F7); // line-on-ink, 11%
+  static const Color lineStrong = Color(0x38F5F5F7); // 22%, outlined buttons
   static const Color text = Color(0xFFF5F5F7); // fg-on-ink
   static const Color textSecondary = Color(0xFF8E8E93); // mute-on-ink
 
@@ -35,6 +37,8 @@ class LivenessTheme {
   static const double gutter = 24;
   static const double gap = 12;
   static const double radius = 5;
+  static const double radiusLg = 8;
+  static const double radiusBadge = 3;
   static const double buttonHeight = 52;
   static const double minTouchTarget = 48;
   static const double maxContentWidth = 560;

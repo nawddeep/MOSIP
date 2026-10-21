@@ -277,10 +277,11 @@ class FaceLivenessScreenState extends State<FaceLivenessScreen> {
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 20),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF141B23),
-                                    borderRadius: BorderRadius.circular(28),
+                                    color: LivenessTheme.panel,
+                                    borderRadius: BorderRadius.circular(
+                                        LivenessTheme.radiusLg),
                                     border: Border.all(
-                                        color: const Color(0xFF293440)),
+                                        color: LivenessTheme.line),
                                   ),
                                   child: Center(
                                       child: LivenessOval(
@@ -342,7 +343,7 @@ class FaceLivenessScreenState extends State<FaceLivenessScreen> {
             child: IconButton(
               tooltip: 'Back',
               style: IconButton.styleFrom(
-                  backgroundColor: const Color(0xFF1C232B)),
+                  backgroundColor: LivenessTheme.raised),
               icon: const Icon(Icons.arrow_back_rounded,
                   color: LivenessTheme.text),
               onPressed: _cancel,
