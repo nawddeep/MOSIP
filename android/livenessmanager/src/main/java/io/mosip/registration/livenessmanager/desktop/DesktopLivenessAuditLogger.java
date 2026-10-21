@@ -23,9 +23,19 @@ public final class DesktopLivenessAuditLogger implements LivenessAuditLogger {
     public static final String MODULE_NAME = "Registration";
 
     private final DesktopAuditManagerService auditManagerService;
+    private FallbackAuditListener fallbackListener;
+
+    /** Optional listener for diagnostics or mock capture during unit testing. */
+    public interface FallbackAuditListener {
+        void onAuditFailure(LivenessAuditRecord record, Exception cause);
+    }
 
     public DesktopLivenessAuditLogger(DesktopAuditManagerService auditManagerService) {
         this.auditManagerService = Objects.requireNonNull(auditManagerService, "auditManagerService cannot be null");
+    }
+
+    public void setFallbackListener(FallbackAuditListener fallbackListener) {
+        this.fallbackListener = fallbackListener;
     }
 
     @Override
@@ -42,6 +52,12 @@ public final class DesktopLivenessAuditLogger implements LivenessAuditLogger {
             // As required by the specification: a failed audit write must never break face capture.
             // Log only the exception class name.
             LOGGER.log(Level.WARNING, "Desktop liveness audit write failed: " + e.getClass().getSimpleName());
+            if (fallbackListener != null) {
+                try {
+                    fallbackListener.onAuditFailure(record, e);
+                } catch (Exception ignored) {
+                }
+            }
         }
     }
 
