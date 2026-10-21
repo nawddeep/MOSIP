@@ -90,6 +90,12 @@ class RegistrationTheme {
   // ---- Type (IBM Plex Sans; Desktop sizes/weights) -------------------------
   static const String fontFamily = 'IBMPlexSans';
 
+  /// Named fallback for scripts Plex does not cover. No device ships a font
+  /// with this name, so phones skip it and use their normal system fallback
+  /// (Noto Arabic/Devanagari/Tamil/Kannada). Screenshot tests register a
+  /// local script font under this name so renders show real glyphs.
+  static const List<String> fontFallback = <String>['RegistrationScriptFallback'];
+
   /// Type-scale sizes, for widgets that build their own TextStyle.
   static const double fsXs = 12.5;
   static const double fsSmall = 14.5;
@@ -100,6 +106,7 @@ class RegistrationTheme {
 
   static const TextStyle display = TextStyle(
       fontFamily: fontFamily,
+      fontFamilyFallback: fontFallback,
       fontSize: 28,
       height: 1.15,
       fontWeight: FontWeight.w600,
@@ -107,6 +114,7 @@ class RegistrationTheme {
       color: ink);
   static const TextStyle title = TextStyle(
       fontFamily: fontFamily,
+      fontFamilyFallback: fontFallback,
       fontSize: 21,
       height: 1.25,
       fontWeight: FontWeight.w600,
@@ -114,6 +122,7 @@ class RegistrationTheme {
       color: ink);
   static const TextStyle heading = TextStyle(
       fontFamily: fontFamily,
+      fontFamilyFallback: fontFallback,
       fontSize: 17,
       height: 1.3,
       fontWeight: FontWeight.w600,
@@ -121,24 +130,28 @@ class RegistrationTheme {
       color: ink);
   static const TextStyle body = TextStyle(
       fontFamily: fontFamily,
+      fontFamilyFallback: fontFallback,
       fontSize: 16,
       height: 1.5,
       fontWeight: FontWeight.w400,
       color: ink);
   static const TextStyle bodyStrong = TextStyle(
       fontFamily: fontFamily,
+      fontFamilyFallback: fontFallback,
       fontSize: 16,
       height: 1.5,
       fontWeight: FontWeight.w500,
       color: ink);
   static const TextStyle small = TextStyle(
       fontFamily: fontFamily,
+      fontFamilyFallback: fontFallback,
       fontSize: 14.5,
       height: 1.45,
       fontWeight: FontWeight.w400,
       color: muted);
   static const TextStyle xs = TextStyle(
       fontFamily: fontFamily,
+      fontFamilyFallback: fontFallback,
       fontSize: 12.5,
       height: 1.4,
       fontWeight: FontWeight.w500,
@@ -146,6 +159,7 @@ class RegistrationTheme {
   /// Section label (Desktop mono uppercase); callers upper-case the text.
   static const TextStyle label = TextStyle(
       fontFamily: fontFamily,
+      fontFamilyFallback: fontFallback,
       fontSize: 11.5,
       height: 1.3,
       fontWeight: FontWeight.w600,
@@ -154,17 +168,20 @@ class RegistrationTheme {
   /// Label above a form field.
   static const TextStyle fieldLabel = TextStyle(
       fontFamily: fontFamily,
+      fontFamilyFallback: fontFallback,
       fontSize: 14.5,
       height: 1.4,
       fontWeight: FontWeight.w500,
       color: ink);
   static const TextStyle button = TextStyle(
       fontFamily: fontFamily,
+      fontFamilyFallback: fontFallback,
       fontSize: 16,
       height: 1.2,
       fontWeight: FontWeight.w600);
   static const TextStyle stat = TextStyle(
       fontFamily: fontFamily,
+      fontFamilyFallback: fontFallback,
       fontSize: 32,
       height: 1.1,
       fontWeight: FontWeight.w600,
@@ -180,6 +197,7 @@ class RegistrationTheme {
     bodyLarge: body,
     bodyMedium: TextStyle(
         fontFamily: fontFamily,
+      fontFamilyFallback: fontFallback,
         fontSize: 14.5,
         height: 1.45,
         fontWeight: FontWeight.w400,
@@ -201,6 +219,7 @@ class RegistrationTheme {
   static ThemeData light() => ThemeData(
         useMaterial3: true,
         fontFamily: fontFamily,
+        fontFamilyFallback: fontFallback,
         scaffoldBackgroundColor: canvas,
         canvasColor: canvas,
         primaryColor: accent,

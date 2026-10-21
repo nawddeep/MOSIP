@@ -50,7 +50,7 @@ class TemplateBottomSheet {
                 width: 75,
                 margin: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: BorderRadius.circular(RegistrationTheme.rPill),
                   color: RegistrationTheme.lineStrong,
                 ),
               ),
