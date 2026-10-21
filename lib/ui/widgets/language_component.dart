@@ -6,7 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
-import 'package:registration_client/utils/app_config.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 
 class LanguageComponent extends StatefulWidget {
   const LanguageComponent({
@@ -37,16 +37,25 @@ class _LanguageComponentState extends State<LanguageComponent> {
       selected: widget.isSelected || widget.isFreezed,
       onSelected:
           widget.isDisabled || widget.isFreezed ? null : (_) => widget.onTap(),
-      selectedColor: const Color(0xFFECF2FF),
-      backgroundColor: Colors.white,
-      labelStyle: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          color: widget.isDisabled ? appBlackShade3 : appSolidPrimary),
+      // Desktop chip: pill, hairline; selected = sunken fill, ink border and
+      // a check mark (not colour alone).
+      selectedColor: RegistrationTheme.sunken,
+      backgroundColor: RegistrationTheme.card,
+      labelStyle: RegistrationTheme.small.copyWith(
+          fontWeight: widget.isSelected || widget.isFreezed
+              ? FontWeight.w600
+              : FontWeight.w500,
+          color: widget.isDisabled
+              ? RegistrationTheme.muted
+              : RegistrationTheme.ink),
       side: BorderSide(
-          color: widget.isSelected ? appSolidPrimary : const Color(0xFFE2E8F2)),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          color: widget.isSelected || widget.isFreezed
+              ? RegistrationTheme.ink
+              : RegistrationTheme.lineStrong),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(RegistrationTheme.rPill)),
+      padding: const EdgeInsets.symmetric(
+          horizontal: RegistrationTheme.s2, vertical: RegistrationTheme.s2),
       materialTapTargetSize: MaterialTapTargetSize.padded,
     );
   }

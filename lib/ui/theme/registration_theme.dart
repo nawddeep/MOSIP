@@ -143,6 +143,13 @@ class RegistrationTheme {
       fontWeight: FontWeight.w600,
       letterSpacing: 1.2,
       color: muted);
+  /// Label above a form field.
+  static const TextStyle fieldLabel = TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 14.5,
+      height: 1.4,
+      fontWeight: FontWeight.w500,
+      color: ink);
   static const TextStyle button = TextStyle(
       fontFamily: fontFamily,
       fontSize: 16,
@@ -316,6 +323,7 @@ class RegistrationTheme {
         chipTheme: ChipThemeData(
             backgroundColor: card,
             selectedColor: sunken,
+            checkmarkColor: ink,
             side: const BorderSide(color: lineStrong),
             labelStyle: small.copyWith(color: ink),
             padding: const EdgeInsets.symmetric(horizontal: s3),

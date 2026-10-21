@@ -8,7 +8,8 @@ import 'package:registration_client/ui/theme/registration_theme.dart';
 
 typedef _T = RegistrationTheme;
 
-/// Upper-case tracked section label ("REGISTRATION TASKS").
+/// Tracked section label (Desktop mono label). The text is not upper-cased:
+/// ui-test finds elements by @text, so existing strings must stay as-is.
 class SectionLabel extends StatelessWidget {
   const SectionLabel(this.text, {super.key, this.trailing});
   final String text;
@@ -17,7 +18,7 @@ class SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final label = Semantics(
-        header: true, child: Text(text.toUpperCase(), style: _T.label));
+        header: true, child: Text(text, style: _T.label));
     if (trailing == null) return label;
     return Row(children: [Expanded(child: label), trailing!]);
   }

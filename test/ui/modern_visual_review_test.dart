@@ -71,8 +71,8 @@ void main() {
             title: 'Welcome',
             description: 'Community Registration Client',
             child: Container(
-                padding: const EdgeInsets.all(24),
-                decoration: RegistrationTheme.surface(shadow: true),
+                padding: const EdgeInsets.all(RegistrationTheme.s6),
+                decoration: RegistrationTheme.surface(),
                 child: Builder(
                     builder: (context) => Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -48,14 +48,10 @@ class _UsernameComponentState extends State<UsernameComponent> {
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(l.language,
-            style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: RegistrationTheme.ink)),
-        const SizedBox(height: 12),
+        Text(l.language, style: RegistrationTheme.fieldLabel),
+        const SizedBox(height: RegistrationTheme.s2),
         _getLanguageRowList(),
-        const SizedBox(height: 24),
+        const SizedBox(height: RegistrationTheme.s6),
         TextField(
           autofillHints: const [AutofillHints.username],
           textInputAction: TextInputAction.next,
@@ -66,26 +62,26 @@ class _UsernameComponentState extends State<UsernameComponent> {
               labelText: l.username,
               hintText: l.enter_username,
               prefixIcon: const Icon(Icons.person_outline_rounded)),
-          style: const TextStyle(fontSize: 16, color: RegistrationTheme.ink),
+          style: RegistrationTheme.body,
           onChanged: (v) => widget.onChanged(v),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: RegistrationTheme.s6),
         ElevatedButton(
             onPressed: widget.isDisabled ? null : widget.onTap,
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Text(l.next_button),
-              const SizedBox(width: 10),
-              const Icon(Icons.arrow_forward_rounded, size: 18),
+              const SizedBox(width: RegistrationTheme.s2),
+              const Icon(Icons.arrow_forward_rounded,
+                  size: RegistrationTheme.iconInline),
             ])),
         if (widget.onTapSignup != null) ...[
-          const SizedBox(height: 20),
+          const SizedBox(height: RegistrationTheme.s4),
           Wrap(
               alignment: WrapAlignment.center,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text(l.signup_no_account,
-                    style: const TextStyle(
-                        fontSize: 14, color: RegistrationTheme.muted)),
+                    style: RegistrationTheme.small),
                 TextButton(
                     key: const ValueKey<String>('signup-link'),
                     onPressed: widget.onTapSignup,

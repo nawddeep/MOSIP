@@ -11,7 +11,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
@@ -157,13 +156,12 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
         child: _loginComponent(),
         footer: Text(appLocalizations.info_text,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-                fontSize: 13, height: 1.5, color: RegistrationTheme.muted)),
+            style: RegistrationTheme.small),
       ),
       if (isMachineKeysDialogOpen)
         Positioned.fill(
             child: Container(
-                color: Colors.black54,
+                color: RegistrationTheme.scrim,
                 child: Center(
                     child: MachineKeys(
                         onCloseComponent: _toggleMachineKeysDialog)))),
@@ -380,27 +378,18 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   Widget _loginComponent() {
     return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: RegistrationTheme.surface(shadow: true),
+      padding: const EdgeInsets.all(RegistrationTheme.s6),
+      decoration: RegistrationTheme.surface(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
-            height: 4,
-          ),
           if (!context.watch<AuthProvider>().isNetworkPresent) ...[
             Text(
               appLocalizations.login_text,
-              style: const TextStyle(
-                  fontFamily: 'IBMPlexSans',
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: RegistrationTheme.ink),
+              style: RegistrationTheme.title,
             ),
-            SizedBox(
-              height: 24,
-            ),
+            const SizedBox(height: RegistrationTheme.s5),
           ],
           !context.watch<AuthProvider>().isValidUser &&
                   !context.watch<AuthProvider>().isNetworkPresent
@@ -512,33 +501,27 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              height: isMobile && isMobileSize ? 210.h : 280.h,
-              width: isMobile && isMobileSize ? 210.w : 280.w,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15), color: pureWhite),
+              constraints: const BoxConstraints(maxWidth: 360),
+              margin: const EdgeInsets.all(RegistrationTheme.s6),
+              decoration: RegistrationTheme.surface(shadow: true),
               child: Padding(
-                padding: const EdgeInsets.all(25.0),
+                padding: const EdgeInsets.all(RegistrationTheme.s6),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: isMobile && isMobileSize ? 40.h : 100.h,
-                      width: isMobile && isMobileSize ? 40.w : 100.w,
+                      height: 56,
+                      width: 56,
                       child: syncProvider.isAllSyncSuccessful()
                           ? SvgPicture.asset(
                               "assets/svg/Success Message Icon.svg")
                           : SvgPicture.asset(
                               "assets/svg/Failed Message Icon.svg"),
                     ),
-                    SizedBox(
-                      height: isMobile ? 2.h : 5.h,
-                    ),
+                    const SizedBox(height: RegistrationTheme.s4),
                     DefaultTextStyle(
-                      style: TextStyle(
-                          fontSize: isMobile && isMobileSize ? 10 : 18,
-                          color: Colors.black87,
-                          fontWeight: FontWeight.bold),
+                      style: RegistrationTheme.heading,
                       child: Text(
                         syncProvider.isAllSyncSuccessful()
                             ? appLocalizations.sync_completed_succesfully
@@ -546,12 +529,9 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    const SizedBox(),
+                    const SizedBox(height: RegistrationTheme.s1),
                     DefaultTextStyle(
-                      style: TextStyle(
-                          fontSize: isMobile && isMobileSize ? 8 : 12,
-                          color: const Color.fromARGB(221, 80, 79, 79),
-                          fontWeight: FontWeight.w900),
+                      style: RegistrationTheme.small,
                       child: Text(
                         syncProvider.isAllSyncSuccessful()
                             ? appLocalizations.sync_completed_message
@@ -580,12 +560,12 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              height: isMobile && isMobileSize ? 210.h : 280.h,
-              width: isMobile && isMobileSize ? 210.w : 280.w,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15), color: pureWhite),
+              constraints: const BoxConstraints(maxWidth: 360),
+              margin: const EdgeInsets.all(RegistrationTheme.s6),
+              padding: const EdgeInsets.all(RegistrationTheme.s6),
+              decoration: RegistrationTheme.surface(shadow: true),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Stack(
                     alignment: Alignment.center,
@@ -593,11 +573,11 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                       Image.asset(
                         appIconLogoOnly,
                         fit: BoxFit.scaleDown,
-                        height: isMobile && isMobileSize ? 35.h : 90.h,
-                        width: isMobile && isMobileSize ? 35.w : 90.w,
+                        height: 40,
+                        width: 40,
                       ),
                       Transform.scale(
-                        scale: isMobile ? 1.4 : 2.8,
+                        scale: 1.6,
                         child: Center(
                           child: ColorfulCircularProgressIndicator(
                             colors: appColors,
@@ -609,18 +589,27 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: isMobile ? 10.h : 20.h,
-                  ),
+                  const SizedBox(height: RegistrationTheme.s8),
                   DefaultTextStyle(
-                      style: TextStyle(
-                          fontSize: isMobile && isMobileSize ? 12 : 15,
-                          color: const Color.fromARGB(221, 80, 79, 79),
-                          fontWeight: FontWeight.w900),
+                      style: RegistrationTheme.bodyStrong,
                       child: Consumer<SyncProvider>(
                         builder: (context, syncP, child) {
-                          return Text(
-                              "Sync ${syncP.currentSyncProgress.toString()} of 7 ");
+                          return Column(children: [
+                            Text(
+                                "Sync ${syncP.currentSyncProgress.toString()} of 7 "),
+                            const SizedBox(height: RegistrationTheme.s3),
+                            ExcludeSemantics(
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.circular(RegistrationTheme.r),
+                                child: LinearProgressIndicator(
+                                    minHeight: 4,
+                                    value: (syncP.currentSyncProgress / 7)
+                                        .clamp(0.0, 1.0)
+                                        .toDouble()),
+                              ),
+                            ),
+                          ]);
                         },
                       )),
                 ],

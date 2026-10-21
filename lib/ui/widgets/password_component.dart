@@ -67,25 +67,25 @@ class _PasswordComponentState extends State<PasswordComponent> {
                 obscured: _obscurePassword,
                 onToggle: () =>
                     setState(() => _obscurePassword = !_obscurePassword))),
-        style: const TextStyle(fontSize: 16, color: RegistrationTheme.ink),
+        style: RegistrationTheme.body,
       ),
-      const SizedBox(height: 12),
+      const SizedBox(height: RegistrationTheme.s2),
       Align(
           alignment: AlignmentDirectional.centerEnd,
           child: TextButton(
               onPressed: isLoggingIn ? null : onTapForgotPassword,
               child: Text(l.forgot_password))),
-      const SizedBox(height: 12),
+      const SizedBox(height: RegistrationTheme.s2),
       ElevatedButton(
           onPressed: isDisabled || isLoggingIn ? null : onTapLogin,
           child: isLoggingIn
               ? const SizedBox(
-                  width: 22,
-                  height: 22,
+                  width: RegistrationTheme.iconInline,
+                  height: RegistrationTheme.iconInline,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Colors.white))
+                      strokeWidth: 2, color: RegistrationTheme.onAccent))
               : Text(l.login_button)),
-      const SizedBox(height: 12),
+      const SizedBox(height: RegistrationTheme.s3),
       OutlinedButton(
           onPressed: isLoggingIn ? null : onTapBack,
           child: Text(l.back_button)),
