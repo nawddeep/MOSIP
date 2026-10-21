@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/pigeon/dash_board_pigeon.dart';
@@ -73,9 +74,9 @@ class _UserDashBoardState extends State<UserDashBoard> {
                     child: Text(
                       appLocalizations.dashboard,
                       style: TextStyle(
-                          fontSize: isMobileSize ? 18 : 24,
+                          fontSize: isMobileSize ? RegistrationTheme.fsHeading : RegistrationTheme.fsTitle,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                          color: RegistrationTheme.card),
                     ),
                   ),
                   Row(
@@ -89,8 +90,8 @@ class _UserDashBoardState extends State<UserDashBoard> {
                               height: isMobileSize ? 100 : 160,
                               width: MediaQuery.of(context).size.width / 3.4,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(RegistrationTheme.r),
+                                color: RegistrationTheme.card,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -113,7 +114,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                             .padLeft(2, '0')
                                             : "00",
                                         style: TextStyle(
-                                            fontSize: isMobileSize ? 25 : 35,
+                                            fontSize: isMobileSize ? RegistrationTheme.fsTitle : RegistrationTheme.fsDisplay,
                                             fontWeight: FontWeight.bold),
                                       )
                                     ],
@@ -130,7 +131,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                           appLocalizations.packets_created,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                              fontSize: isMobileSize ? 15 : 20,
+                                              fontSize: isMobileSize ? RegistrationTheme.fsSmall : RegistrationTheme.fsTitle,
                                               fontWeight: FontWeight.bold),
                                         ),
                                       ),
@@ -148,8 +149,8 @@ class _UserDashBoardState extends State<UserDashBoard> {
                               height: isMobileSize ? 100 : 160,
                               width: MediaQuery.of(context).size.width / 3.4,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(RegistrationTheme.r),
+                                color: RegistrationTheme.card,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -172,7 +173,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                             .padLeft(2, '0')
                                             : "00",
                                         style: TextStyle(
-                                            fontSize: isMobileSize ? 25 : 35,
+                                            fontSize: isMobileSize ? RegistrationTheme.fsTitle : RegistrationTheme.fsDisplay,
                                             fontWeight: FontWeight.bold),
                                       )
                                     ],
@@ -189,7 +190,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                           appLocalizations.packets_synced,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                              fontSize: isMobileSize ? 15 : 20,
+                                              fontSize: isMobileSize ? RegistrationTheme.fsSmall : RegistrationTheme.fsTitle,
                                               fontWeight: FontWeight.bold),
                                         ),
                                       ),
@@ -207,8 +208,8 @@ class _UserDashBoardState extends State<UserDashBoard> {
                               height: isMobileSize ? 100 : 160,
                               width: MediaQuery.of(context).size.width / 3.4,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(RegistrationTheme.r),
+                                color: RegistrationTheme.card,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -230,7 +231,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                                 .padLeft(2, '0')
                                             : "00",
                                         style: TextStyle(
-                                            fontSize: isMobileSize ? 25 : 35,
+                                            fontSize: isMobileSize ? RegistrationTheme.fsTitle : RegistrationTheme.fsDisplay,
                                             fontWeight: FontWeight.bold),
                                       )
                                     ],
@@ -247,7 +248,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                           appLocalizations.packets_uploaded,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            fontSize: isMobileSize ? 15 : 20,
+                                            fontSize: isMobileSize ? RegistrationTheme.fsSmall : RegistrationTheme.fsTitle,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -266,8 +267,8 @@ class _UserDashBoardState extends State<UserDashBoard> {
                               height: isMobileSize ? 100 : 160,
                               width: MediaQuery.of(context).size.width / 3.4,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(RegistrationTheme.r),
+                                color: RegistrationTheme.card,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -290,7 +291,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                                 .padLeft(2, '0')
                                             : "00",
                                         style: TextStyle(
-                                            fontSize: isMobileSize ? 25 : 35,
+                                            fontSize: isMobileSize ? RegistrationTheme.fsTitle : RegistrationTheme.fsDisplay,
                                             fontWeight: FontWeight.bold),
                                       )
                                     ],
@@ -298,7 +299,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                   const SizedBox(height: 10),
                                   Text('Packets Upload Pending',
                                       style: TextStyle(
-                                          fontSize: isMobileSize ? 15 : 20,
+                                          fontSize: isMobileSize ? RegistrationTheme.fsSmall : RegistrationTheme.fsTitle,
                                           fontWeight: FontWeight.bold)),
                                   // const SizedBox(height: 8),
                                   // Text("Last one month data",
@@ -322,7 +323,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
               child: Text(
                 appLocalizations.users,
                 style: TextStyle(
-                    fontSize: isMobileSize ? 18 : 24,
+                    fontSize: isMobileSize ? RegistrationTheme.fsHeading : RegistrationTheme.fsTitle,
                     fontWeight: FontWeight.bold),
               ),
             ),
@@ -334,7 +335,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                     elevation: 3,
                     shadowColor: appBlueShade,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
                     ),
                     margin: isMobileSize
                         ? const EdgeInsets.only(left: 10, right: 10, bottom: 10)
@@ -367,12 +368,12 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                       TableCellVerticalAlignment.middle,
                                   border: TableBorder(
                                     horizontalInside: BorderSide(
-                                        width: 2, color: Colors.grey.shade300),
+                                        width: 2, color: RegistrationTheme.lineStrong),
                                   ),
                                   children: [
                                     TableRow(
                                         decoration: BoxDecoration(
-                                            color: Colors.grey.shade100),
+                                            color: RegistrationTheme.line),
                                         children: [
                                           TableCell(
                                             verticalAlignment:
@@ -545,7 +546,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
             child: Text(
               " ${appLocalizations.active_not_onboarded}",
               style: TextStyle(
-                  fontSize: isMobileSize ? 10 : 16,
+                  fontSize: isMobileSize ? RegistrationTheme.fsXs : RegistrationTheme.fsBody,
                   color: appBlackShade2,
                   fontWeight: FontWeight.w500),
               overflow: TextOverflow.ellipsis,
@@ -566,7 +567,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
             child: Text(
               " ${appLocalizations.user_inactive}",
               style: TextStyle(
-                  fontSize: isMobileSize ? 10 : 16,
+                  fontSize: isMobileSize ? RegistrationTheme.fsXs : RegistrationTheme.fsBody,
                   color: appBlackShade2,
                   fontWeight: FontWeight.w500),
               overflow: TextOverflow.ellipsis,
@@ -590,7 +591,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
           child: Text(
             " ${appLocalizations.onboarded}",
             style: TextStyle(
-                fontSize: isMobileSize ? 10 : 16,
+                fontSize: isMobileSize ? RegistrationTheme.fsXs : RegistrationTheme.fsBody,
                 color: appBlackShade2,
                 fontWeight: FontWeight.w500),
             overflow: TextOverflow.ellipsis,

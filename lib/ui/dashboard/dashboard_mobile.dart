@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/common/mobile_navbar.dart';
@@ -23,7 +24,7 @@ class DashBoardMobileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: RegistrationTheme.card,
       bottomNavigationBar: const MobileNavbar(),
       body: Row(
         children: [

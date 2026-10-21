@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:registration_client/utils/app_style.dart';
@@ -27,13 +28,13 @@ class NetworkComponent extends StatelessWidget {
             height: 50.h,
           ),
           Text(AppLocalizations.of(context)!.no_internet_connection,
-              style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.black,fontSize: 26)),
+              style: const TextStyle(fontWeight: FontWeight.bold,color: RegistrationTheme.ink,fontSize: RegistrationTheme.fsTitle)),
           SizedBox(
             height: 5.h,
           ),
           Text(AppLocalizations.of(context)!.connect_and_retry,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.w300,color: Colors.grey,fontSize: 22)),
+              style: const TextStyle(fontWeight: FontWeight.w300,color: RegistrationTheme.muted,fontSize: RegistrationTheme.fsTitle)),
           SizedBox(
             height: 50.h,
           ),
@@ -48,7 +49,7 @@ class NetworkComponent extends StatelessWidget {
                   color: appBlueShade1,
                 ),
                 borderRadius: const BorderRadius.all(
-                  Radius.circular(5),
+                  Radius.circular(RegistrationTheme.r),
                 ),
               ),
               child: Center(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:registration_client/utils/app_config.dart';
 
@@ -30,10 +31,10 @@ class _QRCodeScannerAppState extends State<QRCodeScannerApp> {
         : 300.0;
 
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: RegistrationTheme.card,
         appBar: AppBar(
           toolbarHeight: 55,
-          backgroundColor: Colors.black,
+          backgroundColor: RegistrationTheme.ink,
           automaticallyImplyLeading: false,
           title: SizedBox(
             height: 40,
@@ -48,7 +49,7 @@ class _QRCodeScannerAppState extends State<QRCodeScannerApp> {
                   });
                 }
               },
-              backgroundColor: Colors.grey[800],
+              backgroundColor: RegistrationTheme.ink,
               elevation: 0,
               label: Text(isFlashOn ? 'OFF':'ON',style: const TextStyle(color: appWhite)),
               icon: const Icon(Icons.flashlight_on_outlined,color: appWhite),
@@ -73,7 +74,7 @@ class _QRCodeScannerAppState extends State<QRCodeScannerApp> {
             Expanded(
               flex: 1,
               child: Container(
-                color: Colors.black,
+                color: RegistrationTheme.ink,
                 width: double.infinity,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -90,13 +91,13 @@ class _QRCodeScannerAppState extends State<QRCodeScannerApp> {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            backgroundColor: Colors.grey[800],
+                            backgroundColor: RegistrationTheme.ink,
                             elevation: 0,
                             child: const Icon(Icons.close,size: 40,color: appWhite),
                           ),
                         ),
                         const SizedBox(height: 5),
-                        const Text('CANCEL',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold))
+                        const Text('CANCEL',style: TextStyle(color: RegistrationTheme.card,fontWeight: FontWeight.bold))
                       ],
                     ),
                     SizedBox(
@@ -104,7 +105,7 @@ class _QRCodeScannerAppState extends State<QRCodeScannerApp> {
                       width: 90,
                       child: FloatingActionButton(
                         heroTag: "two",
-                        backgroundColor: Colors.white,
+                        backgroundColor: RegistrationTheme.card,
                         onPressed: () {
                           if(result!=null) {
                             return Navigator.pop(context, result!.code);
@@ -130,13 +131,13 @@ class _QRCodeScannerAppState extends State<QRCodeScannerApp> {
                                 });
                               }
                             },
-                            backgroundColor: Colors.grey[800],
+                            backgroundColor: RegistrationTheme.ink,
                             elevation: 0,
                             child: const Icon(Icons.flip_camera_ios_outlined,size: 40,color: appWhite),
                           ),
                         ),
                         const SizedBox(height: 5),
-                        const Text('FLIP',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold))
+                        const Text('FLIP',style: TextStyle(color: RegistrationTheme.card,fontWeight: FontWeight.bold))
                       ],
                     ),
                   ],

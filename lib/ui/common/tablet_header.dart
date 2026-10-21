@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
@@ -27,10 +28,10 @@ class TabletHeader extends StatelessWidget {
       decoration: const BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: Color(0xffE5EBFA),
+            color: RegistrationTheme.line,
           ),
         ),
-        color: Color(0xffFAFBFF),
+        color: RegistrationTheme.cardAlt,
       ),
       width: w,
       height: 50.h,
@@ -54,7 +55,7 @@ class TabletHeader extends StatelessWidget {
             Text(
               context.watch<GlobalProvider>().centerName,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: const Color(0xff333333), fontWeight: semiBold),
+                  color: RegistrationTheme.ink, fontWeight: semiBold),
             ),
             SizedBox(
               width: (isLandscape) ? 20.w : 8.w,
@@ -62,8 +63,8 @@ class TabletHeader extends StatelessWidget {
             Icon(
               Icons.circle,
               color: context.watch<ConnectivityProvider>().isConnected
-                  ? const Color(0xff1A9B42)
-                  : Colors.grey,
+                  ? RegistrationTheme.ok
+                  : RegistrationTheme.muted,
               size: 12,
             ),
             SizedBox(
@@ -80,7 +81,7 @@ class TabletHeader extends StatelessWidget {
             Text(
               context.watch<GlobalProvider>().machineName.toUpperCase(),
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: const Color(0xff333333), fontWeight: semiBold),
+                  color: RegistrationTheme.ink, fontWeight: semiBold),
             ),
             SizedBox(
               width: w < 512 ? 0 : 60,

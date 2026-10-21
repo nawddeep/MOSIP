@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -31,8 +32,8 @@ class BottomNavBarWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: selectedIndex == index ? bottomBarSelectedColor : Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        color: selectedIndex == index ? bottomBarSelectedColor : RegistrationTheme.card,
+        borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -42,7 +43,7 @@ class BottomNavBarWidget extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontSize: isMobileSize ? 10 : 18,
+              fontSize: isMobileSize ? RegistrationTheme.fsXs : RegistrationTheme.fsHeading,
               fontWeight: semiBold,
               color: selectedIndex == index ? solidPrimary : secondaryColors.elementAt(5),
             ),

@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -47,7 +48,7 @@ class OnboardLandingPageCard extends StatelessWidget {
                     style: Theme.of(context)
                         .textTheme
                         .bodySmall
-                        ?.copyWith(fontWeight: FontWeight.w900, fontSize: 14),
+                        ?.copyWith(fontWeight: FontWeight.w900, fontSize: RegistrationTheme.fsSmall),
                   ),
                 ),
               ],

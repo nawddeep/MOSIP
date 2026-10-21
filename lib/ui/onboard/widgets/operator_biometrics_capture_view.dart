@@ -292,7 +292,7 @@ class _OperatorBiometricsCaptureState
                                 style: TextStyle(
                                     fontSize: RegistrationTheme.fsDisplay,
                                     fontWeight: semiBold,
-                                    color: Color(0xFF000000)),
+                                    color: RegistrationTheme.ink),
                               ),
                               SizedBox(
                                 height: 62.h,

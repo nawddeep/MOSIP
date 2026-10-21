@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
@@ -73,14 +74,14 @@ class OnboardingPage extends StatelessWidget {
                         Text(
                           "${appLocalizations.hello}, ",
                           style: TextStyle(
-                            fontSize: isMobileSize ? 28.h : 36.h,
+                            fontSize: isMobileSize ? RegistrationTheme.fsDisplay.h : RegistrationTheme.fsDisplay.h,
                             color: appWhite,
                           ),
                         ),
                         Text(
                           authProvider.username,
                           style: TextStyle(
-                            fontSize: isMobileSize ? 28 : 36,
+                            fontSize: isMobileSize ? RegistrationTheme.fsDisplay : RegistrationTheme.fsDisplay,
                             fontWeight: FontWeight.bold,
                             color: appWhite,
                           ),
@@ -93,7 +94,7 @@ class OnboardingPage extends StatelessWidget {
                     Text(
                       appLocalizations.onboard_process_help,
                       style: TextStyle(
-                        fontSize: isMobileSize ? 16 : 22,
+                        fontSize: isMobileSize ? RegistrationTheme.fsBody : RegistrationTheme.fsTitle,
                         color: appWhite.withOpacity(0.6),
                       ),
                       textAlign: TextAlign.center,
@@ -158,14 +159,14 @@ class OnboardingPage extends StatelessWidget {
             color: appWhite,
           ),
           borderRadius: const BorderRadius.all(
-            Radius.circular(5),
+            Radius.circular(RegistrationTheme.r),
           ),
         ),
         child: Center(
           child: Text(
             title,
             style: TextStyle(
-              fontSize: isMobileSize ? 16 : 22,
+              fontSize: isMobileSize ? RegistrationTheme.fsBody : RegistrationTheme.fsTitle,
               fontWeight: FontWeight.bold,
               color: fontColor,
             ),

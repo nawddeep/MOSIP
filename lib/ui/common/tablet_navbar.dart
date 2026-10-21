@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +43,7 @@ class TabletNavbar extends StatelessWidget {
               context.watch<GlobalProvider>().currentIndex != 0
                   ? Icon(
                       Icons.menu,
-                      color: const Color(0xff4E4E4E),
+                      color: RegistrationTheme.ink,
                       size: 26.h,
                     )
                   : const SizedBox.shrink(),
@@ -51,7 +52,7 @@ class TabletNavbar extends StatelessWidget {
               ),
               Icon(
                 Icons.settings,
-                color: const Color(0xff4E4E4E),
+                color: RegistrationTheme.ink,
                 size: 26.h,
               ),
               SizedBox(
@@ -59,7 +60,7 @@ class TabletNavbar extends StatelessWidget {
               ),
               Icon(
                 Icons.notifications_outlined,
-                color: const Color(0xff4E4E4E),
+                color: RegistrationTheme.ink,
                 size: 25.5.h,
               ),
               SizedBox(
@@ -88,14 +89,14 @@ class TabletNavbar extends StatelessWidget {
                 //         .toLowerCase(),
                 authProvider.username,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.black, fontSize: 16, fontWeight: semiBold),
+                    color: RegistrationTheme.ink, fontSize: RegistrationTheme.fsBody, fontWeight: semiBold),
               ),
               SizedBox(
                 width: (isLandscape) ? 5.w : 3.w,
               ),
               Icon(
                 Icons.arrow_drop_down,
-                color: const Color(0xff4D4C4C),
+                color: RegistrationTheme.ink,
                 size: 15.h,
               ),
               SizedBox(

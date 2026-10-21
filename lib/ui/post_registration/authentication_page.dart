@@ -7,6 +7,7 @@
 
 import 'package:registration_client/ui/widgets/password_visibility_toggle.dart';
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/app_style.dart';
@@ -44,7 +45,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
           ),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(
-              Radius.circular(6),
+              Radius.circular(RegistrationTheme.r),
             ),
             color: pureWhite,
           ),
@@ -57,7 +58,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
               Text(
                 'Authentication using Password',
                 style: TextStyle(
-                    fontSize: 18,
+                    fontSize: RegistrationTheme.fsHeading,
                     fontWeight: semiBold,
                     color: appBlack),
               ),
@@ -140,7 +141,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
           color: appGreyShade,
         ),
         borderRadius: const BorderRadius.all(
-          Radius.circular(6),
+          Radius.circular(RegistrationTheme.r),
         ),
       ),
       child: TextField(
@@ -170,7 +171,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
           color: appGreyShade,
         ),
         borderRadius: const BorderRadius.all(
-          Radius.circular(6),
+          Radius.circular(RegistrationTheme.r),
         ),
       ),
       child: TextField(

@@ -10,6 +10,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:native_image_cropper/native_image_cropper.dart';
 import 'package:registration_client/provider/global_provider.dart';
@@ -62,16 +63,16 @@ class _CustomScannerState extends State<CustomScanner> {
   Widget build(BuildContext context) {
     return _pickedFile != null
         ? Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: RegistrationTheme.card,
             appBar: AppBar(
               automaticallyImplyLeading: false,
               title: Text(
                 context
                     .read<GlobalProvider>()
                     .chooseLanguage(widget.field.label!),
-                style: const TextStyle(color: Colors.black),
+                style: const TextStyle(color: RegistrationTheme.ink),
               ),
-              backgroundColor: Colors.white,
+              backgroundColor: RegistrationTheme.card,
               elevation: 1,
               actions: [
                 IconButton(
@@ -80,7 +81,7 @@ class _CustomScannerState extends State<CustomScanner> {
                     },
                     icon: const Icon(
                       Icons.close,
-                      color: Colors.black,
+                      color: RegistrationTheme.ink,
                       size: 30,
                     )),
               ],
@@ -149,7 +150,7 @@ class _CustomScannerState extends State<CustomScanner> {
                     child: OutlinedButton(
                       style: OutlinedButton.styleFrom(
                         elevation: 0,
-                        backgroundColor: Colors.white,
+                        backgroundColor: RegistrationTheme.card,
                         side: BorderSide(width: 2.0, color: solidPrimary),
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(2)),
@@ -160,7 +161,7 @@ class _CustomScannerState extends State<CustomScanner> {
                       },
                       child: Text(
                         AppLocalizations.of(context)!.retake,
-                        style: TextStyle(fontSize: 16, color: solidPrimary),
+                        style: TextStyle(fontSize: RegistrationTheme.fsBody, color: solidPrimary),
                       ),
                     ),
                   ),
@@ -177,7 +178,7 @@ class _CustomScannerState extends State<CustomScanner> {
                       },
                       child: Text(
                         AppLocalizations.of(context)!.save,
-                        style: const TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: RegistrationTheme.fsBody),
                       ),
                     ),
                   ),

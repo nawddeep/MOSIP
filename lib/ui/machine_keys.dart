@@ -8,6 +8,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -64,7 +65,7 @@ class _MachineKeysState extends State<MachineKeys> {
       decoration: const BoxDecoration(
         color: appWhite,
         borderRadius: BorderRadius.all(
-          Radius.circular(12),
+          Radius.circular(RegistrationTheme.rLg),
         ),
       ),
       child: SingleChildScrollView(
@@ -82,7 +83,7 @@ class _MachineKeysState extends State<MachineKeys> {
                       appLocalizations.device_credentials,
                       style: TextStyle(
                         color: appBlack,
-                        fontSize: isMobileSize ? 18 : 26,
+                        fontSize: isMobileSize ? RegistrationTheme.fsHeading : RegistrationTheme.fsTitle,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -157,7 +158,7 @@ class _MachineKeysState extends State<MachineKeys> {
             color: appBlueShade1,
           ),
           borderRadius: const BorderRadius.all(
-            Radius.circular(5),
+            Radius.circular(RegistrationTheme.r),
           ),
         ),
         child: Center(
@@ -184,7 +185,7 @@ class _MachineKeysState extends State<MachineKeys> {
             color: appBlueShade1,
           ),
           borderRadius: const BorderRadius.all(
-            Radius.circular(5),
+            Radius.circular(RegistrationTheme.r),
           ),
         ),
         child: Center(

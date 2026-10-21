@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -18,7 +19,7 @@ class SyncAlertDialog extends StatelessWidget {
         title: Text(
           title,
           style: TextStyle(
-            fontSize: isMobile && !isMobileSize ? 26 : 20,
+            fontSize: isMobile && !isMobileSize ? RegistrationTheme.fsTitle : RegistrationTheme.fsTitle,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -27,7 +28,7 @@ class SyncAlertDialog extends StatelessWidget {
         content: Text(
           content,
           style: TextStyle(
-            fontSize: isMobile && !isMobileSize ? 18 : 14,
+            fontSize: isMobile && !isMobileSize ? RegistrationTheme.fsHeading : RegistrationTheme.fsSmall,
             fontWeight: regular,
           ),
         ),
@@ -49,7 +50,7 @@ class SyncAlertDialog extends StatelessWidget {
                       child: Text(
                         AppLocalizations.of(context)!.cancel,
                         style: TextStyle(
-                          fontSize: isMobile && !isMobileSize ? 18 : 14,
+                          fontSize: isMobile && !isMobileSize ? RegistrationTheme.fsHeading : RegistrationTheme.fsSmall,
                         ),
                       ),
                     ),
@@ -72,7 +73,7 @@ class SyncAlertDialog extends StatelessWidget {
                       child: Text(
                         AppLocalizations.of(context)!.sync_alert_text,
                         style: TextStyle(
-                          fontSize: isMobile && !isMobileSize ? 18 : 14,
+                          fontSize: isMobile && !isMobileSize ? RegistrationTheme.fsHeading : RegistrationTheme.fsSmall,
                         ),
                       ),
                     ),

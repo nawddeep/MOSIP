@@ -6,6 +6,8 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/components.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
@@ -77,15 +79,15 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Registration complete (motion moment 5; static under
+              // reduced motion). The title text carries the meaning.
+              const SuccessCheck(size: 40),
+              const SizedBox(width: RegistrationTheme.s3),
               Expanded(
-                child:Text(
-                AppLocalizations.of(context)!.registration_acknowledgement,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: appBlackShade1,
+                child: Text(
+                  AppLocalizations.of(context)!.registration_acknowledgement,
+                  style: RegistrationTheme.title,
                 ),
-              ),
               ),
               SizedBox(width: 10.w),
               InkWell(
@@ -94,8 +96,10 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
                   _printHtmlToPdf();
                 },
                 child: Container(
-                  height: 42.h,
-                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                  constraints: const BoxConstraints(
+                      minHeight: RegistrationTheme.minTouch),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: RegistrationTheme.s4),
                   decoration: BoxDecoration(
                     color: appSolidPrimary,
                     border: Border.all(
@@ -103,17 +107,21 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
                       color: appBlueShade1,
                     ),
                     borderRadius: const BorderRadius.all(
-                      Radius.circular(5),
+                      Radius.circular(RegistrationTheme.r),
                     ),
                   ),
-                  child: Center(
-                    child: Text(
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    const Icon(Icons.print_outlined,
+                        size: RegistrationTheme.iconInline,
+                        color: RegistrationTheme.onAccent),
+                    const SizedBox(width: RegistrationTheme.s2),
+                    Text(
                       AppLocalizations.of(context)!.print_text,
                       style: isMobile
                           ? AppTextStyle.tabletPortraitButtonText
                           : AppTextStyle.mobileButtonText,
                     ),
-                  ),
+                  ]),
                 ),
               ),
             ],

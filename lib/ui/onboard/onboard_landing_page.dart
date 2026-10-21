@@ -8,6 +8,7 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -108,7 +109,7 @@ class OnboardLandingPage extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xff214FBF), Color(0xff1C43A1)],
+                colors: [RegistrationTheme.accent, RegistrationTheme.accent],
               ),
             ),
             child: Padding(
@@ -151,8 +152,8 @@ class OnboardLandingPage extends StatelessWidget {
                     child: Text(
                       AppLocalizations.of(context)!.onboard_request_message,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: const Color(0xffFFFFFF).withOpacity(0.6),
-                          fontSize: 18,
+                          color: RegistrationTheme.card.withOpacity(0.6),
+                          fontSize: RegistrationTheme.fsHeading,
                           fontWeight: regular),
                     ),
                   ),

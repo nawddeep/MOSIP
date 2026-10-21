@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -42,7 +43,7 @@ class _ValidatorAlertState extends State<ValidatorAlert> {
         width: 130,
         decoration: const BoxDecoration(
           shape: BoxShape.circle,
-          boxShadow: [BoxShadow(color: Color(0xFFF5F8FF), blurRadius: 50.0)],
+          boxShadow: [BoxShadow(color: RegistrationTheme.line, blurRadius: 50.0)],
         ),
         child: SvgPicture.asset('assets/svg/success_message_icon_orange.svg',
             height: 150,
@@ -91,7 +92,7 @@ class _ValidatorAlertState extends State<ValidatorAlert> {
                   backgroundColor: appWhite,
                   side: BorderSide(color: solidPrimary),
                   shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)))),
+                      borderRadius: BorderRadius.all(Radius.circular(RegistrationTheme.r)))),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -104,7 +105,7 @@ class _ValidatorAlertState extends State<ValidatorAlert> {
                     child: Text(
                       AppLocalizations.of(context)!.okay,
                       style: TextStyle(
-                          fontSize: isMobile && !isMobileSize ? 18 : 14,
+                          fontSize: isMobile && !isMobileSize ? RegistrationTheme.fsHeading : RegistrationTheme.fsSmall,
                           color: appSolidPrimary),
                     ),
                   ),
@@ -116,7 +117,7 @@ class _ValidatorAlertState extends State<ValidatorAlert> {
       ],
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
-          Radius.circular(12),
+          Radius.circular(RegistrationTheme.rLg),
         ),
       ),
     );

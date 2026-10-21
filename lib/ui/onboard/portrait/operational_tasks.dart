@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -78,7 +79,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
             color: appWhite,
           ),
           borderRadius: const BorderRadius.all(
-            Radius.circular(6),
+            Radius.circular(RegistrationTheme.r),
           ),
           color: memoryCardColor,
           boxShadow: const [
@@ -117,7 +118,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
                   Text(
                     'System Storage Usage',
                     style: TextStyle(
-                      fontSize: isMobileSize ? 16 : 24,
+                      fontSize: isMobileSize ? RegistrationTheme.fsBody : RegistrationTheme.fsTitle,
                       fontWeight: semiBold,
                       color: appBlackShade1,
                     ),
@@ -130,7 +131,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
                     percent: 0.72,
                     backgroundColor: appWhite,
                     progressColor: appSolidPrimary,
-                    barRadius: const Radius.circular(10),
+                    barRadius: const Radius.circular(RegistrationTheme.rLg),
                   ),
                   SizedBox(
                     height: 10.h,
@@ -140,8 +141,8 @@ class _OperationalTasksState extends State<OperationalTasks> {
                       Text(
                         'Used: 286 GB (72% used)',
                         style: TextStyle(
-                          fontSize: isMobileSize ? 14 : 20,
-                          color: const Color(0XFF4E4E4E),
+                          fontSize: isMobileSize ? RegistrationTheme.fsSmall : RegistrationTheme.fsTitle,
+                          color: RegistrationTheme.ink,
                         ),
                       ),
                       const Expanded(
@@ -151,8 +152,8 @@ class _OperationalTasksState extends State<OperationalTasks> {
                           ? Text(
                               'Available: 192 GB',
                               style: TextStyle(
-                                fontSize: isMobileSize ? 14 : 20,
-                                color: const Color(0XFF4E4E4E),
+                                fontSize: isMobileSize ? RegistrationTheme.fsSmall : RegistrationTheme.fsTitle,
+                                color: RegistrationTheme.ink,
                               ),
                             )
                           : const SizedBox.shrink()
@@ -162,8 +163,8 @@ class _OperationalTasksState extends State<OperationalTasks> {
                       ? Text(
                           'Available: 192 GB',
                           style: TextStyle(
-                            fontSize: isMobileSize ? 14 : 20,
-                            color: const Color(0XFF4E4E4E),
+                            fontSize: isMobileSize ? RegistrationTheme.fsSmall : RegistrationTheme.fsTitle,
+                            color: RegistrationTheme.ink,
                           ),
                         )
                       : const SizedBox.shrink(),

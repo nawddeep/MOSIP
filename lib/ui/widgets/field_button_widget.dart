@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
@@ -60,13 +61,13 @@ class _FieldButtonWidgetState extends State<FieldButtonWidget> {
                 widget.isSelected ? appButtonBorderText : languageSelectedColor,
           ),
           borderRadius: const BorderRadius.all(
-            Radius.circular(5),
+            Radius.circular(RegistrationTheme.r),
           ),
         ),
         child: Text(
           widget.fieldTitle,
           style: TextStyle(
-            fontSize: widget.isMobile && !isMobileSize ? 24 : 16,
+            fontSize: widget.isMobile && !isMobileSize ? RegistrationTheme.fsTitle : RegistrationTheme.fsBody,
             color: widget.isSelected ? appWhite : appBlackShade1,
           ),
         ),

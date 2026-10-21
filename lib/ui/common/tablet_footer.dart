@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 
@@ -25,7 +26,7 @@ class TabletFooter extends StatelessWidget {
             color: Color.fromARGB(255, 249, 249, 249),
           ),
         ),
-        color: Color(0xffFCFCFC),
+        color: RegistrationTheme.cardAlt,
       ),
       child: Center(
           child: Column(
@@ -33,15 +34,15 @@ class TabletFooter extends StatelessWidget {
           Text(
             "Community Registration - Client Version ${context.watch<GlobalProvider>().versionNoApp}",
             style: TextStyle(
-                color: const Color(0xff6F6E6E),
-                fontSize: 14,
+                color: RegistrationTheme.muted,
+                fontSize: RegistrationTheme.fsSmall,
                 fontWeight: regular),
           ),
           Text(
             "Git Commit Id ${context.watch<GlobalProvider>().commitIdApp}",
             style: TextStyle(
-                color: const Color(0xff6F6E6E),
-                fontSize: 14,
+                color: RegistrationTheme.muted,
+                fontSize: RegistrationTheme.fsSmall,
                 fontWeight: regular),
           ),
         ],
