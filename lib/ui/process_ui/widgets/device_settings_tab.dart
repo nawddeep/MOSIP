@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import '../../../model/settings.dart';
 import '../../../platform_spi/biometrics_service.dart';
@@ -69,7 +70,7 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                         widget.settings.label?['eng'] ??
                         (widget.settings.label?.values.first ?? 'UnKnown'),
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: RegistrationTheme.fsTitle,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -97,23 +98,23 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                             Icon(
                               Icons.devices_other_outlined,
                               size: 64,
-                              color: Colors.grey.shade400,
+                              color: RegistrationTheme.lineStrong,
                             ),
                             const SizedBox(height: 16),
                             Text(
                               AppLocalizations.of(context)!.no_devices_found,
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: RegistrationTheme.fsHeading,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.grey.shade700,
+                                color: RegistrationTheme.muted,
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               AppLocalizations.of(context)!.connect_devices_and_scan,
                               style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey.shade600,
+                                fontSize: RegistrationTheme.fsSmall,
+                                color: RegistrationTheme.muted,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -147,8 +148,8 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: Colors.grey.shade300),
-                                  borderRadius: BorderRadius.circular(8),
+                                      color: RegistrationTheme.lineStrong),
+                                  borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
                                 ),
                                 child: Row(
                                   crossAxisAlignment:
@@ -168,7 +169,7 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                                           Text(
                                             "${AppLocalizations.of(context)!.id}: ${device.deviceId ?? ''}",
                                             style: const TextStyle(
-                                                fontSize: 12),
+                                                fontSize: RegistrationTheme.fsXs),
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 1,
                                           ),
@@ -176,7 +177,7 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                                           Text(
                                             "${AppLocalizations.of(context)!.name}: ${device.deviceName ?? ''}",
                                             style: const TextStyle(
-                                                fontSize: 12),
+                                                fontSize: RegistrationTheme.fsXs),
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 2,
                                           ),
@@ -184,7 +185,7 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                                           Text(
                                             "${AppLocalizations.of(context)!.status}: ${device.connectionStatus ?? ''}",
                                             style: const TextStyle(
-                                                fontSize: 12),
+                                                fontSize: RegistrationTheme.fsXs),
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 1,
                                           ),

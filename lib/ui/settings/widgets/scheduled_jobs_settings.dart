@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/platform_spi/sync_response_service.dart';
@@ -93,7 +94,7 @@ class _ScheduledJobsSettingsState extends State<ScheduledJobsSettings> {
                 children: [
                   Text(
                     heading,
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    style: const TextStyle(fontSize: RegistrationTheme.fsTitle, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 12),
                 ],
@@ -357,10 +358,9 @@ class _JobCardState extends State<_JobCard> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE5EBFA), width: 0.8),
-        boxShadow: const [BoxShadow(color: Color(0x11000000), blurRadius: 4, offset: Offset(0, 2))],
+        color: RegistrationTheme.card,
+        borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
+        border: Border.all(color: RegistrationTheme.line),
       ),
       child: Padding(
         padding: const EdgeInsets.all(6.0),
@@ -373,7 +373,7 @@ class _JobCardState extends State<_JobCard> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(job.name ?? job.apiName ?? 'Unknown Job',
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                      style: const TextStyle(fontSize: RegistrationTheme.fsSmall, fontWeight: FontWeight.w600)),
                   Consumer<SyncProvider>(
                     builder: (context, provider, child) {
                       final status = provider.jobStatuses[job.id];
@@ -413,13 +413,13 @@ class _JobCardState extends State<_JobCard> {
                                       errorText: null,
                                       errorBorder: _cronError != null
                                           ? const OutlineInputBorder(
-                                              borderSide: BorderSide(color: Colors.red, width: 1))
+                                              borderSide: BorderSide(color: RegistrationTheme.err, width: 1))
                                           : null,
                                       border: const OutlineInputBorder(),
                                       isDense: true,
                                       contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                                     ),
-                                    style: const TextStyle(fontSize: 11),
+                                    style: const TextStyle(fontSize: RegistrationTheme.fsXs),
                                   ),
                                 ),
                               ),
@@ -428,7 +428,7 @@ class _JobCardState extends State<_JobCard> {
                                   padding: const EdgeInsets.only(top: 1.0, left: 4.0),
                                   child: Text(
                                     _cronError!,
-                                    style: const TextStyle(fontSize: 9, color: Colors.red, height: 1),
+                                    style: const TextStyle(fontSize: RegistrationTheme.fsXs, color: RegistrationTheme.err, height: 1),
                                   ),
                                 ),
                             ],
@@ -449,10 +449,10 @@ class _JobCardState extends State<_JobCard> {
                                     height: 12,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      valueColor: AlwaysStoppedAnimation<Color>(RegistrationTheme.card),
                                     ),
                                   )
-                                 : Text(AppLocalizations.of(context)!.submit, style: const TextStyle(fontSize: 11)),
+                                 : Text(AppLocalizations.of(context)!.submit, style: const TextStyle(fontSize: RegistrationTheme.fsXs)),
                           ),
                         ),
                       ],
@@ -470,9 +470,11 @@ class _JobCardState extends State<_JobCard> {
                   style: OutlinedButton.styleFrom(
                     padding: EdgeInsets.zero,
                     minimumSize: const Size(40, 40),
-                    side: const BorderSide(color: Color(0xFF2A4EA7)),
+                    side: const BorderSide(color: RegistrationTheme.lineStrong),
                   ),
-                  child: const Icon(Icons.sync, size: 20, color: Color(0xFF2A4EA7)),
+                  child: const Icon(Icons.sync,
+                      size: RegistrationTheme.iconInline,
+                      color: RegistrationTheme.ink),
                 ),
               ),
           ],
@@ -485,10 +487,10 @@ class _JobCardState extends State<_JobCard> {
     padding: const EdgeInsets.only(top: 0.5),
     child: Row(
       children: [
-        Text(k, style: const TextStyle(fontSize: 11, color: Colors.black54)),
+        Text(k, style: const TextStyle(fontSize: RegistrationTheme.fsXs, color: RegistrationTheme.muted)),
         const SizedBox(width: 6),
         Flexible(
-            child: Text(v, style: const TextStyle(fontSize: 11, color: Colors.black87))),
+            child: Text(v, style: const TextStyle(fontSize: RegistrationTheme.fsXs, color: RegistrationTheme.muted))),
       ],
     ),
   );

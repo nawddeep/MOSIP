@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:registration_client/utils/app_config.dart';
 import '../../../model/settings.dart';
 import '../../../pigeon/global_config_settings_pigeon.dart';
@@ -250,7 +251,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
       margin: const EdgeInsets.all(5),
       elevation: 2,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(RegistrationTheme.r),
       ),
       child: _buildContent(),
     );
@@ -270,7 +271,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
           child: Text(
             heading,
             style: const TextStyle(
-              fontSize: 20,
+              fontSize: RegistrationTheme.fsTitle,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -288,8 +289,8 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
                 hintText: AppLocalizations.of(context)!.search_for_key,
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
+                  borderRadius: BorderRadius.circular(RegistrationTheme.r),
+                  borderSide: BorderSide(color: RegistrationTheme.lineStrong),
                 ),
                 contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
               ),
@@ -300,8 +301,8 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
-            color: Colors.blue[50],
+            borderRadius: BorderRadius.circular(RegistrationTheme.r),
+            color: RegistrationTheme.accentTint,
           ),
           child: Row(
             children: [
@@ -314,7 +315,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
                   child: Text(
                     AppLocalizations.of(context)!.key,
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: RegistrationTheme.fsSmall,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -329,7 +330,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
                   child: Text(
                     AppLocalizations.of(context)!.server_value,
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: RegistrationTheme.fsSmall,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -344,7 +345,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
                   child: Text(
                     AppLocalizations.of(context)!.local_value,
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: RegistrationTheme.fsSmall,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -377,11 +378,11 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.error, size: 64, color: Colors.red[300]),
+                  Icon(Icons.error, size: 64, color: RegistrationTheme.err),
                   const SizedBox(height: 16),
                   Text(
                     'Error: $errorMessage',
-                    style: TextStyle(color: Colors.red[700]),
+                    style: TextStyle(color: RegistrationTheme.err),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -431,7 +432,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
                 onPressed: _onSaveChanges,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: solidPrimary,
-                        foregroundColor: Colors.white,
+                        foregroundColor: RegistrationTheme.card,
                         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 60),
                         elevation: 4,
                       ),
@@ -445,7 +446,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
         final config = configs[configIndex];
         return Column(
           children: [
-            if (configIndex > 0) Divider(height: 1, color: Colors.grey[300]),
+            if (configIndex > 0) Divider(height: 1, color: RegistrationTheme.lineStrong),
             Semantics(
               label: config.key,
               container: true,
@@ -462,9 +463,9 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
                           config.key,
                           key: Key('config_key_${config.key}'),
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: RegistrationTheme.fsXs,
                             fontWeight: config.isModified ? FontWeight.bold : FontWeight.normal,
-                            color: config.isModified ? Colors.blue : Colors.black,
+                            color: config.isModified ? RegistrationTheme.accentPress : RegistrationTheme.ink,
                           ),
                         ),
                       ),
@@ -476,7 +477,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
                         child: Text(
                           config.serverValue,
                           key: Key('server_value_${config.key}'),
-                          style: const TextStyle(fontSize: 12),
+                          style: const TextStyle(fontSize: RegistrationTheme.fsXs),
                         ),
                       ),
                     ),
@@ -521,15 +522,15 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
           controller: controller,
           onChanged: (newValue) => _updateLocalValue(config.key, newValue),
           style: TextStyle(
-            color: config.isModified ? Colors.blue : Colors.black,
-            fontSize: 12,
+            color: config.isModified ? RegistrationTheme.accentPress : RegistrationTheme.ink,
+            fontSize: RegistrationTheme.fsXs,
             fontWeight: config.isModified ? FontWeight.bold : FontWeight.normal,
           ),
           decoration: InputDecoration(
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(RegistrationTheme.r),
               borderSide: BorderSide(
-                color: config.isModified ? Colors.blue : Colors.grey,
+                color: config.isModified ? RegistrationTheme.accentPress : RegistrationTheme.muted,
               ),
             ),
             contentPadding: const EdgeInsets.symmetric(
@@ -560,15 +561,15 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
           vertical: 8,
         ),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey[300]!),
-          borderRadius: BorderRadius.circular(4),
-          color: Colors.grey[100],
+          border: Border.all(color: RegistrationTheme.lineStrong),
+          borderRadius: BorderRadius.circular(RegistrationTheme.r),
+          color: RegistrationTheme.cardAlt,
         ),
         child: Text(
           config.localValue.isEmpty ? '-' : config.localValue,
           style: TextStyle(
-            color: config.isModified ? Colors.blue : Colors.grey[600],
-            fontSize: 12,
+            color: config.isModified ? RegistrationTheme.accentPress : RegistrationTheme.muted,
+            fontSize: RegistrationTheme.fsXs,
             fontWeight: config.isModified ? FontWeight.bold : FontWeight.normal,
           ),
         ),

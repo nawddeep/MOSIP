@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/settings.dart';
 import 'package:registration_client/provider/auth_provider.dart';
@@ -87,7 +88,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Center(
           child: Text(
             AppLocalizations.of(context)!.no_access_to_this_page,
-            style: TextStyle(fontSize: 18, color: Colors.black),
+            style: TextStyle(fontSize: RegistrationTheme.fsHeading, color: RegistrationTheme.ink),
           ),
         ),
       );
@@ -100,39 +101,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           Container(
             width: MediaQuery.of(context).size.width,
-            color: solidPrimary,
+            // Desktop page header: white, hairline below, ink title.
+            decoration: const BoxDecoration(
+              color: RegistrationTheme.card,
+              border: Border(
+                  bottom: BorderSide(color: RegistrationTheme.line)),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: RegistrationTheme.gutterPhone,
+                      vertical: RegistrationTheme.s4),
                   child: Text(
                     AppLocalizations.of(context)!.settings,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: RegistrationTheme.title,
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.only(top: 8.0, bottom: 3.0),
-                  decoration: const BoxDecoration(
-                    border: Border(
-                      top: BorderSide(
-                        color: Color(0xFFE5EBFA),
-                        width: .3,
-                      ),
-                      bottom: BorderSide(
-                        color: Colors.blueAccent,
-                        width: 1,
-                      ),
-                    ),
-                  ),
                   child: TabBar(
-                    labelColor: Colors.white,
-                    unselectedLabelColor: Colors.white70,
-                    indicatorColor: Colors.white,
+                    labelColor: RegistrationTheme.ink,
+                    unselectedLabelColor: RegistrationTheme.muted,
+                    indicatorColor: RegistrationTheme.accent,
                     indicatorWeight: 2.0,
                     indicatorSize: TabBarIndicatorSize.label,
                     tabs: [
@@ -193,7 +184,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         settings.description?[selectedLang] ??
             settings.description?['eng'] ??
             (settings.description?.values.first ?? 'No description available'),
-        style: const TextStyle(color: Colors.black),
+        style: const TextStyle(color: RegistrationTheme.ink),
       ),
     );
   }
