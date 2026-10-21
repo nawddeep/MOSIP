@@ -7,6 +7,7 @@
 
 // This view is now deprecated and is not being used.
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -78,7 +79,7 @@ class _BiometricCaptureControlLandscapeState
                                     biometricAttributeData.title)
                                 ? secondaryColors.elementAt(12)
                                 : secondaryColors.elementAt(14)),
-                    borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(RegistrationTheme.rLg)),
                 child: (biometricAttributeData.isScanned == true)
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -141,7 +142,7 @@ class _BiometricCaptureControlLandscapeState
                       .read<GlobalProvider>()
                       .chooseLanguage(widget.field.label!),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: 20, color: blackShade1, fontWeight: semiBold),
+                      fontSize: RegistrationTheme.fsTitle, color: blackShade1, fontWeight: semiBold),
                   children: [
                     if (widget.field.required! ||
                         (widget.field.requiredOn != null &&
@@ -152,7 +153,7 @@ class _BiometricCaptureControlLandscapeState
                                 false)))
                       const TextSpan(
                         text: " *",
-                        style: TextStyle(color: Colors.red, fontSize: 15),
+                        style: TextStyle(color: RegistrationTheme.err, fontSize: RegistrationTheme.fsSmall),
                       )
                   ],
                 ))
@@ -161,7 +162,7 @@ class _BiometricCaptureControlLandscapeState
                       .read<GlobalProvider>()
                       .chooseLanguage(widget.field.label!),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: 20, color: blackShade1, fontWeight: semiBold),
+                      fontSize: RegistrationTheme.fsTitle, color: blackShade1, fontWeight: semiBold),
                 ),
         ),
         Card(
@@ -174,7 +175,7 @@ class _BiometricCaptureControlLandscapeState
                   height: 547.h,
                   decoration: BoxDecoration(
                       color: secondaryColors.elementAt(3),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
                       border: Border.all(
                           color: secondaryColors.elementAt(13), width: 1)),
                   child: (widget
@@ -469,7 +470,7 @@ class _BiometricCaptureControlLandscapeState
                                         .textTheme
                                         .bodyLarge
                                         ?.copyWith(
-                                            fontSize: 14,
+                                            fontSize: RegistrationTheme.fsSmall,
                                             fontWeight: semiBold,
                                             color: blackShade1)),
                                 Stack(
@@ -600,7 +601,7 @@ class _BiometricCaptureControlLandscapeState
                                         .textTheme
                                         .bodyLarge
                                         ?.copyWith(
-                                            fontSize: 14,
+                                            fontSize: RegistrationTheme.fsSmall,
                                             fontWeight: semiBold,
                                             color: blackShade1)),
                                 Stack(
@@ -747,7 +748,7 @@ class _BiometricCaptureControlLandscapeState
                                       .textTheme
                                       .bodyLarge
                                       ?.copyWith(
-                                          fontSize: 14,
+                                          fontSize: RegistrationTheme.fsSmall,
                                           fontWeight: semiBold,
                                           color: blackShade1)),
                               Stack(
@@ -1255,7 +1256,7 @@ class _BiometricCaptureControlLandscapeState
                                       .textTheme
                                       .bodyLarge
                                       ?.copyWith(
-                                          fontSize: 14,
+                                          fontSize: RegistrationTheme.fsSmall,
                                           fontWeight: semiBold,
                                           color: blackShade1)),
                               Stack(
@@ -1760,7 +1761,7 @@ class _BiometricCaptureControlLandscapeState
                                       .textTheme
                                       .bodyLarge
                                       ?.copyWith(
-                                          fontSize: 14,
+                                          fontSize: RegistrationTheme.fsSmall,
                                           fontWeight: semiBold,
                                           color: blackShade1)),
                               Stack(
@@ -2027,7 +2028,7 @@ class _BiometricCaptureControlLandscapeState
                                       .textTheme
                                       .bodyLarge
                                       ?.copyWith(
-                                          fontSize: 14,
+                                          fontSize: RegistrationTheme.fsSmall,
                                           fontWeight: semiBold,
                                           color: blackShade1)),
                               SizedBox(
@@ -2064,7 +2065,7 @@ class _BiometricCaptureControlLandscapeState
                                       .textTheme
                                       .bodyLarge
                                       ?.copyWith(
-                                          fontSize: 14,
+                                          fontSize: RegistrationTheme.fsSmall,
                                           fontWeight: semiBold,
                                           color: blackShade1)),
                               SizedBox(

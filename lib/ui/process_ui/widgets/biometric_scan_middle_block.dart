@@ -9,6 +9,7 @@ import 'package:registration_client/ui/face_liveness/face_liveness_gate.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -146,7 +147,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                   Text(
                     "${widget.biometricAttributeData.viewTitle} ${AppLocalizations.of(context)!.capture}",
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontSize: 18, fontWeight: bold, color: blackShade1),
+                        fontSize: RegistrationTheme.fsHeading, fontWeight: bold, color: blackShade1),
                   ),
                   IconButton(
                     onPressed: () {
@@ -330,7 +331,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
             label: Text(
               AppLocalizations.of(context)!.scan,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontSize: 14,
+                  fontSize: RegistrationTheme.fsSmall,
                   fontWeight: bold,
                   color:
                       (widget.biometricAttributeData.exceptions.contains(false))
@@ -345,7 +346,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                           : secondaryColors.elementAt(2),
                   width: 1),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: BorderRadius.circular(RegistrationTheme.r),
               ),
             ),
           ),
@@ -368,7 +369,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                       Text(
                         AppLocalizations.of(context)!.attempts,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              fontSize: 14,
+                              fontSize: RegistrationTheme.fsSmall,
                               color: secondaryColors.elementAt(1),
                             ),
                       ),
@@ -381,7 +382,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                       Text(
                         AppLocalizations.of(context)!.exceptions,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              fontSize: 14,
+                              fontSize: RegistrationTheme.fsSmall,
                               color: secondaryColors.elementAt(1),
                             ),
                       ),
@@ -406,12 +407,12 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                 Text(
                   AppLocalizations.of(context)!.quality,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontSize: 14, fontWeight: semiBold, color: blackShade1),
+                      fontSize: RegistrationTheme.fsSmall, fontWeight: semiBold, color: blackShade1),
                 ),
                 Text(
                   "${AppLocalizations.of(context)!.threshold} ${widget.biometricAttributeData.thresholdPercentage}%",
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontSize: 14,
+                        fontSize: RegistrationTheme.fsSmall,
                         fontWeight: regular,
                         color: secondaryColors.elementAt(1),
                       ),
@@ -424,7 +425,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                       lineHeight: 8,
                       percent:
                           widget.biometricAttributeData.qualityPercentage / 100,
-                      backgroundColor: Colors.grey,
+                      backgroundColor: RegistrationTheme.sunken,
                       progressColor: (widget
                                   .biometricAttributeData.qualityPercentage
                                   .toInt() <
@@ -439,7 +440,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                     Text(
                       "${widget.biometricAttributeData.qualityPercentage.toInt()}%",
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontSize: 14,
+                            fontSize: RegistrationTheme.fsSmall,
                             fontWeight: regular,
                             color: blackShade1,
                           ),
@@ -454,7 +455,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                       style: Theme.of(context)
                           .textTheme
                           .bodyLarge
-                          ?.copyWith(fontSize: 12, color: blackShade1),
+                          ?.copyWith(fontSize: RegistrationTheme.fsXs, color: blackShade1),
                     ),
                     SizedBox(
                       width: 13.w,
@@ -508,7 +509,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                               horizontal: 11,
                             ),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
                               border: Border.all(
                                 color: secondaryColors.elementAt(17),
                               ),
@@ -523,7 +524,7 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                   .textTheme
                                   .bodyLarge
                                   ?.copyWith(
-                                      fontSize: 12,
+                                      fontSize: RegistrationTheme.fsXs,
                                       color: (widget.biometricAttributeData
                                                   .attemptNo <
                                               i)

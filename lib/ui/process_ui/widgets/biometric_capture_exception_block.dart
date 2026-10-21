@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/model/biometric_attribute_data.dart';
@@ -32,7 +33,7 @@ class _BiometricCaptureExceptionBlockState
       width: 370.h,
       decoration: BoxDecoration(
           color: secondaryColors.elementAt(3),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
           border: Border.all(color: secondaryColors.elementAt(13), width: 1)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -44,7 +45,7 @@ class _BiometricCaptureExceptionBlockState
               child: Text(
                 AppLocalizations.of(context)!.mark_exception,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontSize: 18, fontWeight: semiBold, color: blackShade1),
+                    fontSize: RegistrationTheme.fsHeading, fontWeight: semiBold, color: blackShade1),
               ),
             ),
           ),
@@ -57,7 +58,7 @@ class _BiometricCaptureExceptionBlockState
               child: Text(
                 "${AppLocalizations.of(context)!.marking_exceptions_on} ${widget.attribute.viewTitle.toLowerCase()} ${AppLocalizations.of(context)!.is_not_allowed}",
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontSize: 14, fontWeight: regular, color: blackShade1),
+                    fontSize: RegistrationTheme.fsSmall, fontWeight: regular, color: blackShade1),
               ),
             )),
           (widget.attribute.title != "Face" &&
@@ -70,7 +71,7 @@ class _BiometricCaptureExceptionBlockState
                       Text(
                         AppLocalizations.of(context)!.exception_type,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontSize: 14,
+                            fontSize: RegistrationTheme.fsSmall,
                             fontWeight: semiBold,
                             color: blackShade1),
                       ),
@@ -104,7 +105,7 @@ class _BiometricCaptureExceptionBlockState
                                     .textTheme
                                     .bodyLarge
                                     ?.copyWith(
-                                        fontSize: 14,
+                                        fontSize: RegistrationTheme.fsSmall,
                                         fontWeight: regular,
                                         color: blackShade1),
                               ),
@@ -138,7 +139,7 @@ class _BiometricCaptureExceptionBlockState
                                     .textTheme
                                     .bodyLarge
                                     ?.copyWith(
-                                        fontSize: 14,
+                                        fontSize: RegistrationTheme.fsSmall,
                                         fontWeight: regular,
                                         color: blackShade1),
                               ),
@@ -160,7 +161,7 @@ class _BiometricCaptureExceptionBlockState
                       Text(
                         AppLocalizations.of(context)!.comments,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontSize: 14,
+                            fontSize: RegistrationTheme.fsSmall,
                             fontWeight: semiBold,
                             color: blackShade1),
                       ),
@@ -174,7 +175,7 @@ class _BiometricCaptureExceptionBlockState
                           maxLines: 5,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
+                              borderRadius: BorderRadius.circular(RegistrationTheme.r),
                               borderSide: BorderSide(
                                 color: secondaryColors.elementAt(14),
                               ),
@@ -185,7 +186,7 @@ class _BiometricCaptureExceptionBlockState
                                 .textTheme
                                 .bodyLarge
                                 ?.copyWith(
-                                    fontSize: 14,
+                                    fontSize: RegistrationTheme.fsSmall,
                                     fontWeight: regular,
                                     color: secondaryColors.elementAt(2)),
                           ),

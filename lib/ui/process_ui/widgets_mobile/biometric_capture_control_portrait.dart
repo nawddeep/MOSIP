@@ -6,6 +6,8 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/components.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -88,7 +90,7 @@ class _BiometricCaptureControlPortraitState
                                     biometricAttributeData.title)
                                 ? secondaryColors.elementAt(12)
                                 : secondaryColors.elementAt(14)),
-                    borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(RegistrationTheme.rLg)),
                 child: Semantics(
                   label: biometricAttributeData.title,
                   excludeSemantics: true,
@@ -110,7 +112,7 @@ class _BiometricCaptureControlPortraitState
                       Text(
                         "${biometricAttributeData.viewTitle} ${AppLocalizations.of(context)!.scan}",
                         style: TextStyle(
-                          fontSize: 28,
+                          fontSize: RegistrationTheme.fsDisplay,
                           fontWeight: semiBold,
                           color: blackShade1,
                         ),
@@ -136,9 +138,8 @@ class _BiometricCaptureControlPortraitState
                         ? Image.asset(
                             "assets/images/Exception_Mark.png",
                           )
-                        : Image.asset(
-                            "assets/images/Green_Check.png",
-                          )),
+                        : // Self-drawing check on capture success (motion moment 4).
+                            const SuccessCheck(size: 28)),
               if (!biometricAttributeData.exceptions.contains(false))
                 Positioned(
                     top: 15,
@@ -165,7 +166,7 @@ class _BiometricCaptureControlPortraitState
                       child: Text(
                           "${biometricAttributeData.qualityPercentage.toInt()}%",
                           style: TextStyle(
-                              fontSize: 20,
+                              fontSize: RegistrationTheme.fsTitle,
                               color: pureWhite,
                               fontWeight: semiBold)),
                     )),
@@ -204,7 +205,7 @@ class _BiometricCaptureControlPortraitState
                               .textTheme
                               .titleLarge
                               ?.copyWith(
-                                  fontSize: (isMobileSize) ? 16.w : 24.w,
+                                  fontSize: (isMobileSize) ? RegistrationTheme.fsBody.w : RegistrationTheme.fsTitle.w,
                                   color: blackShade1,
                                   fontWeight: semiBold,
                                   overflow: TextOverflow.ellipsis),
@@ -220,7 +221,7 @@ class _BiometricCaptureControlPortraitState
                               const TextSpan(
                                 text: " *",
                                 style:
-                                    TextStyle(color: Colors.red, fontSize: 15),
+                                    TextStyle(color: RegistrationTheme.err, fontSize: RegistrationTheme.fsSmall),
                               )
                           ],
                         ))
@@ -232,7 +233,7 @@ class _BiometricCaptureControlPortraitState
                               .textTheme
                               .titleLarge
                               ?.copyWith(
-                                  fontSize: (isMobileSize) ? 16.w : 24.w,
+                                  fontSize: (isMobileSize) ? RegistrationTheme.fsBody.w : RegistrationTheme.fsTitle.w,
                                   color: blackShade1,
                                   fontWeight: semiBold,
                                   overflow: TextOverflow.ellipsis),

@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -32,7 +33,7 @@ class BiometricCaptureScanBlock extends StatelessWidget {
       width: 370.h,
       decoration: BoxDecoration(
           color: secondaryColors.elementAt(3),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(RegistrationTheme.rLg),
           border: Border.all(color: secondaryColors.elementAt(13), width: 1)),
       child: Column(
         children: [
@@ -41,7 +42,7 @@ class BiometricCaptureScanBlock extends StatelessWidget {
             child: Text(
               title,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 18, fontWeight: semiBold, color: blackShade1),
+                  fontSize: RegistrationTheme.fsHeading, fontWeight: semiBold, color: blackShade1),
             ),
           ),
           middleBlock,

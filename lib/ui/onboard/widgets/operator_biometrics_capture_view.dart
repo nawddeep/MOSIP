@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/components.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -79,7 +81,7 @@ class _OperatorBiometricsCaptureState
                             biometricAttributeData.title)
                             ? secondaryColors.elementAt(12)
                             : secondaryColors.elementAt(14)),
-                    borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(RegistrationTheme.rLg)),
                 child: Semantics(
                   label: biometricAttributeData.title,
                   excludeSemantics: true,
@@ -101,7 +103,7 @@ class _OperatorBiometricsCaptureState
                       Text(
                         "${biometricAttributeData.viewTitle} ${AppLocalizations.of(context)!.scan}",
                         style: TextStyle(
-                          fontSize: 28,
+                          fontSize: RegistrationTheme.fsDisplay,
                           fontWeight: semiBold,
                           color: blackShade1,
                         ),
@@ -118,9 +120,8 @@ class _OperatorBiometricsCaptureState
                         ? Image.asset(
                             "assets/images/Exception_Mark.png",
                           )
-                        : Image.asset(
-                            "assets/images/Green_Check.png",
-                          )),
+                        : // Self-drawing check on capture success (motion moment 4).
+                            const SuccessCheck(size: 28)),
               if (!biometricAttributeData.exceptions.contains(false))
                 Positioned(
                     top: 15,
@@ -149,7 +150,7 @@ class _OperatorBiometricsCaptureState
                               ? biometricAttributeData.qualityPercentage.clamp(0.0, 100.0).toInt()
                               : 0)}%",
                           style: TextStyle(
-                              fontSize: 20,
+                              fontSize: RegistrationTheme.fsTitle,
                               color: pureWhite,
                               fontWeight: semiBold)),
                     )),
@@ -289,7 +290,7 @@ class _OperatorBiometricsCaptureState
                                     .operator_biometric_updated_successfully,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    fontSize: 28,
+                                    fontSize: RegistrationTheme.fsDisplay,
                                     fontWeight: semiBold,
                                     color: Color(0xFF000000)),
                               ),
@@ -303,7 +304,7 @@ class _OperatorBiometricsCaptureState
                                 child: Text(
                                   appLocalizations.home,
                                   style: TextStyle(
-                                      fontSize: 19,
+                                      fontSize: RegistrationTheme.fsHeading,
                                       fontWeight: bold,
                                       color: pureWhite),
                                 ),
@@ -386,7 +387,7 @@ class _OperatorBiometricsCaptureState
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge
-                    ?.copyWith(fontSize: 26.h, color: pureWhite),
+                    ?.copyWith(fontSize: RegistrationTheme.fsTitle.h, color: pureWhite),
               ),
             ),
           ),
@@ -409,7 +410,7 @@ class _OperatorBiometricsCaptureState
                     Text(
                       getBiometricTitle(),   // Call the function here
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontSize: (isMobileSize) ? 16.w : 24.w,
+                        fontSize: (isMobileSize) ? RegistrationTheme.fsBody.w : RegistrationTheme.fsTitle.w,
                         color: blackShade1,
                         fontWeight: semiBold,
                         overflow: TextOverflow.ellipsis,

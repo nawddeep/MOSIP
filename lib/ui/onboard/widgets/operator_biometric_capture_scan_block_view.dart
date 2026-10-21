@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/theme/registration_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -136,7 +137,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                       overflow: TextOverflow.visible,
                       maxLines: 1,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontSize: 22, fontWeight: bold, color: blackShade1),
+                          fontSize: RegistrationTheme.fsTitle, fontWeight: bold, color: blackShade1),
                     ),
                     const Spacer(),
                     IconButton(
@@ -323,13 +324,13 @@ class _OperatorBiometricCaptureScanBlockViewState
                 child: Text(
                   AppLocalizations.of(context)!.quality,
                   style: TextStyle(
-                      fontSize: 24, color: blackShade1, fontWeight: semiBold),
+                      fontSize: RegistrationTheme.fsTitle, color: blackShade1, fontWeight: semiBold),
                 ),
               ),
               Text(
                 "${AppLocalizations.of(context)!.threshold} ${biometricAttributeData.thresholdPercentage}%",
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontSize: 23,
+                      fontSize: RegistrationTheme.fsTitle,
                       fontWeight: regular,
                       color: secondaryColors.elementAt(1),
                     ),
@@ -344,7 +345,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                     width: (isMobileSize) ? 250.w : 450.w,
                     lineHeight: 15.4,
                     percent: safeQualityPercent(biometricAttributeData.qualityPercentage),
-                    backgroundColor: Colors.grey,
+                    backgroundColor: RegistrationTheme.muted,
                     progressColor:
                         (safeQualityToInt(biometricAttributeData.qualityPercentage) <
                                 int.parse(
@@ -358,7 +359,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                   Text(
                     "${safeQualityToInt(biometricAttributeData.qualityPercentage)}%",
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontSize: 23,
+                          fontSize: RegistrationTheme.fsTitle,
                           fontWeight: semiBold,
                           color: secondaryColors.elementAt(1),
                         ),
@@ -437,7 +438,7 @@ class _OperatorBiometricCaptureScanBlockViewState
             style: Theme.of(context)
                 .textTheme
                 .bodySmall
-                ?.copyWith(fontSize: 27, fontWeight: bold, color: pureWhite),
+                ?.copyWith(fontSize: RegistrationTheme.fsDisplay, fontWeight: bold, color: pureWhite),
           ),
           style: OutlinedButton.styleFrom(
             padding: (isMobileSize)
@@ -448,7 +449,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                     ? solidPrimary
                     : secondaryColors.elementAt(22)),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(RegistrationTheme.r),
             ),
           ),
         ),
@@ -796,7 +797,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                             color:
                                 (biometricAttributeData.exceptions[2] == true)
                                     ? secondaryColors.elementAt(25)
-                                    : const Color.fromARGB(0, 221, 210, 210),
+                                    : Colors.transparent,
                           ),
                         )),
                     Positioned(
@@ -880,7 +881,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                                   height: (isMobileSize) ? 500 : 720,
                                   width: (isMobileSize) ? 404 : 760,
                                   decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12)),
+                                      borderRadius: BorderRadius.circular(RegistrationTheme.rLg)),
                                   child: SingleChildScrollView(
                                     child: Column(
                                       children: [
@@ -1268,7 +1269,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                     excludeSemantics: true,
                     child: Container(
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(1000),
+                            borderRadius: BorderRadius.circular(RegistrationTheme.rPill),
                             color: solidPrimary),
                         height: 75,
                         width: 75,
@@ -1546,7 +1547,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                                 height: (isMobileSize) ? 500 : 720,
                                 width: (isMobileSize) ? 404 : 760,
                                 decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12)),
+                                    borderRadius: BorderRadius.circular(RegistrationTheme.rLg)),
                                 child: SingleChildScrollView(
                                   child: Column(
                                     children: [
@@ -1934,7 +1935,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                     excludeSemantics: true,
                     child: Container(
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(1000),
+                            borderRadius: BorderRadius.circular(RegistrationTheme.rPill),
                             color: solidPrimary),
                         height: 75,
                         width: 75,
@@ -2131,7 +2132,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                   Text(
                     AppLocalizations.of(context)!.exception_type,
                     style: TextStyle(
-                        fontSize: 25, fontWeight: semiBold, color: blackShade1),
+                        fontSize: RegistrationTheme.fsTitle, fontWeight: semiBold, color: blackShade1),
                   ),
                   const SizedBox(
                     height: 18,
@@ -2172,7 +2173,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                           child: Text(
                             AppLocalizations.of(context)!.permanent,
                             style: TextStyle(
-                                fontSize: (isMobileSize) ? 16.h : 24.h,
+                                fontSize: (isMobileSize) ? RegistrationTheme.fsBody.h : RegistrationTheme.fsTitle.h,
                                 fontWeight: FontWeight.w400,
                                 color: (biometricAttributeData.exceptionType ==
                                         "Permanent")
@@ -2218,7 +2219,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                           child: Text(
                             AppLocalizations.of(context)!.temporary,
                             style: TextStyle(
-                                fontSize: (isMobileSize) ? 16.h : 24.h,
+                                fontSize: (isMobileSize) ? RegistrationTheme.fsBody.h : RegistrationTheme.fsTitle.h,
                                 fontWeight: FontWeight.w400,
                                 color: (biometricAttributeData.exceptionType ==
                                         "Temporary")
@@ -2235,7 +2236,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                   Text(
                     AppLocalizations.of(context)!.comments,
                     style: TextStyle(
-                        fontSize: 25, fontWeight: semiBold, color: blackShade1),
+                        fontSize: RegistrationTheme.fsTitle, fontWeight: semiBold, color: blackShade1),
                   ),
                   const SizedBox(
                     height: 20,
@@ -2248,11 +2249,11 @@ class _OperatorBiometricCaptureScanBlockViewState
                       hintText: AppLocalizations.of(context)!
                           .add_comments_for_marking_the_exception,
                       hintStyle: TextStyle(
-                          fontSize: 28,
+                          fontSize: RegistrationTheme.fsDisplay,
                           fontWeight: regular,
                           color: secondaryColors.elementAt(1)),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(RegistrationTheme.r),
                         borderSide: BorderSide(
                           color: secondaryColors.elementAt(12),
                         ),
@@ -2265,12 +2266,12 @@ class _OperatorBiometricCaptureScanBlockViewState
                 height: 96,
                 decoration: BoxDecoration(
                     color: secondaryColors.elementAt(23),
-                    borderRadius: BorderRadius.circular(6)),
+                    borderRadius: BorderRadius.circular(RegistrationTheme.r)),
                 child: Center(
                   child: Text(
                     "${AppLocalizations.of(context)!.marking_exceptions_on} ${biometricAttributeData.viewTitle} ${AppLocalizations.of(context)!.is_not_allowed}",
                     style: TextStyle(
-                        fontSize: 25,
+                        fontSize: RegistrationTheme.fsTitle,
                         fontWeight: semiBold,
                         color: secondaryColors.elementAt(24)),
                   ),
@@ -2361,7 +2362,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                   }
                 },
                 child: Text(AppLocalizations.of(context)!.next_button,
-                    style: TextStyle(fontSize: 24, fontWeight: bold)),
+                    style: TextStyle(fontSize: RegistrationTheme.fsTitle, fontWeight: bold)),
               ),
             ],
           ),
@@ -2384,7 +2385,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                       Text(
                         getRoleBasedBiometricTitle(context),
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontSize: (isMobileSize) ? 14.h : 24.h,
+                          fontSize: (isMobileSize) ? RegistrationTheme.fsSmall.h : RegistrationTheme.fsTitle.h,
                           color: blackShade1,
                           fontWeight: semiBold,
                           overflow: TextOverflow.ellipsis,
@@ -2457,7 +2458,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                             child: Text(
                               "${biometricAttributeData.viewTitle} ${AppLocalizations.of(context)!.scan}",
                               style: TextStyle(
-                                  fontSize: (isMobileSize) ? 18 : 24,
+                                  fontSize: (isMobileSize) ? RegistrationTheme.fsHeading : RegistrationTheme.fsTitle,
                                   fontWeight: semiBold,
                                   color: (context
                                               .read<
@@ -2503,7 +2504,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                             child: Text(
                               AppLocalizations.of(context)!.mark_exception,
                               style: TextStyle(
-                                  fontSize: (isMobileSize) ? 18 : 24,
+                                  fontSize: (isMobileSize) ? RegistrationTheme.fsHeading : RegistrationTheme.fsTitle,
                                   fontWeight: semiBold,
                                   color: (context
                                               .read<
