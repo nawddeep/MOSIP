@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane fx:id="root" styleClass="liveness-root" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mosip.registration.controller.liveness.FaceLivenessController">
+   <children>
+      <BorderPane fx:id="content" maxWidth="760.0">
+         <padding>
+            <Insets bottom="24.0" left="24.0" right="24.0" top="20.0" />
+         </padding>
+         <top>
+            <HBox alignment="CENTER_LEFT" spacing="16.0">
+               <children>
+                  <Button fx:id="backButton" accessibleText="%liveness_cancel" focusTraversable="true" onAction="#onCancel" styleClass="liveness-back" text="&#8592;" />
+                  <VBox spacing="2.0">
+                     <children>
+                        <Label fx:id="captionLabel" styleClass="liveness-caption" />
+                        <Label fx:id="workflowLabel" styleClass="liveness-title" />
+                        <Label fx:id="attemptLabel" styleClass="liveness-caption" />
+                     </children>
+                  </VBox>
+               </children>
+               <BorderPane.margin>
+                  <Insets bottom="8.0" />
+               </BorderPane.margin>
+            </HBox>
+         </top>
+         <center>
+            <StackPane fx:id="ovalHolder" minHeight="440.0" />
+         </center>
+         <bottom>
+            <VBox alignment="TOP_CENTER" spacing="8.0">
+               <children>
+                  <StackPane fx:id="iconHolder" minHeight="44.0" prefHeight="44.0" />
+                  <Label fx:id="progressLabel" styleClass="liveness-caption" />
+                  <Label fx:id="headlineLabel" styleClass="liveness-message" textAlignment="CENTER" wrapText="true" />
+                  <Label fx:id="countdownLabel" styleClass="liveness-caption" />
+                  <Label fx:id="sublineLabel" styleClass="liveness-body" textAlignment="CENTER" wrapText="true" />
+                  <HBox fx:id="buttonBar" alignment="CENTER" spacing="12.0">
+                     <children>
+                        <Button fx:id="startButton" defaultButton="true" onAction="#onStart" styleClass="liveness-primary" text="%liveness_start" />
+                        <Button fx:id="tryAgainButton" defaultButton="true" onAction="#onRetry" styleClass="liveness-primary" />
+                        <Button fx:id="continueButton" defaultButton="true" onAction="#onContinue" styleClass="liveness-primary" text="%liveness_continue" />
+                        <Button fx:id="recoveryButton" defaultButton="true" onAction="#onRecovery" styleClass="liveness-primary" text="%liveness_recovery_options" />
+                        <Button fx:id="cancelButton" cancelButton="true" onAction="#onCancel" styleClass="liveness-secondary" text="%liveness_cancel" />
+                     </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+               <BorderPane.margin>
+                  <Insets top="8.0" />
+               </BorderPane.margin>
+            </VBox>
+         </bottom>
+      </BorderPane>
+      <VBox fx:id="recoveryPanel" alignment="CENTER" maxHeight="-Infinity" maxWidth="520.0" spacing="14.0" styleClass="liveness-recovery" visible="false">
+         <children>
+            <Label fx:id="recoveryTitle" styleClass="liveness-message" textAlignment="CENTER" wrapText="true" />
+            <Label fx:id="recoveryBody" styleClass="liveness-body" textAlignment="CENTER" wrapText="true" />
+            <HBox alignment="CENTER" spacing="12.0">
+               <children>
+                  <Button fx:id="stayButton" onAction="#onRecoveryStay" styleClass="liveness-secondary" text="%liveness_recovery_stay" />
+                  <Button fx:id="returnButton" defaultButton="true" onAction="#onRecoveryReturn" styleClass="liveness-primary" text="%liveness_recovery_return" />
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="28.0" left="28.0" right="28.0" top="28.0" />
+         </padding>
+      </VBox>
+   </children>
+</StackPane>

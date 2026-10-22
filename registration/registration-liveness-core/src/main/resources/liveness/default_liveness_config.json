@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "configVersion": "bundled-1.0.0",
+  "livenessTokenTtlSeconds": 60,
+  "performance": { "frameSkip": 1, "padEveryNthFrame": 1 },
+  "policies": {
+    "resident": {
+      "enabled": true,
+      "passiveThreshold": 0.9,
+      "padRejectThreshold": 0.3,
+      "challengeTypes": ["BLINK", "SMILE", "TURN_LEFT", "TURN_RIGHT"],
+      "challengeCount": 2,
+      "challengeTimeoutSeconds": 8,
+      "maxRetries": 3,
+      "minFaceSize": 0.25,
+      "maxFaces": 1,
+      "passiveFrames": 5,
+      "positioningStableFrames": 5,
+      "minPassiveMotion": 0.002,
+      "quality": { "minBrightness": 50, "maxBrightness": 220, "minSharpness": 25, "maxMotion": 0.15 }
+    },
+    "operator": {
+      "enabled": false,
+      "passiveThreshold": 0.9,
+      "padRejectThreshold": 0.3,
+      "challengeTypes": ["BLINK", "TURN_LEFT", "TURN_RIGHT"],
+      "challengeCount": 2,
+      "challengeTimeoutSeconds": 8,
+      "maxRetries": 3,
+      "minFaceSize": 0.25,
+      "maxFaces": 1
+    },
+    "supervisor": {
+      "enabled": false,
+      "passiveThreshold": 0.92,
+      "padRejectThreshold": 0.3,
+      "challengeTypes": ["BLINK", "SMILE", "TURN_LEFT", "TURN_RIGHT"],
+      "challengeCount": 2,
+      "challengeTimeoutSeconds": 8,
+      "maxRetries": 3,
+      "minFaceSize": 0.25,
+      "maxFaces": 1
+    }
+  }
+}

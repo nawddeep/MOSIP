@@ -1,0 +1,15 @@
+delete from reg.pre_registration_list;
+delete from reg.reg_center_type;
+delete from reg.reg_center_user_machine;
+delete from reg.registration_center; 
+delete from reg.key_store;
+delete from reg.KEY_POLICY_DEF;
+delete from reg.KEY_ALIAS;
+delete from reg.user_detail;
+delete from reg.user_role;
+delete from reg.user_pwd;
+delete from reg.user_biometric;
+delete from reg.machine_type;
+delete from reg.machine_spec;
+delete from reg.machine_master;
+delete from reg.user_token;
