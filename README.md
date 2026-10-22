@@ -8,7 +8,7 @@
 ```
 
 The Android client (Flutter + Java) is at the repository root. The Desktop client (Java 11, JavaFX, Maven) is in
-[desktop/](desktop/), imported with its history; its liveness documentation is
+[desktop/](desktop/), imported as one squashed commit (the full history is in the fork linked below); its liveness documentation is
 [desktop/docs/liveness/README.md](desktop/docs/liveness/README.md). Desktop changes are made in `desktop/` in this repository.
 
 `desktop/` includes MOSIP's own public test fixtures (test keys, sample images) from upstream registration-client; they are not ours.
