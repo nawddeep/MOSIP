@@ -1,8 +1,8 @@
 # Face liveness + PAD in the MOSIP Desktop Registration Client
 
-Branch `release-1.2.0.x` (based on tag `v1.2.0.2`). This fork adds passive presentation-attack detection (PAD), random
+In the `nawddeep/MOSIP` repository this folder is `desktop/`; commands below run from there. Origin: branch `release-1.2.0.x` of the fork (based on tag `v1.2.0.2`). This Desktop client adds passive presentation-attack detection (PAD), random
 active challenges, and gates for resident face capture, operator login and supervisor approval. It uses the same engine
-as the Android client ([nawddeep/MOSIP](https://github.com/nawddeep/MOSIP)), is configured through the existing global
+as the Android client at the root of this repository (see [docs/liveness/README.md](../../../docs/liveness/README.md)), is configured through the existing global
 parameter and audited through the existing audit service, with **no new tables and no schema change**.
 
 ## Status: what is and is not verified

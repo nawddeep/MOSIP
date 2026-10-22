@@ -1,6 +1,8 @@
 # Desktop Registration Client: liveness integration
 
-The Desktop integration lives in a fork of the real client: **[nawddeep/registration-client](https://github.com/nawddeep/registration-client), branch `release-1.2.0.x`** (based on `v1.2.0.2`). Its own documentation, with the list of modified upstream files, is `docs/liveness/README.md` in that fork.
+The Desktop integration lives in this repository under **[desktop/](../../desktop/)**, the real MOSIP registration client (based on `v1.2.0.2`). Its own documentation, with the list of modified upstream files, is [desktop/docs/liveness/README.md](../../desktop/docs/liveness/README.md).
+
+Desktop upstream comparison: https://github.com/nawddeep/registration-client (fork of mosip/registration-client)
 
 This page replaces an earlier version that described a standalone Derby test as if it were the client integration. It was not.
 

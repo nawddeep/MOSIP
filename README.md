@@ -1,11 +1,24 @@
 # android-registration-client
 
+## Repository layout
+
+```
+/            Android Registration Client with face liveness
+/desktop     Desktop Registration Client (MOSIP registration-client v1.2.0.2) with face liveness
+```
+
+The Android client (Flutter + Java) is at the repository root. The Desktop client (Java 11, JavaFX, Maven) is in
+[desktop/](desktop/), imported with its history; its liveness documentation is
+[desktop/docs/liveness/README.md](desktop/docs/liveness/README.md). Desktop changes are made in `desktop/` in this repository.
+
+Desktop upstream comparison: https://github.com/nawddeep/registration-client (fork of mosip/registration-client)
+
 The Android Registration Client is a tablet application that serves as a portable version of the existing desktop Registration Client. It has been developed to support accessibility on all Android devices. The creation of the Android Registration Client was driven by the need to meet the mobility requirements of countries adopting MOSIP.
 
 ## Face liveness + PAD
 
 Face liveness and presentation attack detection for resident capture, operator login and supervisor approval: see [docs/liveness/README.md](docs/liveness/README.md).
-Desktop Registration Client: the integration lives in the fork [nawddeep/registration-client](https://github.com/nawddeep/registration-client) (`release-1.2.0.x`); status and limits in [docs/liveness/10-desktop-derby-integration.md](docs/liveness/10-desktop-derby-integration.md).
+Desktop Registration Client: the integration is in [desktop/](desktop/) (see [desktop/docs/liveness/README.md](desktop/docs/liveness/README.md)); status and limits in [docs/liveness/10-desktop-derby-integration.md](docs/liveness/10-desktop-derby-integration.md).
 
 ## Website and in-browser demo
 

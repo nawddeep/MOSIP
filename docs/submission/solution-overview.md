@@ -1,8 +1,7 @@
 # Solution overview (draft for judges)
 
 Face Liveness and Presentation Attack Detection for the MOSIP registration clients (MOSIP Decode 2026, Problem Statement 04).
-Repositories: Android client https://github.com/nawddeep/MOSIP (branch `main`); Desktop client
-https://github.com/nawddeep/registration-client (branch `release-1.2.0.x`).
+One repository, https://github.com/nawddeep/MOSIP (branch `main`): the Android client at the root and the Desktop client in `desktop/`.
 
 ## Problem
 
@@ -22,12 +21,12 @@ adds its own frame source, UI, audit and config adapters.
 ## Architecture
 
 * Android: [docs/liveness/01-architecture.md](../liveness/01-architecture.md) (module layout, state machine and sequence diagrams, bridge contract).
-* Desktop: shared core module, services adapters and JavaFX popup, described in the Desktop repository's `docs/liveness/README.md`.
+* Desktop: shared core module, services adapters and JavaFX popup, described in [desktop/docs/liveness/README.md](../../desktop/docs/liveness/README.md).
 * Both are plugged into the existing MOSIP mechanisms: the audit service, the global-parameter config, the workflow controllers. No new tables.
 
 ## What we built versus upstream MOSIP
 
-| | Android (`nawddeep/MOSIP`) | Desktop (`nawddeep/registration-client`) |
+| | Android (repository root) | Desktop (`desktop/`) |
 |---|---|---|
 | Fork point | upstream commit `8f4643a` (`bf1b3b91` in this repository after the history rewrite) | tag `v1.2.0.2` |
 | Existing upstream files modified | 99 (many are the Flutter UI restyle, not liveness) | 15, all small, each listed with its reason in that README |
