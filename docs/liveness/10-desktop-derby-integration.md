@@ -1,77 +1,34 @@
-# Desktop Liveness: Apache Derby Database Integration Report
+# Desktop Registration Client: liveness integration
 
-> **Task Document**: *Desktop Liveness: Derby Database Task* (Oct 21, 2026, @prateeek)  
-> **Target**: MOSIP Desktop Registration Client (Java / Spring / Apache Derby)  
-> **Status**: Completed & 100% Verified against Embedded Apache Derby (`jdbc:derby:tools/derby/testdb`)
+The Desktop integration lives in a fork of the real client: **[nawddeep/registration-client](https://github.com/nawddeep/registration-client), branch `release-1.2.0.x`** (based on `v1.2.0.2`). Its own documentation, with the list of modified upstream files, is `docs/liveness/README.md` in that fork.
 
----
+This page replaces an earlier version that described a standalone Derby test as if it were the client integration. It was not.
 
-## 1. Task A: Codebase Audit & Gap Analysis
+## What exists
 
-### A.1 Logging and Storage Outside the Audit Service
-* **Zero Leakage in Core Client**: In `io.mosip.registration.livenessmanager` and the newly integrated `desktop` package, all audit records strictly route through `DesktopAuditManagerService` into Derby's `APP_AUDIT_LOG` table.
-* **Image and Biometric Privacy**: As verified by automated tests and structural assertions in `PrivacyContractTest`, `LivenessAuditRecord` contains no arrays, byte buffers, crops, thumbnails, or embeddings. Only `record.toCompactString()` reaches the database.
-* **Console Logging**: All `System.out.println` and `printStackTrace()` calls have been omitted from client code. Any audit write exceptions are caught and swallowed, logging only the exception class name via standard Java logging (`java.util.logging.Logger`).
+| Item | State |
+|---|---|
+| Shared Java 11 engine module, same sources as `android/livenessmanager` | built, 103 tests pass |
+| SBI frame source, Face Mesh landmarks, MiniFASNet PAD, quality, `DesktopLivenessEngine` | built, tested on real models |
+| Audit through the real `AuditManagerService` (`REG-LIV-001..006`) | verified into `AUDIT.APP_AUDIT_LOG` with the client's own DDL |
+| Config from `global_param` (`mosip.registration.face.liveness.config`) | verified against the real `REG.GLOBAL_PARAM` DDL; tamper rejected; offline restart uses the cached copy |
+| JavaFX popup, all 16 states, en / fr / ar | rendered off-screen from the real FXML/CSS/bundles: [desktop-screens/](desktop-screens/) |
+| Gates in `GenericBiometricsController`, `LoginController`, `AuthenticationController` | written and compiled |
 
-### A.2 Hardcoded Parameters Refactoring
-* In previous prototypes, thresholds (`passiveThreshold = 0.90`) and timeouts (`challengeTimeout = 8.0`) were static defaults.
-* In the Desktop integration, **100% of operational thresholds are dynamically resolved** via `DesktopLivenessConfigAdapter` from Derby's `GLOBAL_PARAM` table (`mosip.registration.face.liveness.config`).
+## What has NOT been verified
 
----
+* The real client has **not been run** with an SBI device or Mock SBI. It needs a MOSIP environment that was not available, so the gates have not been exercised in the running UI. This is therefore not claimed as "integrated" end to end.
+* Print, phone-screen and video-replay attacks with real media were not tested. An injected still photo was stopped by the random challenge, not by passive PAD alone.
+* Timings come from an Apple-silicon Mac, not a registration PC. No screen recording exists.
+* French and Arabic wording of the new alert is a draft.
+* The MiniFASNet weights have an unclear upstream licence.
 
-## 2. Touchpoint Mapping: Android vs. Desktop Target
+## Facts that differ from the earlier text
 
-| Touchpoint | Android Implementation (Reference) | Desktop Target (Apache Derby) |
-|---|---|---|
-| **Audit Service** | `AuditManagerLivenessLogger` -> `AuditManagerService` | `DesktopLivenessAuditLogger` -> `DesktopAuditManagerService` |
-| **Audit Table** | SQLite `app_audit_log` | Derby `APP_AUDIT_LOG` |
-| **Audit Events** | `REG-LIV-001` through `REG-LIV-006` | `DesktopAuditEvent` (`REG-LIV-001` to `REG-LIV-006`) |
-| **Log Format** | `record.toCompactString()` | `record.toCompactString()` |
-| **Exception Safety** | try/catch logging exception class name | try/catch logging exception class name |
-| **Config Source** | `GlobalParamRepository` | `DesktopGlobalParamService` (`GLOBAL_PARAM` table) |
-| **Config Integrity** | `LivenessConfigParser` + `CanonicalJson` SHA-256 | `LivenessConfigParser` + `CanonicalJson` SHA-256 |
-| **Config Fallback** | Bundled default JSON or last good cache | Bundled default JSON or `DesktopFileConfigCache` |
+* The client's audit table is **`AUDIT.APP_AUDIT_LOG`**, not `APP_AUDIT_LOG` in the default schema.
+* The existing 4-argument `audit()` overwrites `ref_id` with the user id or registration id; a new 5-argument overload keeps the liveness session id.
+* `REG.GLOBAL_PARAM.VAL` is `VARCHAR(512)`. The full default config (about 1,100 characters signed) does not fit, so the synced value must list only the fields that differ from the defaults (about 270 characters). `tools/liveness-config-signer` signs and checks it.
 
----
+## `tools/derby`
 
-## 3. The 6 Audit Events (`REG-LIV-00x`)
-
-| ID | Name | Type | Description |
-|---|---|---|---|
-| **`REG-LIV-001`** | `FACE_LIVENESS_SESSION` | `USER_EVENT` | Session started, ended, and latency benchmarks. |
-| **`REG-LIV-002`** | `FACE_LIVENESS_STATE` | `SYSTEM_EVENT` | State transitions (`POSITIONING`, `PASSIVE_CHECK`, etc.). |
-| **`REG-LIV-003`** | `FACE_LIVENESS_DECISION` | `SYSTEM_EVENT` | Passive evaluation outcome, mean/min/max scores, thresholds. |
-| **`REG-LIV-004`** | `FACE_LIVENESS_CHALLENGE` | `USER_EVENT` | Active challenge results (`BLINK`, `SMILE`, `TURN_LEFT`, `TURN_RIGHT`). |
-| **`REG-LIV-005`** | `FACE_LIVENESS_CONFIG` | `SYSTEM_EVENT` | Config applied with `configVersion` or rejected with error code. |
-| **`REG-LIV-006`** | `FACE_LIVENESS_GATE_BLOCKED` | `SYSTEM_EVENT` | Face capture blocked because no valid, unexpired liveness pass exists. |
-
----
-
-## 4. Derby Database Test Execution Results
-
-Executed against `jdbc:derby:tools/derby/testdb;create=true` via `tools.derby.TestDerbyIntegration`:
-
-```
-ID   | EVENT_ID     | EVENT_NAME                 | EVENT_TYPE    | DESCRIPTION (record.toCompactString())
-------------------------------------------------------------------------------------------------------------------------
-1    | REG-LIV-005  | FACE_LIVENESS_CONFIG       | SYSTEM_EVENT  | type=CONFIG_APPLIED;ts=...;attempt=0;outcome=PASS;configVersion=1.0-synced
-2    | REG-LIV-006  | FACE_LIVENESS_GATE_BLOCKED | SYSTEM_EVENT  | Face capture blocked, liveness not passed for field: individualBiometrics_bio_CBEFF
-3    | REG-LIV-001  | FACE_LIVENESS_SESSION      | USER_EVENT    | type=SESSION_STARTED;ts=...;session=sess-res-01;workflow=RESIDENT;attempt=1;outcome=NONE
-4    | REG-LIV-002  | FACE_LIVENESS_STATE        | SYSTEM_EVENT  | type=STATE_TRANSITION;ts=...;attempt=0;from=IDLE;to=POSITIONING;outcome=NONE
-5    | REG-LIV-002  | FACE_LIVENESS_STATE        | SYSTEM_EVENT  | type=STATE_TRANSITION;ts=...;attempt=0;from=POSITIONING;to=PASSIVE_CHECK;outcome=NONE
-6    | REG-LIV-003  | FACE_LIVENESS_DECISION     | SYSTEM_EVENT  | type=PASSIVE_DECISION;ts=...;session=sess-res-01;workflow=RESIDENT;attempt=1;outcome=PASS;score=0.9400;threshold=0.9000
-7    | REG-LIV-001  | FACE_LIVENESS_SESSION      | USER_EVENT    | type=SESSION_ENDED;ts=...;session=sess-res-01;workflow=RESIDENT;attempt=1;outcome=PASS
-8    | REG-LIV-001  | FACE_LIVENESS_SESSION      | USER_EVENT    | type=PERFORMANCE;ts=...;session=sess-res-01;workflow=RESIDENT;attempt=1;outcome=NONE;durationMs=710
-9    | REG-LIV-001  | FACE_LIVENESS_SESSION      | USER_EVENT    | type=SESSION_STARTED;ts=...;session=sess-op-01;workflow=OPERATOR;attempt=1;outcome=NONE
-10   | REG-LIV-002  | FACE_LIVENESS_STATE        | SYSTEM_EVENT  | type=STATE_TRANSITION;ts=...;attempt=0;from=PASSIVE_CHECK;to=CHALLENGE;outcome=NONE
-11   | REG-LIV-004  | FACE_LIVENESS_CHALLENGE    | USER_EVENT    | type=CHALLENGE_RESULT;ts=...;attempt=0;challenge=BLINK;outcome=PASS
-12   | REG-LIV-001  | FACE_LIVENESS_SESSION      | USER_EVENT    | type=SESSION_ENDED;ts=...;session=sess-op-01;workflow=OPERATOR;attempt=1;outcome=PASS
-13   | REG-LIV-001  | FACE_LIVENESS_SESSION      | USER_EVENT    | type=SESSION_STARTED;ts=...;session=sess-sup-01;workflow=SUPERVISOR;attempt=1;outcome=NONE
-14   | REG-LIV-003  | FACE_LIVENESS_DECISION     | SYSTEM_EVENT  | type=PASSIVE_DECISION;ts=...;session=sess-sup-01;workflow=SUPERVISOR;attempt=1;outcome=PASS;score=0.9600;threshold=0.9000
-15   | REG-LIV-001  | FACE_LIVENESS_SESSION      | USER_EVENT    | type=SESSION_ENDED;ts=...;session=sess-sup-01;workflow=SUPERVISOR;attempt=1;outcome=PASS
-16   | REG-LIV-005  | FACE_LIVENESS_CONFIG       | SYSTEM_EVENT  | type=CONFIG_APPLIED;ts=...;attempt=0;outcome=PASS;configVersion=2.0-updated
-17   | REG-LIV-005  | FACE_LIVENESS_CONFIG       | SYSTEM_EVENT  | type=CONFIG_REJECTED;ts=...;attempt=0;outcome=FAIL;error=LIV-701;source=sync;reason=...
-------------------------------------------------------------------------------------------------------------------------
-Total Derby Audit Records Recorded: 17
-Privacy & Zero-Image Verification: PASSED (Zero image/pixel leaks)
-```
+`tools/derby` is a **standalone adapter test, not the client schema**. It exercises the neutral adapters against a hand-made Derby database. It is kept for reference only and is not evidence of client integration.

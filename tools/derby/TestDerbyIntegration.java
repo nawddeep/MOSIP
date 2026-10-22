@@ -1,3 +1,4 @@
+// STANDALONE ADAPTER TEST, NOT THE CLIENT SCHEMA: runs against a hand-made Derby database, not the Desktop client.
 package tools.derby;
 
 import java.io.File;

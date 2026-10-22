@@ -1,53 +1,20 @@
-# MOSIP Judge Evaluation Guide: Desktop Liveness Derby Integration
+# Judge evaluation guide: Desktop liveness
 
-> **Document Objective**: Provides MOSIP judges and evaluators with step-by-step verification procedures to confirm full integration with the existing Desktop Registration Client configuration and audit framework.
+Everything about the Desktop client is in the fork **[nawddeep/registration-client](https://github.com/nawddeep/registration-client)** (`release-1.2.0.x`). Read `docs/liveness/README.md` there first; it separates what was verified from what was not.
 
----
+## Check these claims
 
-## 1. Executive Evaluation Summary
+| Claim | How to check |
+|---|---|
+| Builds on JDK 11 | `cd registration && mvn clean install` with JDK 11 |
+| Nothing already passing got worse | compare per-test-class results with an unmodified clone of the same tag (summary in the fork README) |
+| Audit rows reach the client's audit table through `AuditManagerService` | `mvn -pl registration-services test -Dtest=AuditRowsIntegrationTest` and read the printed rows of `AUDIT.APP_AUDIT_LOG` |
+| Config fits the real `global_param` column and a tampered one is rejected | `-Dtest=GlobalParamColumnTest,DesktopLivenessRuntimeTest` |
+| No new tables, no images stored | the tests above use only the client's own DDL; search the diff for `CREATE TABLE` (none) |
+| Fails closed | `DesktopLivenessServiceTest` (tampered model, bad config, engine error) |
+| UI states | [desktop-screens/](desktop-screens/) (rendered with `tools/liveness-screenshots`) |
+| Gates are in Java | `GenericBiometricsController`, `LoginController`, `AuthenticationController` in the fork diff |
 
-| Evaluation Criteria | MOSIP PS Section | How Verified |
-|---|---|---|
-| **Use Existing Config Framework** | Integration: "Existing Registration Client configuration framework" | Synced param `mosip.registration.face.liveness.config` read from Derby `GLOBAL_PARAM` table via `GlobalParamService`. |
-| **Use Existing Audit Framework** | Integration: Audit logging and security | Records flow through `AuditManagerService` into Derby `APP_AUDIT_LOG` table with events `REG-LIV-001` to `006`. |
-| **Strict Privacy Compliance** | Privacy & Zero-Knowledge | Zero face images, crops, thumbnails, or embeddings in the database or logs. |
-| **No Schema Invasions** | Architecture & Stability | Zero new tables or schema changes added to Apache Derby. |
-| **Tamper Resistance** | Integrity & Anti-Spoofing | All config payloads verified via SHA-256 canonical integrity digests (`CanonicalJson`). |
+## What cannot be checked from this submission
 
----
-
-## 2. Quick Automated Verification (30 Seconds)
-
-To reproduce the complete test and view real rows inserted into Apache Derby:
-
-```bash
-# On Windows:
-tools\derby\run_derby_tests.bat
-
-# On Linux / macOS:
-bash tools/derby/run_derby_tests.sh
-```
-
-### Expected Output:
-1. Connects to embedded Apache Derby (`jdbc:derby:tools/derby/testdb`).
-2. Seeds `GLOBAL_PARAM` with signed config.
-3. Blocks unauthorized face capture (`REG-LIV-006` `FACE_LIVENESS_GATE_BLOCKED`).
-4. Executes Resident, Operator, and Supervisor workflows (`REG-LIV-001` to `004`).
-5. Updates threshold dynamically in Derby and verifies config version increment.
-6. Rejects tampered config payloads while retaining previous active policies.
-7. Dumps all 17 audit rows and asserts 0 image leaks.
-
----
-
-## 3. Post-Test Audit Inspection Tool
-
-To independently query and validate an existing Derby database directory:
-
-```bash
-java -cp "tools/derby/classes:tools/derby/derby.jar" tools.derby.AuditLogInspector tools/derby/testdb
-```
-
-Output confirms:
-* Total `REG-LIV` records recorded.
-* Breakdown of events across `REG-LIV-001` through `REG-LIV-006`.
-* Clean pass on Zero-Biometric Leak verification.
+The running client with Mock SBI (resident pass, challenge, print/phone/replay attacks, operator login, supervisor approval, unplugged device, offline restart), timings on the demo PC, and a screen recording were **not** done. The README in the fork lists the steps to do them.

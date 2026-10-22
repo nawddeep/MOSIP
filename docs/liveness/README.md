@@ -12,7 +12,8 @@ Passive liveness first, then a random active challenge (blink / smile / turn hea
 | [07-performance-accuracy.md](07-performance-accuracy.md) | Measurements, accuracy findings, default values, limits |
 | [08-technical-notes.md](08-technical-notes.md) | Privacy and security, ISO/IEC 30107 alignment, known limits, future work |
 | [09-frontend-completion.md](09-frontend-completion.md) | HUD completion, ARB localization, accessibility |
-| [10-desktop-derby-integration.md](10-desktop-derby-integration.md) | Desktop client Apache Derby audit and config integration, Task A findings |
+| [10-desktop-derby-integration.md](10-desktop-derby-integration.md) | Desktop client integration (fork), what is and is not verified |
+| [11-judge-evaluation-guide.md](11-judge-evaluation-guide.md) | How to check the Desktop claims |
 | [DEPENDENCIES.md](DEPENDENCIES.md) | Every added dependency, model and font with its licence |
 | [liveness-config.schema.json](liveness-config.schema.json) | Config JSON Schema |
 
