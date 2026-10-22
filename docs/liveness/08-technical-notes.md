@@ -54,7 +54,7 @@ Honest gaps: config integrity is a **digest**, not a signature, so authenticity 
 7. The MiniFASNet crop uses the MediaPipe landmark box, which is tighter than upstream's detector box. Offline check: 0.991 vs 0.996 on the real sample, which is acceptable but not identical.
 8. UI copy is fully localized into 6 languages (EN, HI, FR, AR, TA, KN) via `assets/l10n` ARB files with screen-reader accessibility announcements for countdown and oval mode transitions.
 9. The APK grows about 59 MB per ABI.
-10. End-to-end SBI capture after a pass, and the operator/supervisor flows, are not exercised on device (they need MOSIP sandbox sync, an onboarded machine and Mock MDS).
+10. End-to-end SBI capture after a pass, and the operator/supervisor flows, are not exercised on device (they need MOSIP sandbox sync, an onboarded machine and Mock MDS). (being verified: see [12-test-evidence.md](12-test-evidence.md))
 
 ## Future work
 

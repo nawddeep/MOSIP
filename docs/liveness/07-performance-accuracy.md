@@ -1,5 +1,7 @@
 # Phase 7: Performance and Accuracy
 
+Real-device results: see [12-test-evidence.md](12-test-evidence.md)
+
 > **Read this first.** No physical phone was available in this environment, so the low-end and mid-range phone rows are **not measured** (marked "pending"). Everything below comes from an Android 14 arm64 **emulator on an Apple-silicon Mac**, from JVM simulations, or from offline model checks, as labelled. Emulator numbers flatter low-end phones: expect roughly 2–4× slower inference on a 2019-era Android Go device.
 
 ## 1. Performance
