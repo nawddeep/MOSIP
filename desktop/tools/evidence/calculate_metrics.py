@@ -41,7 +41,11 @@ def calculate_metrics(results_csv_path: str, output_md_path: str):
         final_state = r["final_state"].strip().upper()
         stage = r.get("stage_ended", "").strip()
 
-        is_bona_fide = "bona_fide" in subject or attack_type == "none"
+        if "smoke" in subject or "smoke" in attack_type:
+            # Verified refusal when no face present
+            continue
+
+        is_bona_fide = "bona_fide" in subject or (attack_type == "none" and "attack" not in subject)
 
         stats = device_stats[device]
         if stage:

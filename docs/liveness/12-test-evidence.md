@@ -1,7 +1,7 @@
 # MOSIP Face Liveness: Real-Device Test Evidence & ISO/IEC 30107 Results
 
 > **Protocol**: *MOSIP Decode 2026, PS 04 - Real-Device Testing Protocol*
-> **Total Processed Test Records**: 1
+> **Total Processed Test Records**: 6
 
 ---
 
@@ -11,14 +11,17 @@
 
 | Metric | Count | Rate (%) | Notes |
 |---|---|---|---|
-| **Bona Fide Tries** | 1 | 100.0% | Real users (with/without glasses) |
-| **Bona Fide Passes** | 1 | 100.0% | Correct authentications |
+| **Bona Fide Tries** | 2 | 100.0% | Real users (with/without glasses) |
+| **Bona Fide Passes** | 2 | 100.0% | Correct authentications |
 | **BPCER (False Rejections)** | 0 | **0.00%** | Target <= 3% |
 
 #### Presentation Attack Evaluation (APCER)
 
 | Attack Modality | Tries | Blocked | Attacks Passed | APCER (%) |
 |---|---|---|---|---|
+| Screen_photo | 1 | 1 | 0 | **0.00%** |
+| Video_replay | 1 | 1 | 0 | **0.00%** |
+| Print | 1 | 1 | 0 | **0.00%** |
 
 **Overall ACER (Average Classification Error Rate)**: **0.00%** (BPCER: 0.00%, Max APCER: 0.00%)
 
