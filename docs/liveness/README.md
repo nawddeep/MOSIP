@@ -71,7 +71,7 @@ Delivered as MOSIP global param **`mosip.registration.face.liveness.config`** (v
 | `livenessTokenTtlSeconds` | root | 60 | how long a pass stays valid for the guarded step (single use) |
 | `performance.frameSkip` | root | 1 | analyse every Nth camera frame |
 | `performance.padEveryNthFrame` | root | 1 | run PAD on every Nth analysed frame |
-| `enabled` | policy | resident true, others false | gate on/off for the workflow |
+| `enabled` | policy | true for all three (demo config) | gate on/off for the workflow |
 | `passiveThreshold` | policy | 0.90 | mean live score for a passive pass |
 | `padRejectThreshold` | policy | 0.30 | below: PAD_FAILED without a challenge |
 | `challengeTypes` | policy | all 4 | pool: `BLINK`, `SMILE`, `TURN_LEFT`, `TURN_RIGHT` |

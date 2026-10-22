@@ -80,7 +80,7 @@ RegistrationDto.addBiometric(fieldId, "face", attempt, dto) ─► Pigeon Result
 | R2 | The MDS app and our CameraX both need the front camera. | We release the camera (`unbindAll`) before SUCCESS is emitted, and the SBI intent starts only after that. |
 | R3 | Flutter 3.10 / Dart 2.19 language level | Dart code avoids Dart 3 features. |
 | R4 | APK size: MediaPipe (~10 MB/ABI), ONNX Runtime (~8 MB/ABI), OpenCV (~20 MB/ABI) | ABI splits are recommended. The OpenCV dependency is isolated to one adapter class (`OpenCvQualityAnalyzer`) so it can be removed. |
-| R5 | Password-only auth today means "face login" is new UX and new policy | Disabled by default for operator/supervisor in bundled config (`enabled:false`). Resident is enabled. |
+| R5 | Password-only auth today means "face login" is new UX and new policy | Enabled for all three workflows in the bundled demo config (`enabled:true`); a programme can switch operator/supervisor off by config. |
 | R6 | No certified L0/L1 device or attack dataset available in this environment | Mock video frame source, synthetic trace harness, honest reporting in Phase 7. |
 | R7 | Model provenance: MiniFASNet weights (Minivision, Apache-2.0), ONNX conversion by a third party (Apache-2.0) | SHA-256 pinned in `models/manifest.json` and verified at load. Outputs must be re-validated against the upstream PyTorch reference before production. |
 

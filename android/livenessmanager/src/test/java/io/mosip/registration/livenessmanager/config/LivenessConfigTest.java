@@ -45,7 +45,7 @@ public class LivenessConfigTest {
     public void bundledDefaultIsValid() throws Exception {
         LivenessConfig c = parser.parse(bundled(), false);
         assertTrue(c.policyFor(Workflow.RESIDENT).enabled);
-        assertFalse(c.policyFor(Workflow.OPERATOR).enabled);
+        assertTrue(c.policyFor(Workflow.OPERATOR).enabled);
         assertEquals(2, c.policyFor(Workflow.SUPERVISOR).challengeCount);
         assertEquals(3, c.policyFor(Workflow.OPERATOR).maxRetries);
         assertNotNull(c.policyFor(Workflow.OPERATOR).quality);

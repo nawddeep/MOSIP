@@ -94,7 +94,7 @@ Real APCER/BPCER need a labelled set captured on target devices: for example ≥
 
 | Field | Resident | Operator | Supervisor | Basis |
 |---|---|---|---|---|
-| enabled | true | false | false | product decision needed for login flows (D3) |
+| enabled | true | true | true | demo config; a programme decides for login flows (D3) |
 | passiveThreshold | 0.90 | 0.90 | 0.92 | upstream T1 = 0.996 vs attacks 0.001; leaves margin for camera variation; **tune on real data** |
 | padRejectThreshold | 0.30 | 0.30 | 0.30 | below this, a challenge is not offered (clear attack) |
 | challengeCount | **2** | **2** | 2 | synthetic replay study (0.32 → 0.00) |

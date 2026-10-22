@@ -50,7 +50,7 @@ Honest gaps: config integrity is a **digest**, not a signature, so authenticity 
 3. A single BLINK challenge is beatable by a natural-blink replay; mitigated by `challengeCount: 2`.
 4. `minPassiveMotion` (0.002) is uncalibrated on real sensors; too high means extra challenges for very still users.
 5. Liveness (CameraX) and the stored biometric (SBI/MDS) are two captures; the 60 s single-use pass narrows but does not close the gap (risk R1).
-6. Operator/supervisor "face login" is a liveness gate on top of the password; there is no face matching (no MOSIP API for it), and it is disabled by default.
+6. Operator/supervisor "face login" is a liveness gate on top of the password; there is no face matching (no MOSIP API for it), and it is enabled in the bundled demo config (a programme can disable it).
 7. The MiniFASNet crop uses the MediaPipe landmark box, which is tighter than upstream's detector box. Offline check: 0.991 vs 0.996 on the real sample, which is acceptable but not identical.
 8. UI copy is fully localized into 6 languages (EN, HI, FR, AR, TA, KN) via `assets/l10n` ARB files with screen-reader accessibility announcements for countdown and oval mode transitions.
 9. The APK grows about 59 MB per ABI.

@@ -38,7 +38,7 @@ Release builds ignore `setSource` (`BuildConfig.DEBUG` check), so mock input can
 | Operator login | `login_page.dart` `_navigateToHomePage()`, after password auth and centre/machine checks | Login completes only if liveness passes. On cancel, failure or max retries: `logoutUser()` and the operator stays on the login page. |
 | Supervisor approval | `authenticate_dialogbox.dart` `submitReviews()`, after the supervisor password check | Review is submitted only if liveness passes. Otherwise it shows the same "login failed" feedback. |
 
-Each workflow uses its own policy (`policies.resident|operator|supervisor`). With `enabled:false` the gate is a no-op: no screen, and the native gate allows. Bundled defaults: resident **on**; operator and supervisor **off**, because that is new UX and policy on top of password login and needs a programme decision (see D3 in 01-architecture.md).
+Each workflow uses its own policy (`policies.resident|operator|supervisor`). With `enabled:false` the gate is a no-op: no screen, and the native gate allows. Bundled demo defaults: resident, operator and supervisor all **on**. Operator and supervisor are new UX and policy on top of password login; a programme can turn them off by config (see D3 in 01-architecture.md).
 
 ### Offline behaviour
 

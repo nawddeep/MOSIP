@@ -214,7 +214,7 @@ Two fields were added beyond the brief, with the reason for each:
 |---|---|---|
 | D1 | In-app CameraX liveness **gates** the existing SBI capture; it does not replace it | SBI/MDS owns the signed biometric (MOSIP compliance). The app cannot see MDS frames. |
 | D2 | Native single-use `LivenessGate` (TTL 60 s), checked in `BiometricsDetailsApi` | A UI bypass cannot skip liveness, and replaying an old pass is blocked |
-| D3 | Operator/supervisor: liveness gate **after** the existing password auth; disabled by default | No face-login API exists. Without face matching, liveness alone is not authentication. |
+| D3 | Operator/supervisor: liveness gate **after** the existing password auth; enabled in the bundled demo config | No face-login API exists. Without face matching, liveness alone is not authentication. |
 | D4 | Method/EventChannel + Flutter `Texture` preview | Pigeon 10 has no streams. A Texture avoids PlatformView cost. |
 | D5 | One analysis thread, keep-only-latest frames, `frameSkip` / `padEveryNthFrame` knobs | Bounded latency on low-end phones |
 | D6 | Models pinned by SHA-256, loaded from memory; any failure is ENGINE_ERROR | Fail closed, plus model provenance |

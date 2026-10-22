@@ -20,7 +20,7 @@
       "quality": { "minBrightness": 50, "maxBrightness": 220, "minSharpness": 25, "maxMotion": 0.15 }
     },
     "operator": {
-      "enabled": false,
+      "enabled": true,
       "passiveThreshold": 0.9,
       "padRejectThreshold": 0.3,
       "challengeTypes": ["BLINK", "TURN_LEFT", "TURN_RIGHT"],
@@ -31,7 +31,7 @@
       "maxFaces": 1
     },
     "supervisor": {
-      "enabled": false,
+      "enabled": true,
       "passiveThreshold": 0.92,
       "padRejectThreshold": 0.3,
       "challengeTypes": ["BLINK", "SMILE", "TURN_LEFT", "TURN_RIGHT"],
