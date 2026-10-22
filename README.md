@@ -5,6 +5,7 @@ The Android Registration Client is a tablet application that serves as a portabl
 ## Face liveness + PAD
 
 Face liveness and presentation attack detection for resident capture, operator login and supervisor approval: see [docs/liveness/README.md](docs/liveness/README.md).
+For the Desktop Registration Client Apache Derby database integration, see [docs/liveness/10-desktop-derby-integration.md](docs/liveness/10-desktop-derby-integration.md).
 
 ## Website and in-browser demo
 
