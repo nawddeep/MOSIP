@@ -121,7 +121,7 @@ public final class DesktopLivenessConfigAdapter implements LivenessConfigProvide
                 "      \"quality\": {\"minBrightness\": 50, \"maxBrightness\": 220, \"minSharpness\": 25, \"maxMotion\": 0.15}\n" +
                 "    },\n" +
                 "    \"operator\": {\n" +
-                "      \"enabled\": false,\n" +
+                "      \"enabled\": true,\n" +
                 "      \"passiveThreshold\": 0.90,\n" +
                 "      \"padRejectThreshold\": 0.30,\n" +
                 "      \"challengeTypes\": [\"BLINK\", \"SMILE\"],\n" +
@@ -136,7 +136,7 @@ public final class DesktopLivenessConfigAdapter implements LivenessConfigProvide
                 "      \"quality\": {\"minBrightness\": 50, \"maxBrightness\": 220, \"minSharpness\": 25, \"maxMotion\": 0.15}\n" +
                 "    },\n" +
                 "    \"supervisor\": {\n" +
-                "      \"enabled\": false,\n" +
+                "      \"enabled\": true,\n" +
                 "      \"passiveThreshold\": 0.90,\n" +
                 "      \"padRejectThreshold\": 0.30,\n" +
                 "      \"challengeTypes\": [\"BLINK\", \"SMILE\"],\n" +
