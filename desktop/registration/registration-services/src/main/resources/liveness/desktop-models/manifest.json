@@ -1,0 +1,34 @@
+{
+  "faceDetector": {
+    "file": "face_detector.onnx",
+    "sha256": "02a04d5d37c3558dc4d5274f7f8f0f0f01ac94e46c5ffb2cee82395d47e23181",
+    "version": "mediapipe-blazeface-short-range, ONNX conversion",
+    "source": "https://huggingface.co/fernandotonon/QtMeshEditor-blazeface-onnx @ 50f2c66ffbdf84beae8c267df2b49e5c5a5162e9",
+    "license": "Apache-2.0 (as stated by the model card; original: Google MediaPipe)"
+  },
+  "faceLandmarks": {
+    "file": "face_landmarks.onnx",
+    "sha256": "d16e5a55e6a480284d468ee32469692464049518c311662ab3956681de31e3e9",
+    "version": "mediapipe-face-mesh-v2 (478 landmarks, first 468 follow the Face Mesh topology), ONNX conversion",
+    "source": "https://huggingface.co/fernandotonon/QtMeshEditor-facemesh-onnx @ 32714088ed9830a98df6ee653ad406a3b83ef014",
+    "license": "Apache-2.0 (as stated by the model card; original: Google MediaPipe)"
+  },
+  "pad": {
+    "minFaceSize": 32,
+    "intraOpThreads": 1,
+    "models": [
+      {
+        "resource": "/liveness/models/minifasnet/2.7_80x80_MiniFASNetV2.onnx",
+        "sha256": "fe59ec8048b16a1d9be0139d4d03749078053aa2e1e57c6f333957895886c866",
+        "version": "MiniFASNetV2-2.7_80x80"
+      },
+      {
+        "resource": "/liveness/models/minifasnet/4_0_0_80x80_MiniFASNetV1SE.onnx",
+        "sha256": "2b45c7b23879e1af72adfb565b493cd33704c57984b8e63f9e39db61057f2342",
+        "version": "MiniFASNetV1SE-4_0_0_80x80"
+      }
+    ],
+    "source": "Same PAD models as the Android client (registration-liveness-core); see registration-liveness-core/MODEL_CARD.md",
+    "license": "Code Apache-2.0; weights licence UNCLEAR upstream (see MODEL_CARD.md)"
+  }
+}

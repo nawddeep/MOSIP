@@ -1,0 +1,32 @@
+name: Face liveness tests
+
+on:
+  push:
+    branches: [release-1.2.0.x]
+  pull_request:
+    branches: [release-1.2.0.x]
+
+jobs:
+  liveness:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+          cache: maven
+
+      - name: Core module tests
+        working-directory: registration
+        run: mvn -B -pl registration-liveness-core -am test
+
+      - name: Desktop liveness and audit tests
+        working-directory: registration
+        run: >
+          mvn -B -pl registration-services -am test
+          -Dtest='io.mosip.registration.liveness.*Test,AuditManagerDescriptionOverloadTest'
+          -DfailIfNoTests=false

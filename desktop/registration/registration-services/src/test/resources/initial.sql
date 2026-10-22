@@ -1,0 +1,313 @@
+-- ============================
+
+-- This file was created using Derby's dblook utility.
+-- Timestamp: 2020-08-30 22:41:40.912
+-- Source database is: db/reg
+-- appendLogs: false
+
+-- ----------------------------------------------
+-- DDL Statements for schemas
+-- ----------------------------------------------
+
+CREATE SCHEMA IF NOT EXISTS "REG";
+
+CREATE SCHEMA IF NOT EXISTS "AUDIT";
+
+-- ----------------------------------------------
+-- DDL Statements for tables
+-- ----------------------------------------------
+
+CREATE TABLE IF NOT EXISTS "REG"."LOCATION" ("CODE" VARCHAR(36) NOT NULL, "NAME" VARCHAR(128) NOT NULL, "HIERARCHY_LEVEL" SMALLINT NOT NULL, "HIERARCHY_LEVEL_NAME" VARCHAR(64) NOT NULL, "PARENT_LOC_CODE" VARCHAR(32), "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."RID_SEQ" ("CURR_SEQ_NO" INTEGER NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."PRE_REGISTRATION_LIST" ("ID" VARCHAR(36) NOT NULL, "PREREG_ID" VARCHAR(64) NOT NULL, "PREREG_TYPE" VARCHAR(64), "PARENT_PREREG_ID" VARCHAR(64), "APPOINTMENT_DATE" DATE, "PACKET_SYMMETRIC_KEY" VARCHAR(256), "STATUS_CODE" VARCHAR(36), "STATUS_COMMENT" VARCHAR(256), "PACKET_PATH" VARCHAR(256), "SJOB_ID" VARCHAR(36), "SYNCTRN_ID" VARCHAR(36), "LAST_UPD_DTIMES" TIMESTAMP, "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."DOC_CATEGORY" ("CODE" VARCHAR(36) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "DESCR" VARCHAR(128), "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."MACHINE_SPEC" ("ID" VARCHAR(36) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "BRAND" VARCHAR(32) NOT NULL, "MODEL" VARCHAR(16) NOT NULL, "MTYP_CODE" VARCHAR(36) NOT NULL, "MIN_DRIVER_VER" VARCHAR(16) NOT NULL, "DESCR" VARCHAR(256), "LANG_CODE" VARCHAR(3), "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."TEMPLATE" ("ID" VARCHAR(36) NOT NULL, "NAME" VARCHAR(128) NOT NULL, "DESCR" VARCHAR(256), "FILE_FORMAT_CODE" VARCHAR(36) NOT NULL, "MODEL" VARCHAR(128), "FILE_TXT" CLOB, "MODULE_ID" VARCHAR(36), "MODULE_NAME" VARCHAR(128), "TEMPLATE_TYP_CODE" VARCHAR(36) NOT NULL, "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(256) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(256), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."IDENTITY_SCHEMA" ("ID" VARCHAR(36) NOT NULL, "ID_VERSION" VARCHAR(8), "FILE_NAME" VARCHAR(50), "FILE_HASH" VARCHAR(260), "EFFECTIVE_FROM" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."USER_DETAIL" ("ID" VARCHAR(36) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "EMAIL" VARCHAR(64), "MOBILE" VARCHAR(16), "STATUS_CODE" VARCHAR(64), "LANG_CODE" VARCHAR(3) NOT NULL, "LAST_LOGIN_DTIMES" TIMESTAMP, "LAST_LOGIN_METHOD" VARCHAR(36), "UNSUCCESSFUL_LOGIN_COUNT" SMALLINT, "USERLOCK_TILL_DTIMES" TIMESTAMP, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP, "REG_ID" VARCHAR(36), "SALT" VARCHAR(64), "REG_CNTR_ID" VARCHAR(10) NOT NULL);
+
+CREATE TABLE IF NOT EXISTS "REG"."GLOBAL_PARAM" ("CODE" VARCHAR(128) NOT NULL, "NAME" VARCHAR(128) NOT NULL, "VAL" VARCHAR(512), "TYP" VARCHAR(128) NOT NULL, "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."REGISTRATION" ("ID" VARCHAR(39) NOT NULL, "REG_TYPE" VARCHAR(64) NOT NULL, "REF_REG_ID" VARCHAR(39), "PREREG_ID" VARCHAR(64),"APP_ID" VARCHAR(128) NOT NULL, "PACKET_ID" VARCHAR(256) NOT NULL, "ADDITIONAL_INFO_REQ_ID" VARCHAR(128), "STATUS_CODE" VARCHAR(36) NOT NULL, "LANG_CODE" VARCHAR(3) NOT NULL, "STATUS_COMMENT" VARCHAR(256), "STATUS_DTIMES" TIMESTAMP, "ACK_FILENAME" VARCHAR(128), "CLIENT_STATUS_CODE" VARCHAR(36), "SERVER_STATUS_CODE" VARCHAR(36), "CLIENT_STATUS_DTIME" TIMESTAMP, "SERVER_STATUS_DTIME" TIMESTAMP, "CLIENT_STATUS_COMMENT" VARCHAR(256), "SERVER_STATUS_COMMENT" VARCHAR(256), "REG_USR_ID" VARCHAR(36) NOT NULL, "REGCNTR_ID" VARCHAR(10) NOT NULL, "APPROVER_USR_ID" VARCHAR(36) NOT NULL, "APPROVER_ROLE_CODE" VARCHAR(36), "FILE_UPLOAD_STATUS" VARCHAR(64), "UPLOAD_COUNT" SMALLINT, "UPLOAD_DTIMES" TIMESTAMP, "LATEST_REGTRN_ID" VARCHAR(36), "LATEST_TRN_TYPE_CODE" VARCHAR(36), "LATEST_TRN_STATUS_CODE" VARCHAR(36), "LATEST_TRN_LANG_CODE" VARCHAR(3), "LATEST_REGTRN_DTIMES" TIMESTAMP, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "ADDITIONAL_INFO" BLOB(2147483647), "ACK_SIGNATURE" VARCHAR(350), "HAS_BWORDS" BOOLEAN);
+
+CREATE TABLE IF NOT EXISTS "REG"."TRANSACTION_TYPE" ("CODE" VARCHAR(36) NOT NULL, "DESCR" VARCHAR(256) NOT NULL, "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."REG_CENTER_USER_MACHINE" ("REGCNTR_ID" VARCHAR(10) NOT NULL, "USR_ID" VARCHAR(36) NOT NULL, "MACHINE_ID" VARCHAR(10) NOT NULL, "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."LOC_HOLIDAY" ("ID" INTEGER NOT NULL, "LOCATION_CODE" VARCHAR(36) NOT NULL, "HOLIDAY_DATE" DATE NOT NULL, "HOLIDAY_NAME" VARCHAR(64) NOT NULL, "HOLIDAY_DESC" VARCHAR(128), "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."BIOMETRIC_ATTRIBUTE" ("CODE" VARCHAR(36) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "DESCR" VARCHAR(128), "BMTYP_CODE" VARCHAR(36) NOT NULL, "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."ID_TYPE" ("CODE" VARCHAR(36) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "DESCR" VARCHAR(128), "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."AUTHENTICATION_METHOD" ("CODE" VARCHAR(36) NOT NULL, "METHOD_SEQ" SMALLINT, "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."DOC_TYPE" ("CODE" VARCHAR(36) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "DESCR" VARCHAR(128), "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."ROLE_LIST" ("CODE" VARCHAR(36) NOT NULL, "DESCR" VARCHAR(256), "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."BIOMETRIC_TYPE" ("CODE" VARCHAR(36) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "DESCR" VARCHAR(128), "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "AUDIT"."APP_AUDIT_LOG" ("LOG_ID" VARCHAR(64) NOT NULL, "LOG_DTIMES" TIMESTAMP NOT NULL, "LOG_DESC" VARCHAR(2048), "EVENT_ID" VARCHAR(64) NOT NULL, "EVENT_TYPE" VARCHAR(64) NOT NULL, "EVENT_NAME" VARCHAR(128) NOT NULL, "ACTION_DTIMES" TIMESTAMP NOT NULL, "HOST_NAME" VARCHAR(32) NOT NULL, "HOST_IP" VARCHAR(16) NOT NULL, "SESSION_USER_ID" VARCHAR(64) NOT NULL, "SESSION_USER_NAME" VARCHAR(128), "APP_ID" VARCHAR(64) NOT NULL, "APP_NAME" VARCHAR(128) NOT NULL, "MODULE_ID" VARCHAR(64), "MODULE_NAME" VARCHAR(128), "REF_ID" VARCHAR(64), "REF_ID_TYPE" VARCHAR(64), "CR_BY" VARCHAR(256) NOT NULL);
+
+CREATE TABLE IF NOT EXISTS "REG"."USER_PWD" ("USR_ID" VARCHAR(36) NOT NULL, "PWD" VARCHAR(512), "PWD_EXPIRY_DTIMES" TIMESTAMP, "STATUS_CODE" VARCHAR(64) NOT NULL, "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."BLOCKLISTED_WORDS" ("WORD" VARCHAR(128) NOT NULL, "DESCR" VARCHAR(256), "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."MACHINE_MASTER" ("ID" VARCHAR(10) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "MAC_ADDRESS" VARCHAR(64), "SERIAL_NUM" VARCHAR(64), "IP_ADDRESS" VARCHAR(17), "PUBLIC_KEY" CLOB(2147483647) NOT NULL, "KEY_INDEX" VARCHAR(128) NOT NULL, "VALIDITY_END_DTIMES" TIMESTAMP, "MSPEC_ID" VARCHAR(36) NOT NULL, "LANG_CODE" VARCHAR(3), "IS_ACTIVE" BOOLEAN NOT NULL, "REG_CNTR_ID" VARCHAR(10) NOT NULL, "CR_BY" VARCHAR(256) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(256), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."PROCESS_LIST" ("ID" VARCHAR(36) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "DESCR" VARCHAR(256), "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."REASON_CATEGORY" ("CODE" VARCHAR(36) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "DESCR" VARCHAR(128), "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."DYNAMIC_FIELD" ("ID" VARCHAR(36) NOT NULL, "NAME" VARCHAR(36) NOT NULL, "DESCRIPTION" VARCHAR(256), "DATA_TYPE" VARCHAR(16), "VALUE_JSON" CLOB, "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL);
+
+CREATE TABLE IF NOT EXISTS "REG"."APPLICANT_VALID_DOCUMENT" ("APPTYP_CODE" VARCHAR(36) NOT NULL, "DOCCAT_CODE" VARCHAR(36) NOT NULL, "DOCTYP_CODE" VARCHAR(36) NOT NULL, "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."LANGUAGE" ("CODE" VARCHAR(3) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "FAMILY" VARCHAR(64), "NATIVE_NAME" VARCHAR(64), "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."REASON_LIST" ("CODE" VARCHAR(36) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "DESCR" VARCHAR(256), "RSNCAT_CODE" VARCHAR(36) NOT NULL, "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."USER_ROLE" ("USR_ID" VARCHAR(36) NOT NULL, "ROLE_CODE" VARCHAR(36) NOT NULL, "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."SYNC_CONTROL" ("ID" VARCHAR(36) NOT NULL, "SYNCJOB_ID" VARCHAR(36) NOT NULL, "MACHINE_ID" VARCHAR(10), "REGCNTR_ID" VARCHAR(10), "SYNCTRN_ID" VARCHAR(36) NOT NULL, "LAST_SYNC_DTIMES" TIMESTAMP NOT NULL, "LANG_CODE" VARCHAR(3), "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."APPL_FORM_TYPE" ("CODE" VARCHAR(36) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "DESCR" VARCHAR(128), "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."SCREEN_AUTHORIZATION" ("SCREEN_ID" VARCHAR(36) NOT NULL, "ROLE_CODE" VARCHAR(36) NOT NULL, "LANG_CODE" VARCHAR(3) NOT NULL, "IS_PERMITTED" BOOLEAN NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."REG_CENTER_TYPE" ("CODE" VARCHAR(36) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "DESCR" VARCHAR(128), "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."APP_ROLE_PRIORITY" ("APP_ID" VARCHAR(36) NOT NULL, "PROCESS_ID" VARCHAR(36) NOT NULL, "ROLE_CODE" VARCHAR(36) NOT NULL, "PRIORITY" SMALLINT, "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."USER_BIOMETRIC" ("USR_ID" VARCHAR(36) NOT NULL, "BMTYP_CODE" VARCHAR(36) NOT NULL, "BMATT_CODE" VARCHAR(36) NOT NULL, "BIO_RAW_IMAGE" BLOB(2147483647), "BIO_ISO_IMAGE" BLOB(2147483647), "QUALITY_SCORE" INTEGER, "NO_OF_RETRY" SMALLINT, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP, "BIO_MINUTIA" CLOB(2147483647));
+
+CREATE TABLE IF NOT EXISTS "REG"."SCREEN_DETAIL" ("ID" VARCHAR(36) NOT NULL, "APP_ID" VARCHAR(36) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "DESCR" VARCHAR(256), "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."REGISTRATION_TRANSACTION" ("ID" VARCHAR(36) NOT NULL, "REG_ID" VARCHAR(39) NOT NULL,"APP_ID" VARCHAR(39) NOT NULL, "TRN_TYPE_CODE" VARCHAR(36) NOT NULL, "REMARKS" VARCHAR(1024), "PARENT_REGTRN_ID" VARCHAR(36), "STATUS_CODE" VARCHAR(36) NOT NULL, "LANG_CODE" VARCHAR(3) NOT NULL, "STATUS_COMMENT" VARCHAR(1024), "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."KEY_POLICY_DEF" ("APP_ID" VARCHAR(36) NOT NULL, "KEY_VALIDITY_DURATION" SMALLINT, "IS_ACTIVE" BOOLEAN NOT NULL, "PRE_EXPIRE_DAYS" SMALLINT, "ACCESS_ALLOWED" VARCHAR(1024), "CR_BY" VARCHAR(256) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(256), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."KEY_ALIAS" ("ID" VARCHAR(36) NOT NULL, "APP_ID" VARCHAR(36) NOT NULL, "REF_ID" VARCHAR(128), "KEY_GEN_DTIMES" TIMESTAMP, "KEY_EXPIRE_DTIMES" TIMESTAMP, "STATUS_CODE" VARCHAR(36), "LANG_CODE" VARCHAR(3), "UNI_IDENT" VARCHAR(50), "CR_BY" VARCHAR(256) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(256), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP, "CERT_THUMBPRINT" VARCHAR(128));
+
+CREATE TABLE IF NOT EXISTS "REG"."KEY_STORE" ("ID" VARCHAR(36) NOT NULL, "MASTER_KEY" VARCHAR(36) NOT NULL, "PRIVATE_KEY" VARCHAR(2500) NOT NULL, "CERTIFICATE_DATA" VARCHAR(2500) NOT NULL, "CR_BY" VARCHAR(256) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(256), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."SYNC_TRANSACTION" ("ID" VARCHAR(36) NOT NULL, "SYNCJOB_ID" VARCHAR(36) NOT NULL, "SYNC_DTIMES" TIMESTAMP NOT NULL, "STATUS_CODE" VARCHAR(36) NOT NULL, "STATUS_COMMENT" VARCHAR(256), "TRIGGER_POINT" VARCHAR(32), "SYNC_FROM" VARCHAR(32), "SYNC_TO" VARCHAR(32), "MACHINE_ID" VARCHAR(10), "REGCNTR_ID" VARCHAR(10), "REF_ID_TYPE" VARCHAR(64), "REF_ID" VARCHAR(64), "SYNC_PARAM" VARCHAR(2048), "LANG_CODE" VARCHAR(3), "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."REGISTRATION_CENTER" ("ID" VARCHAR(10) NOT NULL, "NAME" VARCHAR(128) NOT NULL, "CNTRTYP_CODE" VARCHAR(36), "ADDR_LINE1" VARCHAR(256), "ADDR_LINE2" VARCHAR(256), "ADDR_LINE3" VARCHAR(256), "LATITUDE" VARCHAR(32), "LONGITUDE" VARCHAR(32), "LOCATION_CODE" VARCHAR(36) NOT NULL, "CONTACT_PHONE" VARCHAR(16), "CONTACT_PERSON" VARCHAR(128), "NUMBER_OF_KIOSKS" SMALLINT, "WORKING_HOURS" VARCHAR(32), "PER_KIOSK_PROCESS_TIME" TIME, "CENTER_START_TIME" TIME, "CENTER_END_TIME" TIME, "LUNCH_START_TIME" TIME, "LUNCH_END_TIME" TIME, "TIME_ZONE" VARCHAR(64), "HOLIDAY_LOC_CODE" VARCHAR(36), "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."MACHINE_TYPE" ("CODE" VARCHAR(36) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "DESCR" VARCHAR(128), "LANG_CODE" VARCHAR(3), "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."APP_AUTHENTICATION_METHOD" ("APP_ID" VARCHAR(36) NOT NULL, "PROCESS_ID" VARCHAR(36) NOT NULL, "ROLE_CODE" VARCHAR(36) NOT NULL, "AUTH_METHOD_CODE" VARCHAR(36) NOT NULL, "METHOD_SEQ" SMALLINT, "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."SYNC_JOB_DEF" ("ID" VARCHAR(36) NOT NULL, "NAME" VARCHAR(64) NOT NULL, "API_NAME" VARCHAR(64), "PARENT_SYNCJOB_ID" VARCHAR(36), "SYNC_FREQ" VARCHAR(36), "LOCK_DURATION" VARCHAR(36), "LANG_CODE" VARCHAR(3), "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP, "JOB_TYPE" VARCHAR(128));
+
+CREATE TABLE IF NOT EXISTS "REG"."USER_TOKEN" ("USR_ID" VARCHAR(36) NOT NULL, "TOKEN" VARCHAR(2048), "TOKEN_EXPIRY" BIGINT, "REFRESH_TOKEN" VARCHAR(2048), "RTOKEN_EXPIRY" BIGINT, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."CA_CERT_STORE"("CERT_ID" VARCHAR(36) NOT NULL, "CERT_SUBJECT" VARCHAR(500) NOT NULL, "CERT_ISSUER" VARCHAR(500) NOT NULL, "ISSUER_ID" VARCHAR(36) NOT NULL, "CERT_NOT_BEFORE" TIMESTAMP, "CERT_NOT_AFTER" TIMESTAMP, "CRL_URI" VARCHAR(120), "CERT_DATA" VARCHAR(3000), "CERT_THUMBPRINT" VARCHAR(100), "CERT_SERIAL_NO" VARCHAR(50),    "PARTNER_DOMAIN" VARCHAR(36), "CR_BY" VARCHAR(256) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(256), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."LOC_HIERARCHY_LIST"("HIERARCHY_LEVEL" INTEGER NOT NULL, "HIERARCHY_LEVEL_NAME" VARCHAR(36) NOT NULL, "LANG_CODE" VARCHAR(3) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(256) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(256), "UPD_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."PERMITTED_LOCAL_CONFIG" ("CODE" VARCHAR(128) NOT NULL, "NAME" VARCHAR(128) NOT NULL, "CONFIG_TYPE" VARCHAR(128) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL, "CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."LOCAL_PREFERENCES" ("ID" VARCHAR(36) NOT NULL, "NAME" VARCHAR(128) NOT NULL, "VAL" VARCHAR(512), "CONFIG_TYPE" VARCHAR(128) NOT NULL, "MACHINE_NAME" VARCHAR(128) NOT NULL,"CR_BY" VARCHAR(32) NOT NULL, "CR_DTIMES" TIMESTAMP NOT NULL, "UPD_BY" VARCHAR(32), "UPD_DTIMES" TIMESTAMP, "IS_DELETED" BOOLEAN, "DEL_DTIMES" TIMESTAMP);
+
+CREATE TABLE IF NOT EXISTS "REG"."PROCESS_SPEC" ("ID" VARCHAR(100) NOT NULL, "TYPE" VARCHAR(100) NOT NULL, "ID_VERSION" VARCHAR(8), "ORDER_NUM" INTEGER NOT NULL, "IS_SUB_PROCESS" BOOLEAN  NOT NULL, "FLOW" VARCHAR(36) NOT NULL, "IS_ACTIVE" BOOLEAN NOT NULL);
+
+CREATE TABLE IF NOT EXISTS "REG"."FILE_SIGNATURE" ("FILE_NAME" VARCHAR(100) NOT NULL, "SIGNATURE" VARCHAR(2048) NOT NULL, "CONTENT_LENGTH" BIGINT, "ENCRYPTED" BOOLEAN  NOT NULL);
+-- ----------------------------------------------
+-- DDL Statements for indexes
+-- ----------------------------------------------
+
+CREATE UNIQUE INDEX IF NOT EXISTS "REG"."IDX_LOCHOL_ID" ON "REG"."LOC_HOLIDAY" ("ID", "LOCATION_CODE");
+
+CREATE UNIQUE INDEX IF NOT EXISTS "REG"."UK_APPAUTHM_ID" ON "REG"."APP_AUTHENTICATION_METHOD" ("APP_ID", "PROCESS_ID", "ROLE_CODE", "METHOD_SEQ");
+
+CREATE UNIQUE INDEX IF NOT EXISTS "REG"."UK_ROLEPRT_ID" ON "REG"."APP_ROLE_PRIORITY" ("APP_ID", "PROCESS_ID", "PRIORITY");
+
+-- ----------------------------------------------
+-- DDL Statements for keys
+-- ----------------------------------------------
+
+
+
+-- FOREIGN
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.applicant.type.age.limit','mosip.kernel.applicant.type.age.limit','5','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.jsonvalidator.file-storage-uri','mosip.kernel.jsonvalidator.file-storage-uri','LOCAL','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.crypto.symmetric-algorithm-name','mosip.kernel.crypto.symmetric-algorithm-name','AES/GCM/PKCS5Padding','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.keygenerator.symmetric-key-length','mosip.kernel.keygenerator.symmetric-key-length','256','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.keygenerator.asymmetric-key-length','mosip.kernel.keygenerator.asymmetric-key-length','2048','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.prid.restricted-numbers','mosip.kernel.prid.restricted-numbers','786,666','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.prid.length','mosip.kernel.prid.length','14','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.prid.sequence-limit','mosip.kernel.prid.sequence-limit','3','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.prid.repeating-block-limit','mosip.kernel.prid.repeating-block-limit','3','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.prid.repeating-limit','mosip.kernel.prid.repeating-limit','2','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.prid.not-start-with','mosip.kernel.prid.not-start-with','0,1','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.uin.restricted-numbers','mosip.kernel.uin.restricted-numbers','786,666','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.uin.length.repeating-block-limit','mosip.kernel.uin.length.repeating-block-limit','2','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.uin.length.sequence-limit','mosip.kernel.uin.length.sequence-limit','3','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.uin.length.repeating-limit','mosip.kernel.uin.length.repeating-limit','2','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.uin.length.conjugative-even-digits-limit','mosip.kernel.uin.length.conjugative-even-digits-limit','3','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.transliteration.arabic-language-code','mosip.kernel.transliteration.arabic-language-code','ara','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.transliteration.franch-language-code','mosip.kernel.transliteration.franch-language-code','fra','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.virus-scanner.host','mosip.kernel.virus-scanner.host','104.211.209.102','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.virus-scanner.port','mosip.kernel.virus-scanner.port','3310','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.jsonvalidator.property-source','mosip.kernel.jsonvalidator.property-source','LOCAL','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.xsdstorage-uri','mosip.kernel.xsdstorage-uri','LOCAL','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.xsdfile','mosip.kernel.xsdfile','LOCAL','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.jsonvalidator.schema-name','mosip.kernel.jsonvalidator.schema-name','mosip-identity-json-schema.json','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.registration.machinecenterchanged','mosip.registration.machinecenterchanged','false','CONFIGURATION','eng',true,'System',current timestamp,'SYSTEM',current timestamp, false, current timestamp);
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.registration.machine.inactive','mosip.registration.machine.inactive','false','CONFIGURATION','eng',true,'System',current timestamp,'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.registration.initial_setup','mosip.registration.initial_setup','Y','CONFIGURATION','eng',true,'System',current timestamp,'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.registration.is_software_update_available','mosip.registration.is_software_update_available','N','CONFIGURATION','eng',true,'System',current timestamp,'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.reg.services.current.version','mosip.reg.services.current.version','0','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.keygenerator.asymmetric-algorithm-name','mosip.kernel.keygenerator.asymmetric-algorithm-name','RSA','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.keygenerator.symmetric-algorithm-name','mosip.kernel.keygenerator.symmetric-algorithm-name','AES','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.crypto.asymmetric-algorithm-name','mosip.kernel.crypto.asymmetric-algorithm-name','RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.signature.signature-request-id','mosip.kernel.signature.signature-request-id','SIGNATURE.REQUEST','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.signature.signature-version-id','mosip.kernel.signature.signature-version-id','v1.0','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.signed.header','mosip.signed.header','response-signature','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('auth.role.prefix','auth.role.prefix','ROLE_','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('auth.header.name','auth.header.name','Authorization','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.idobjectvalidator.schema-name','mosip.kernel.idobjectvalidator.schema-name','mosip-identity-json-schema.json','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.idobjectvalidator.file-storage-uri','mosip.kernel.idobjectvalidator.file-storage-uri','LOCAL','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.idobjectvalidator.property-source','mosip.kernel.idobjectvalidator.property-source','LOCAL','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.idobjectvalidator.mandatory-attributes.reg-client.new-registration','mosip.kernel.idobjectvalidator.mandatory-attributes.reg-client.new-registration','fullName,dateOfBirth|age,gender,addressLine1,region,province,city,zone,postalCode,residenceStatus,referenceIdentityNumber','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.idobjectvalidator.mandatory-attributes.reg-client.child-registration','mosip.kernel.idobjectvalidator.mandatory-attributes.reg-client.child-registration','fullName,dateOfBirth|age,gender,addressLine1,region,province,city,zone,postalCode,residenceStatus,referenceIdentityNumber,parentOrGuardianName,parentOrGuardianRID|parentOrGuardianUIN,parentOrGuardianBiometrics','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.idobjectvalidator.mandatory-attributes.reg-client.lost-uin','mosip.kernel.idobjectvalidator.mandatory-attributes.reg-client.lost-uin','','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.idobjectvalidator.mandatory-attributes.reg-client.update-uin','mosip.kernel.idobjectvalidator.mandatory-attributes.reg-client.update-uin','','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.id.validation.identity.dateOfBirth','mosip.id.validation.identity.dateOfBirth','^\\d{4}/([0]\\d|1[0-2])/([0-2]\\d|3[01])$','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.id.validation.identity.phone','mosip.id.validation.identity.phone','^([6-9]{1})([0-9]{9})$','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.id.validation.identity.email','mosip.id.validation.identity.email','^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.id.validation.identity.postalCode','mosip.id.validation.identity.postalCode','^[(?i)A-Z0-9]{5}$','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.id.validation.identity.referenceIdentityNumber','mosip.id.validation.identity.referenceIdentityNumber','^([0-9]{10,30})$','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.id.validation.identity.age','mosip.id.validation.identity.age','^(150|1[0-4][0-9]|[1-9]?[0-9])$','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.id.validation.identity.fullName.[*].value','mosip.id.validation.identity.fullName.[*].value','^(?=.{0,50}$).*','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.id.validation.identity.addressLine1.[*].value','mosip.id.validation.identity.addressLine1.[*].value','^(?=.{0,50}$).*','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.id.validation.identity.addressLine2.[*].value','mosip.id.validation.identity.addressLine2.[*].value','^(?=.{0,50}$).*','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.id.validation.identity.addressLine3.[*].value','mosip.id.validation.identity.addressLine3.[*].value','^(?=.{0,50}$).*','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.id.validation.identity.region.[*].value','mosip.id.validation.identity.region.[*].value','^(?=.{0,50}$).*','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.id.validation.identity.province.[*].value','mosip.id.validation.identity.province.[*].value','^(?=.{0,50}$).*','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.id.validation.identity.city.[*].value','mosip.id.validation.identity.city.[*].value','^(?=.{0,50}$).*','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.country.code','mosip.country.code','MOR','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.registration.app.id','mosip.registration.app.id','registrationclient','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.otp.expiry-time','mosip.kernel.otp.expiry-time','180','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('auth.jwt.secret','auth.jwt.secret','authjwtsecret','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('auth.jwt.base','auth.jwt.base','Mosip-Token','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.pdf_owner_password','mosip.kernel.pdf_owner_password','{cipher}AQBUgUNlaJfAh44K+n1DenAzBAHaYh42nHxYd4kgYlSTh+Jgs5KOxKpNfW6TFpbpokiE+qM29J2aww5o1HDWKUhboLfpRfIkssNKxThaOI9crKE6LSNQK0mmDejcvOoyj1OuY5imX+bIgLRdunBJtyZljGPquw7l0oqcHSolYaWCnt2UgX5Hdx1aovSrP+sgGUEZs23ASzEXTTAA8GQKZJxYsqz6sMyzvD6bCkU1FMSxN04d+j5N71GsSh1WzoUNSy09ydq997WEi8TLOZHTnZ6W142cYJoNvVSOhZuDT9FZogxQKaZ6mgxcO9aF/k2cYLVsy2axGbBm8Vba04/AyfK2pgRcnE4M5pvUJsNydOZvmcgQNial4+PAAz9xqKLURMA=','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.crypto.gcm-tag-length','mosip.kernel.crypto.gcm-tag-length','128','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.crypto.hash-symmetric-key-length','mosip.kernel.crypto.hash-symmetric-key-length','256','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.crypto.hash-algorithm-name','mosip.kernel.crypto.hash-algorithm-name','PBKDF2WithHmacSHA512','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.crypto.sign-algorithm-name','mosip.kernel.crypto.sign-algorithm-name','SHA512withRSA','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.crypto.hash-iteration','mosip.kernel.crypto.hash-iteration','100000','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.data-key-splitter','mosip.kernel.data-key-splitter','#KEY_SPLITTER#','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.registration.HTTP_API_READ_TIMEOUT','mosip.registration.HTTP_API_READ_TIMEOUT','60000','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.registration.HTTP_API_WRITE_TIMEOUT','mosip.registration.HTTP_API_WRITE_TIMEOUT','60000','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.registration.last_software_update','mosip.registration.last_software_update','-','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.registration.regclient_installed_time','mosip.registration.regclient_installed_time',current timestamp,'CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.registration.mdm.trust.domain.rcapture','mosip.registration.mdm.key.domain.rcapture','DEVICE','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.registration.mdm.trust.domain.digitalId','mosip.registration.mdm.key.domain.digitalId','DEVICE','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.registration.mdm.trust.domain.deviceinfo','mosip.registration.mdm.key.domain.deviceinfo','DEVICE','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.vid.restricted-numbers','mosip.kernel.vid.restricted-numbers','786,666','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.vid.not-start-with','mosip.kernel.vid.not-start-with','0,1','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.vid.length.repeating-limit','mosip.kernel.vid.length.repeating-limit','2','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.vid.length.repeating-block-limit','mosip.kernel.vid.length.repeating-block-limit','2','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.vid.length.sequence-limit','mosip.kernel.vid.length.sequence-limit','3','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."GLOBAL_PARAM" VALUES ('mosip.kernel.vid.length','mosip.kernel.vid.length','16','CONFIGURATION','eng',true,'SYSTEM',current timestamp, 'SYSTEM',current timestamp, false, current timestamp);
+
+INSERT INTO "REG"."KEY_POLICY_DEF" ("APP_ID", "KEY_VALIDITY_DURATION","PRE_EXPIRE_DAYS", "ACCESS_ALLOWED", "IS_ACTIVE", "CR_BY", "CR_DTIMES") VALUES ('REGISTRATION', 1095, 50, 'NA', true, 'mosipadmin', current timestamp);
+
+INSERT INTO "REG"."KEY_POLICY_DEF" ("APP_ID", "KEY_VALIDITY_DURATION","PRE_EXPIRE_DAYS", "ACCESS_ALLOWED", "IS_ACTIVE", "CR_BY", "CR_DTIMES") VALUES('KERNEL', 1095, 50, 'NA', true, 'mosipadmin', current timestamp);
+
+INSERT INTO "REG"."KEY_POLICY_DEF" ("APP_ID", "KEY_VALIDITY_DURATION","PRE_EXPIRE_DAYS", "ACCESS_ALLOWED", "IS_ACTIVE", "CR_BY", "CR_DTIMES") VALUES('SERVER-RESPONSE', 1095, 50, 'NA', true, 'mosipadmin', current timestamp);
+
+INSERT INTO "REG"."KEY_POLICY_DEF" ("APP_ID", "KEY_VALIDITY_DURATION","PRE_EXPIRE_DAYS", "ACCESS_ALLOWED", "IS_ACTIVE", "CR_BY", "CR_DTIMES") VALUES('IDA', 1095, 50, 'NA', true, 'mosipadmin', current timestamp);
+
+INSERT INTO "REG"."KEY_POLICY_DEF" ("APP_ID", "KEY_VALIDITY_DURATION","PRE_EXPIRE_DAYS", "ACCESS_ALLOWED", "IS_ACTIVE", "CR_BY", "CR_DTIMES") VALUES('BASE', 730, 20, 'NA', true, 'mosipadmin', current timestamp);

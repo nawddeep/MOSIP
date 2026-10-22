@@ -1,0 +1,86 @@
+/* Face liveness screen: Desktop "ink" palette (docs/ui/design-system.md in the Android repo). */
+
+.liveness-root {
+    -fx-background-color: #0B0B0C;
+    -fx-font-family: "Segoe UI", "Helvetica Neue", "Arial", sans-serif;
+}
+
+.liveness-title {
+    -fx-text-fill: #F5F5F7;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.liveness-caption {
+    -fx-text-fill: #8E8E93;
+    -fx-font-size: 13px;
+}
+
+.liveness-message {
+    -fx-text-fill: #F5F5F7;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.liveness-body {
+    -fx-text-fill: #8E8E93;
+    -fx-font-size: 16px;
+}
+
+.liveness-back {
+    -fx-background-color: #1C1C1F;
+    -fx-text-fill: #F5F5F7;
+    -fx-font-size: 20px;
+    -fx-background-radius: 5px;
+    -fx-min-width: 48px;
+    -fx-min-height: 48px;
+    -fx-cursor: hand;
+}
+
+.liveness-primary {
+    -fx-background-color: #3B6FE8;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-min-width: 160px;
+    -fx-min-height: 52px;
+    -fx-cursor: hand;
+}
+
+.liveness-primary:hover,
+.liveness-primary:pressed {
+    -fx-background-color: #2F5FD0;
+}
+
+.liveness-secondary {
+    -fx-background-color: transparent;
+    -fx-text-fill: #F5F5F7;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-border-color: rgba(245, 245, 247, 0.22);
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-min-width: 160px;
+    -fx-min-height: 52px;
+    -fx-cursor: hand;
+}
+
+.liveness-secondary:hover {
+    -fx-background-color: #1C1C1F;
+}
+
+.liveness-primary:focused,
+.liveness-secondary:focused,
+.liveness-back:focused {
+    -fx-border-color: #86A6F5;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+}
+
+.liveness-recovery {
+    -fx-background-color: #111113;
+    -fx-border-color: rgba(245, 245, 247, 0.22);
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}

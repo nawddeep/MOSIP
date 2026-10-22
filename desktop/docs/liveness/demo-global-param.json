@@ -1,0 +1,1 @@
+{"schemaVersion":1,"configVersion":"demo-1","policies":{"resident":{"enabled":true,"challengeCount":2},"operator":{"enabled":true},"supervisor":{"enabled":true}},"integrity":{"algorithm":"SHA-256","value":"65212b456c3bf1e664b1be0d33548e678ea32c18f57f9403591fff3b5aed65bc"}}
