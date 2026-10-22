@@ -2,7 +2,7 @@
 
 A website and in-browser demo client for the MOSIP Registration Client. It mirrors the Android client's flows, fields, validation and copy: login, sign-up, registration, face liveness, Manage Applications, approval and settings. Discovery notes: [docs/discovery.md](docs/discovery.md).
 
-Integrated from [CharviPaliwal/Mosip_desktop](https://github.com/CharviPaliwal/Mosip_desktop) at commit `c8e23a2` (2026-10-20). See [Changes made during integration](#changes-made-during-integration).
+Built by Charvi Paliwal, team member. Integrated from [CharviPaliwal/Mosip_desktop](https://github.com/CharviPaliwal/Mosip_desktop) at commit `c8e23a2` (2026-10-20). See [Changes made during integration](#changes-made-during-integration).
 
 ## What's here
 
