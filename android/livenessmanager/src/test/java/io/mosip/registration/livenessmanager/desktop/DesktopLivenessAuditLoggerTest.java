@@ -64,7 +64,7 @@ public class DesktopLivenessAuditLoggerTest {
     @Test
     public void sessionStartedMapsToRegLiv001() {
         LivenessAuditRecord record = LivenessAuditRecord.builder(LivenessAuditRecord.Type.SESSION_STARTED, 1000L)
-                .workflow(Workflow.RESIDENT)
+                .session("test-session", Workflow.RESIDENT, 1)
                 .build();
 
         logger.log(record);
@@ -79,13 +79,13 @@ public class DesktopLivenessAuditLoggerTest {
     @Test
     public void sessionEndedAndPerformanceMapToRegLiv001() {
         LivenessAuditRecord endRecord = LivenessAuditRecord.builder(LivenessAuditRecord.Type.SESSION_ENDED, 1050L)
-                .workflow(Workflow.RESIDENT)
+                .session("test-session", Workflow.RESIDENT, 1)
                 .outcome(LivenessAuditRecord.Outcome.PASS)
                 .build();
         logger.log(endRecord);
 
         LivenessAuditRecord perfRecord = LivenessAuditRecord.builder(LivenessAuditRecord.Type.PERFORMANCE, 1060L)
-                .workflow(Workflow.RESIDENT)
+                .session("test-session", Workflow.RESIDENT, 1)
                 .detail("durationMs", 60)
                 .build();
         logger.log(perfRecord);
@@ -98,7 +98,7 @@ public class DesktopLivenessAuditLoggerTest {
     @Test
     public void stateTransitionMapsToRegLiv002() {
         LivenessAuditRecord record = LivenessAuditRecord.builder(LivenessAuditRecord.Type.STATE_TRANSITION, 1100L)
-                .state(LivenessState.PASSIVE_CHECK)
+                .transition(LivenessState.POSITIONING, LivenessState.PASSIVE_CHECK)
                 .build();
 
         logger.log(record);
@@ -112,7 +112,7 @@ public class DesktopLivenessAuditLoggerTest {
     @Test
     public void passiveDecisionMapsToRegLiv003() {
         LivenessAuditRecord record = LivenessAuditRecord.builder(LivenessAuditRecord.Type.PASSIVE_DECISION, 1200L)
-                .workflow(Workflow.RESIDENT)
+                .session("test-session", Workflow.RESIDENT, 1)
                 .outcome(LivenessAuditRecord.Outcome.PASS)
                 .detail("score", 0.94)
                 .detail("threshold", 0.90)
