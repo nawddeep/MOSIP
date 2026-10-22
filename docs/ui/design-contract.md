@@ -2,7 +2,7 @@
 
 Purpose: support repeated registration work, operator access, and face verification.
 Audience: registration operators, residents following camera instructions, supervisors.
-Direction: calm, readable operations UI matched to the Desktop client (paper palette, ink face verification); see design-system.md.
+Direction: calm, readable operations UI matched to the web demo (paper palette, ink face verification); see design-system.md.
 Detail: sunken icon tiles, 1px hairline panels, icon + word status badges, 5/8 px radii.
 
 Targets: 390x844 phone and 1024x768 tablet; scrolling at enlarged text and keyboard insets.

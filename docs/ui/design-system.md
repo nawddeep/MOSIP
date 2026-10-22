@@ -1,10 +1,10 @@
 # Registration Client design system
 
-Source of truth: the Desktop web client in `website/` (`index.src.html`, `:root` tokens).
-Reference captures: `docs/ui/desktop-reference/01…09-*.png` (1280×800, light theme; liveness in dark).
+Source of truth: the web demo in `website/` (`index.src.html`, `:root` tokens).
+Reference captures: `docs/ui/web-demo-reference/01…09-*.png` (1280×800, light theme; liveness in dark).
 
-The Android app uses the Desktop **paper** (light) theme on all operator screens and the
-**ink** (dark) theme on face liveness only, exactly as the Desktop does.
+The Android app uses the web demo **paper** (light) theme on all operator screens and the
+**ink** (dark) theme on face liveness only, exactly as the web demo does.
 
 Code entry points:
 
@@ -56,7 +56,7 @@ Status tints (inline alerts, chips): background = status colour at 9% on surface
 | `line` | `#F5F5F7` @ 11% | borders |
 | `text` | `#F5F5F7` | primary text |
 | `textSecondary` | `#8E8E93` | secondary text |
-| `checking` | `#86A6F5` | oval while checking (Desktop focus-blue; plain blue fails contrast) |
+| `checking` | `#86A6F5` | oval while checking (web demo focus-blue; plain blue fails contrast) |
 | `challenge` | `#CDA866` | oval during a challenge (warn-ink) |
 | `success` | `#86AE90` | oval on success (ok-ink) |
 | `failure` | `#D48A82` | oval on failure (err-ink) |
@@ -75,7 +75,7 @@ Status tints (inline alerts, chips): background = status colour at 9% on surface
 | liveness text / secondary on ink | 18.07 / 6.03 | AA |
 | ok / warn / err / focus-blue on ink | 7.94 / 8.80 / 7.27 / 8.23 | AA |
 | accent `#3B6FE8` on ink | **4.33** | not used for text on ink |
-| Desktop 22% line as field outline | ~1.6 | fails 3:1 → fields use `inputBorder` (3.62 white / 3.38 canvas) |
+| Web demo 22% line as field outline | ~1.6 | fails 3:1 → fields use `inputBorder` (3.62 white / 3.38 canvas) |
 | muted on sunkenStrong | 4.44 | avoided: disabled states use `sunken` (5.01) |
 
 Colour is never the only signal: every status also carries an icon and a word
@@ -83,11 +83,11 @@ Colour is never the only signal: every status also carries an icon and a word
 
 ## 2. Typography
 
-Family: **IBM Plex Sans** (bundled, `IBMPlexSans`). Desktop uses Inter Tight; this is the one
+Family: **IBM Plex Sans** (bundled, `IBMPlexSans`). The web demo uses Inter Tight; this is the one
 deliberate difference: Plex is already bundled (offline, OFL-licensed) and the brief asks for it.
-Sizes, weights and tracking follow the Desktop.
+Sizes, weights and tracking follow the web demo.
 
-Mono labels: Desktop uses JetBrains Mono, upper-cased by CSS. Android has no bundled mono, so
+Mono labels: the web demo uses JetBrains Mono, upper-cased by CSS. Android has no bundled mono, so
 `label` is Plex Sans 11.5/600 with tracking 1.2. Text is **not** upper-cased in code: ui-test finds
 elements by `@text`, and changing the case of an existing string would break its locator.
 
@@ -96,12 +96,12 @@ fonts on device. Every token style also names the fallback family `RegistrationS
 which no device ships (so it is skipped); screenshot tests register a local script font under that
 name so RTL renders show real glyphs.
 
-| Style | Size / line | Weight | Tracking | Desktop source |
+| Style | Size / line | Weight | Tracking | Web demo source |
 |---|---|---|---|---|
 | `display` | 28 / 1.15 | 600 | -0.6 | greeting "Amina, ready when you are." |
 | `title` | 21 / 1.25 | 600 | -0.3 | h3 / screen title |
 | `heading` | 17 / 1.3 | 600 | -0.1 | panel header |
-| `body` | 16 / 1.5 | 400 | 0 | body (17 on Desktop; 16 on phone) |
+| `body` | 16 / 1.5 | 400 | 0 | body (17 on the web demo; 16 on phone) |
 | `bodyStrong` | 16 / 1.5 | 500 | 0 | field values |
 | `small` | 14.5 / 1.45 | 400 | 0 | helper, secondary |
 | `fieldLabel` | 14.5 / 1.4 | 500 | 0 | label above a form field |
@@ -121,9 +121,9 @@ All sizes follow `MediaQuery.textScaleFactor`; nothing is clamped. Layouts must 
 - Elevation: none. Separation is a 1px `line` border. Only dialogs and bottom sheets get one
   soft shadow (`0 12 32 #0A0A0B @ 8%`).
 
-## 4. Touch adaptation (Android ≠ Desktop)
+## 4. Touch adaptation (Android ≠ web demo)
 
-| Desktop | Android |
+| Web demo | Android |
 |---|---|
 | `.btn` 44px | buttons **48** min; primary **52** (`.btn-lg`); full-width primary at phone width |
 | `.btn-sm` 34px | not used; smallest target 48×48 |
@@ -162,7 +162,7 @@ All sizes follow `MediaQuery.textScaleFactor`; nothing is clamped. Layouts must 
 
 ## 6. Motion
 
-Easing `Cubic(0.22, 1, 0.36, 1)` (Desktop `--ease`). Durations: `fast 160ms`, `base 280ms`, `slow 480ms`.
+Easing `Cubic(0.22, 1, 0.36, 1)` (web demo `--ease`). Durations: `fast 160ms`, `base 280ms`, `slow 480ms`.
 Every animation is skipped when `MediaQuery.disableAnimations` is true. Allowed moments only:
 
 | # | Moment | Implementation |

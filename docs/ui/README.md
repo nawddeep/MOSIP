@@ -1,13 +1,13 @@
 # UI
 
-The operator screens follow the Desktop client (`website/`): paper palette, IBM Plex Sans with the
-Desktop type scale, flat hairline panels, 5/8 px radii, one accent-blue primary action. Face
-verification uses the Desktop ink (dark) palette.
+The operator screens follow the web demo (`website/`): paper palette, IBM Plex Sans with the
+web demo type scale, flat hairline panels, 5/8 px radii, one accent-blue primary action. Face
+verification uses the web demo ink (dark) palette.
 
 - Design system: [design-system.md](design-system.md)
 - Plan and per-screen notes: [redesign-plan.md](redesign-plan.md)
 - Changelog, including text/locator changes for `ui-test/`: [CHANGELOG.md](CHANGELOG.md)
-- Desktop reference captures: [desktop-reference/](desktop-reference/)
+- Web demo reference captures: [web-demo-reference/](web-demo-reference/)
 - Before/after renders: [screenshots/before/](screenshots/before/), [screenshots/after/](screenshots/after/)
 - Golden previews (compared by tests): [previews/](previews/)
 - Behaviour rules: [design-contract.md](design-contract.md)

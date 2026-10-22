@@ -1,7 +1,7 @@
-# UI changelog: Desktop-matched redesign
+# UI changelog: web-demo-matched redesign
 
 Spec: [design-system.md](design-system.md) · Plan: [redesign-plan.md](redesign-plan.md) ·
-Desktop reference: [desktop-reference/](desktop-reference/) · Before/after: [screenshots/](screenshots/)
+Web demo reference: [web-demo-reference/](web-demo-reference/) · Before/after: [screenshots/](screenshots/)
 
 Presentation only. Not touched: `lib/provider`, `lib/platform_android`, `lib/platform_spi`, `pigeon/`,
 `android/` native code, navigation, form validation, UI-spec interpretation, sync/packet logic,
@@ -11,7 +11,7 @@ authentication, liveness engine. No new packages.
 
 | # | Commit | Screen | What changed |
 |---|---|---|---|
-| 1 | `6e3fdbd` | All (tokens) | Desktop paper palette, IBM Plex type scale, 4-pt spacing, 5/8 radii, touch sizes, motion tokens; full Material 3 theme applied app-wide in `main.dart` (was a bare blue `ThemeData`). Legacy `app_config` colour names re-pointed to tokens. `LivenessTheme` → Desktop ink palette. |
+| 1 | `6e3fdbd` | All (tokens) | Web demo paper palette, IBM Plex type scale, 4-pt spacing, 5/8 radii, touch sizes, motion tokens; full Material 3 theme applied app-wide in `main.dart` (was a bare blue `ThemeData`). Legacy `app_config` colour names re-pointed to tokens. `LivenessTheme` → web demo ink palette. |
 | 2 | `e33b54c` | Shared | `components.dart`: SectionLabel, Panel, StatusBadge, InlineAlert, StepProgress, EmptyState, IconTile, FadeRise, SyncSpinner, SuccessCheck. |
 | 3 | `532a9b6` | Login | Flat hairline panel, field/label tokens, pill language chips with check mark. Sync-result and sync-progress dialogs no longer fixed boxes with 8–10px text; they grow with text size and show a determinate bar under the existing "Sync n of 7". |
 | 4 | `05e98f2` | Home / tasks | Hairline task cards with sunken icon tiles, segmented task tabs, themed bottom nav with top hairline, EmptyState for no processes. Motion 1, 2, 6. |
@@ -44,7 +44,7 @@ locator might still notice:
 | Sync progress dialog | Same "Sync n of 7" text; progress bar excluded from semantics. | None. |
 | Synchronize Data card icon | SVG replaced by Material sync icon (inside `ExcludeSemantics`). | None. |
 | Scanned biometric tile | `Green_Check.png` replaced by drawn check (no content-desc before or after). | None. |
-| Section labels | Not upper-cased in code (Desktop does it in CSS) to keep `@text` stable. | None. |
+| Section labels | Not upper-cased in code (the web demo does it in CSS) to keep `@text` stable. | None. |
 
 ## Known gaps
 

@@ -1,4 +1,4 @@
-# Redesign plan (Desktop-matched)
+# Redesign plan (web-demo-matched)
 
 Spec: `docs/ui/design-system.md`. Presentation only: no changes to providers, platform code,
 pigeon, native code, navigation, validation, sync/packet logic, auth or the liveness engine.
@@ -6,15 +6,15 @@ No text, widget `Key` or semantics-label changes (ui-test locators use `@text` /
 
 ## Current look and problems
 
-| Area | Today | Problem vs Desktop |
+| Area | Today | Problem vs web demo |
 |---|---|---|
 | Palette | MOSIP blue `#1C43A1`, pale-blue canvas `#F4F7FC`, ~40 near-duplicate constants in `app_config.dart` | many blues/greys; no neutral paper; status colours inconsistent (3 reds, 2 greens) |
-| Shape | radii 14–20, drop shadows on cards | Desktop is flat: 5/8 radii, 1px hairlines |
-| Type | Plex Sans, ad-hoc sizes 13–28 inline (≈175 literal `fontSize`) | no shared scale; bold 700 everywhere vs Desktop 500–600 |
+| Shape | radii 14–20, drop shadows on cards | the web demo is flat: 5/8 radii, 1px hairlines |
+| Type | Plex Sans, ad-hoc sizes 13–28 inline (≈175 literal `fontSize`) | no shared scale; bold 700 everywhere vs web demo 500–600 |
 | Hard-coding | ≈450 literal colours, ≈110 literal radii in `lib/ui` (most in `process_ui`, `onboard`) | theme changes don't propagate |
-| Home | blue cards, icon images | Desktop: hairline task cards with section labels, greeting |
-| Form shell | blue header band, tab-like step chips | Desktop: step label + progress, white panels, single blue Continue |
-| Liveness | dark navy-grey, amber/green/red oval | close already; retune to Desktop ink palette |
+| Home | blue cards, icon images | Web demo: hairline task cards with section labels, greeting |
+| Form shell | blue header band, tab-like step chips | Web demo: step label + progress, white panels, single blue Continue |
+| Liveness | dark navy-grey, amber/green/red oval | close already; retune to web demo ink palette |
 | Lists (approve/export) | dense rows, colour-only status text | need badges (icon + word), 56px rows, 48px checkboxes |
 
 ## Commits (each followed by `flutter analyze` + `flutter test test/face_liveness test/ui test/widgets`)
@@ -44,6 +44,6 @@ No text, widget `Key` or semantics-label changes (ui-test locators use `@text` /
 ## Assumptions
 
 - Keep IBM Plex Sans (brief) instead of Inter Tight; mono labels approximated with tracked Plex.
-- Phone keeps its existing bottom navigation (Desktop side nav is not a touch pattern).
+- Phone keeps its existing bottom navigation (web demo side nav is not a touch pattern).
 - Legacy constant names stay (renaming would touch hundreds of widget files for no visual gain);
   literal colours inside widgets are replaced screen by screen as each is restyled.
