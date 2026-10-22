@@ -1,6 +1,6 @@
 # Discovery: MOSIP Android Registration Client
 
-Source reviewed (read-only): `/Users/charvipaliwal/Documents/Mosip/MOSIP`, branch `feature/face-liveness-pad`, HEAD `9be3e309` ("Add face liveness and demo account support"). Version `1.1.1+1`, Flutter 3.10.4, native Android (Java) modules `clientmanager`, `keymanager`, `packetmanager`, `livenessmanager`, `transliterationmanager`.
+Source reviewed (read-only): a local checkout, branch `feature/face-liveness-pad`, HEAD `9be3e309` ("Add face liveness and demo account support"). Version `1.1.1+1`, Flutter 3.10.4, native Android (Java) modules `clientmanager`, `keymanager`, `packetmanager`, `livenessmanager`, `transliterationmanager`.
 
 Nothing outside `Mosip_desktop/` was modified.
 
@@ -19,7 +19,7 @@ The existing app is **not** a consumer face-verification app. It is the **MOSIP 
 | A REST backend the UI calls directly | The Flutter UI calls **native Java over Pigeon/MethodChannels**. Java does the networking, cryptography, local DB (Room/SQLite), packet building and sync. The server requires **machine-key-signed requests from a registered machine**. |
 | Webcam capture of the face | Biometrics come from certified **SBI/MDS devices** (or Mock MDS). The phone camera is used only for the **liveness check** (CameraX) and for document scanning. The stored face is the SBI capture, not the liveness frame. |
 
-Consequence for this project: the website and desktop app can match the **flows, fields and validation** exactly, but they cannot talk to a real MOSIP server the way a browser normally would. See section 6 (open questions Q1 to Q3) for the decision this needs.
+Consequence for this project: the website and web demo can match the **flows, fields and validation** exactly, but they cannot talk to a real MOSIP server the way a browser normally would. See section 6 (open questions Q1 to Q3) for the decision this needs.
 
 ---
 
@@ -368,8 +368,8 @@ Everything else (thresholds, timeouts, lengths, URLs for help pages) is a **serv
 **Q2. How the browser website talks to MOSIP.** Login needs a registered machine's private key, sync bodies and packets are encrypted with server keys, and CORS on MOSIP internal APIs is not open to browsers.
 *Assumption:* the website's functional pages (auth, enrolment, liveness, results, settings) run in **demo mode** with a typed mock API that follows the exact contract, unless a gateway/BFF is provided. The typed client is written against the real paths so a BFF can be plugged in through `MOSIP_BASE_URL`.
 
-**Q3. How far the desktop app goes against a real server.** Electron (Node) can hold a machine key pair (in the OS keychain via `safeStorage`) and sign login requests, so **login, sync of config/master data/UI spec/users, packet status** are realistic. Building **encrypted MOSIP packets** (CBEFF biometrics, policy-key encryption, signing, packetmanager format) is a large port of `packetmanager` and is not realistic in this scope.
-*Assumption:* desktop app does real login + sync + status against a configured server, and runs registration in full UI with packet **submission mocked** (clearly labelled), behind a `PacketService` interface that can be implemented later.
+**Q3. How far the web demo goes against a real server.** Electron (Node) can hold a machine key pair (in the OS keychain via `safeStorage`) and sign login requests, so **login, sync of config/master data/UI spec/users, packet status** are realistic. Building **encrypted MOSIP packets** (CBEFF biometrics, policy-key encryption, signing, packetmanager format) is a large port of `packetmanager` and is not realistic in this scope.
+*Assumption:* the web demo does real login + sync + status against a configured server, and runs registration in full UI with packet **submission mocked** (clearly labelled), behind a `PacketService` interface that can be implemented later.
 
 **Q4. Biometric devices on desktop.** Mobile uses Android SBI intents. Desktop MOSIP SBI devices expose HTTP on localhost (`MOSIPDISC`, `MOSIPDINFO`, `CAPTURE`, `RCAPTURE`, ports 4501–4600).
 *Assumption:* desktop implements SBI discovery over localhost with a Mock MDS fallback; webcam (getUserMedia) is used **only** for the liveness step, as on mobile.

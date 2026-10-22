@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:registration_client/utils/app_config.dart';
 
-/// Design tokens and theme for the operator screens, matched to the Desktop
-/// client (`website/`, paper theme). Spec: docs/ui/design-system.md.
+/// Design tokens and theme for the operator screens, matched to the web demo
+/// (`website/`, paper theme). Spec: docs/ui/design-system.md.
 ///
 /// Widgets read colours, type, spacing, radii and motion from here instead of
 /// literals, so the whole app follows one change.

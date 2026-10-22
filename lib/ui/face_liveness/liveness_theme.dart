@@ -12,7 +12,7 @@ import 'package:registration_client/model/face_liveness_event.dart';
 class LivenessTheme {
   LivenessTheme._();
 
-  // Desktop "ink" theme (website/ :root), see docs/ui/design-system.md.
+  // Web demo "ink" theme (website/ :root), see docs/ui/design-system.md.
   static const Color background = Color(0xFF0B0B0C); // ink-0
   static const Color panel = Color(0xFF111113); // ink-1, camera panel
   static const Color ovalFill = Color(0xFF161618); // ink-2
