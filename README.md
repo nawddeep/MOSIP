@@ -25,7 +25,7 @@ Charvi Paliwal built the in-browser web demo in [website/](website/).
 | Demo video | TODO(team): demo video link |
 | Submission document | TODO(team): submission document link |
 | Test evidence | Android: [docs/liveness/12-test-evidence.md](docs/liveness/12-test-evidence.md) · Desktop: [desktop/docs/liveness/test-evidence.md](desktop/docs/liveness/test-evidence.md) |
-| Release APK | TODO(team): release link (added after the GitHub release is published) |
+| Release APK | [decode-2026-v1](https://github.com/nawddeep/MOSIP/releases/tag/decode-2026-v1): a production-like build and an evaluation build for judges (works offline) |
 | Android liveness docs | [docs/liveness/README.md](docs/liveness/README.md) |
 | Desktop liveness docs | [desktop/docs/liveness/README.md](desktop/docs/liveness/README.md) |
 | Desktop upstream comparison | [nawddeep/registration-client](https://github.com/nawddeep/registration-client) (fork of mosip/registration-client) |
