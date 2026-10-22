@@ -1,30 +1,83 @@
-# android-registration-client
+# TODO(team): project name
+
+MOSIP Decode 2026, Problem Statement 04: Face Liveness and Presentation Attack Detection for Registration and Biometric Authentication.
+
+## What we built
+
+We added face liveness and presentation attack detection to the MOSIP Registration Clients, on Android and on Desktop. A passive check (a MiniFASNet ensemble) runs first; when needed, a random active challenge (blink, smile or head turn) must be performed live. A successful check issues a single-use, short-lived pass that gates resident face capture, operator login and supervisor approval. The same engine runs on both clients. Audit events (`REG-LIV-001` to `REG-LIV-006`) go through MOSIP's own audit service, and the configuration comes from the global parameter `mosip.registration.face.liveness.config`. It works offline, adds no new database tables and shows no scores on screen.
+
+## Team
+
+Team name: TODO(team)
+
+- Navdeep Vyas ([nawddeep](https://github.com/nawddeep))
+- Pratik Kansara ([pratik-aep](https://github.com/pratik-aep))
+- Manan Ramani ([Manan-013](https://github.com/Manan-013))
+- Charvi Paliwal ([charvi11](https://github.com/charvi11))
+- Divyanshu Nagarchi ([divyanshdamami2018-web](https://github.com/divyanshdamami2018-web))
+
+Charvi Paliwal built the in-browser web demo in [website/](website/).
+
+## Quick links
+
+| What | Where |
+|---|---|
+| Demo video | TODO(team): demo video link |
+| Submission document | TODO(team): submission document link |
+| Test evidence | Android: [docs/liveness/12-test-evidence.md](docs/liveness/12-test-evidence.md) · Desktop: [desktop/docs/liveness/test-evidence.md](desktop/docs/liveness/test-evidence.md) |
+| Release APK | TODO(team): release link (added after the GitHub release is published) |
+| Android liveness docs | [docs/liveness/README.md](docs/liveness/README.md) |
+| Desktop liveness docs | [desktop/docs/liveness/README.md](desktop/docs/liveness/README.md) |
+| Desktop upstream comparison | [nawddeep/registration-client](https://github.com/nawddeep/registration-client) (fork of mosip/registration-client) |
+| Judge guide | [docs/liveness/11-judge-evaluation-guide.md](docs/liveness/11-judge-evaluation-guide.md) |
+
+## Status, honestly
+
+- CI is green for both clients: the Android liveness tests, the Flutter liveness tests and the Desktop liveness tests run on GitHub Actions.
+- Android measurements so far come from an Android 14 emulator; real-device results: see the evidence files linked above, which are still templates.
+- The Desktop client has not yet run inside a MOSIP environment (it needs one, and a Windows 10 machine with TPM 2.0); its engine, adapters, audit chain and screens were tested on their own.
+- The MiniFASNet model weights have no separate licence upstream: a known issue, see [docs/liveness/DEPENDENCIES.md](docs/liveness/DEPENDENCIES.md).
+- French and Arabic wording of the Desktop liveness strings still needs a native speaker's review: see [docs/review/desktop-liveness-translations.md](docs/review/desktop-liveness-translations.md).
 
 ## Repository layout
 
 ```
 /            Android Registration Client with face liveness
 /desktop     Desktop Registration Client (MOSIP registration-client v1.2.0.2) with face liveness
+/website     In-browser web demo (mock data, works offline)
 ```
 
 The Android client (Flutter + Java) is at the repository root. The Desktop client (Java 11, JavaFX, Maven) is in
 [desktop/](desktop/), imported as one squashed commit (the full history is in the fork linked below); its liveness documentation is
 [desktop/docs/liveness/README.md](desktop/docs/liveness/README.md). Desktop changes are made in `desktop/` in this repository.
+The web demo is in [website/](website/index.html) (see [website/README.md](website/README.md)).
 
 `desktop/` includes MOSIP's own public test fixtures (test keys, sample images) from upstream registration-client; they are not ours.
 
 Desktop upstream comparison: https://github.com/nawddeep/registration-client (fork of mosip/registration-client)
 
+## How to run
+
+Android (Flutter 3.10.4, JDK 21, Android SDK 34; details in [docs/liveness/README.md](docs/liveness/README.md)):
+
+```bash
+bash pigeon.sh                                   # pub get, build_runner, pigeon code generation
+flutter build apk --debug                        # or: flutter run
+cd android && ./gradlew :livenessmanager:testDebugUnitTest
+flutter test test/face_liveness
+```
+
+Desktop (JDK 11, Maven; details in [desktop/docs/liveness/README.md](desktop/docs/liveness/README.md)):
+
+```bash
+cd desktop/registration && mvn clean install
+```
+
+---
+
+## Upstream MOSIP developer guide (unchanged)
+
 The Android Registration Client is a tablet application that serves as a portable version of the existing desktop Registration Client. It has been developed to support accessibility on all Android devices. The creation of the Android Registration Client was driven by the need to meet the mobility requirements of countries adopting MOSIP.
-
-## Face liveness + PAD
-
-Face liveness and presentation attack detection for resident capture, operator login and supervisor approval: see [docs/liveness/README.md](docs/liveness/README.md).
-Desktop Registration Client: the integration is in [desktop/](desktop/) (see [desktop/docs/liveness/README.md](desktop/docs/liveness/README.md)); status and limits in [docs/liveness/10-desktop-derby-integration.md](docs/liveness/10-desktop-derby-integration.md).
-
-## Website and in-browser demo
-
-A landing site and in-browser demo client (mock data, works offline): open [website/index.html](website/index.html). See [website/README.md](website/README.md).
 
 # Developer Guide
 
