@@ -18,3 +18,5 @@ Everything about the Desktop client is in **[desktop/](../../desktop/)** of this
 ## What cannot be checked from this submission
 
 The running client with Mock SBI (resident pass, challenge, print/phone/replay attacks, operator login, supervisor approval, unplugged device, offline restart), timings on the demo PC, and a screen recording were **not** done. The Desktop README (`desktop/docs/liveness/README.md`) lists the steps to do them.
+
+Known limits: the Desktop client has not run inside a MOSIP environment, and the MiniFASNet model weights have no separate licence upstream (see [DEPENDENCIES.md](DEPENDENCIES.md)).

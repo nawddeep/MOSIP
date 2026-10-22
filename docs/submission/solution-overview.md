@@ -53,6 +53,7 @@ Taken from the documents; read those for detail.
 ## Limits and future work
 
 * The MiniFASNet weights have no separate licence upstream (see [DEPENDENCIES.md](../liveness/DEPENDENCIES.md)).
+* The Desktop client has not run inside a MOSIP environment (it needs one, and a Windows 10 machine with TPM 2.0); the engine, adapters, audit chain and screens were tested on their own. See [desktop/docs/liveness/README.md](../../desktop/docs/liveness/README.md).
 * French and Arabic wording of the new Desktop alert is a draft and needs native review.
 * Demo configuration: Android bundled default and the Desktop signed demo value both enable resident, operator and supervisor.
 * TODO(team): add the future-work list the team agrees on (the Android list is in [08-technical-notes.md](../liveness/08-technical-notes.md)).
