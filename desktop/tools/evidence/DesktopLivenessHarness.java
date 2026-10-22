@@ -35,7 +35,7 @@ public class DesktopLivenessHarness {
         boolean pipeMode = false;
         int width = 640;
         int height = 480;
-        int fps = 15;
+        int fps = 30;
 
         for (int i = 0; i < args.length; i++) {
             if ("--smoke".equalsIgnoreCase(args[i])) {

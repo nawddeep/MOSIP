@@ -14,7 +14,7 @@ Detected camera on this system: `"HP TrueVision HD Camera"`
 To stream frames to standard output (pipe) or file:
 ```cmd
 :: Pipe 640x480 BGR24 frames directly to DesktopLivenessHarness:
-ffmpeg -f dshow -video_size 640x480 -framerate 15 -i video="HP TrueVision HD Camera" -pix_fmt bgr24 -f rawvideo - | java -cp "tools/derby/classes;tools/derby/derby.jar;tools/derby/gson.jar" desktop.tools.evidence.DesktopLivenessHarness --pipe 640 480 15
+ffmpeg -f dshow -video_size 640x480 -framerate 30 -i video="HP TrueVision HD Camera" -pix_fmt bgr24 -f rawvideo - | java -cp "tools/derby/classes;tools/derby/derby.jar;tools/derby/gson.jar" desktop.tools.evidence.DesktopLivenessHarness --pipe 640 480 30
 ```
 
 ### macOS (AVFoundation)
