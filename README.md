@@ -11,6 +11,8 @@ The Android client (Flutter + Java) is at the repository root. The Desktop clien
 [desktop/](desktop/), imported with its history; its liveness documentation is
 [desktop/docs/liveness/README.md](desktop/docs/liveness/README.md). Desktop changes are made in `desktop/` in this repository.
 
+`desktop/` includes MOSIP's own public test fixtures (test keys, sample images) from upstream registration-client; they are not ours.
+
 Desktop upstream comparison: https://github.com/nawddeep/registration-client (fork of mosip/registration-client)
 
 The Android Registration Client is a tablet application that serves as a portable version of the existing desktop Registration Client. It has been developed to support accessibility on all Android devices. The creation of the Android Registration Client was driven by the need to meet the mobility requirements of countries adopting MOSIP.
