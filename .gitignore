@@ -88,3 +88,7 @@ app.*.map.json
 /ios/Runner/pigeon.h
 /ios/Runner/pigeon.m
 
+# Generated / local-only files
+coverage/
+CLAUDE.md
+AGENTS.md

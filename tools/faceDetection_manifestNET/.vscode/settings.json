@@ -1,4 +1,0 @@
-{
-  // Use the project's own Python (the macOS system python3 is broken on this machine).
-  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python"
-}

@@ -1,9 +1,0 @@
-# Everything needed for export, tests, evaluation, benchmark and static checks (versions verified on 2026-10-02).
--r requirements.txt
-opencv-python==4.14.0.94  # Apache-2.0; must stay < 5 (5.x removed readNetFromCaffe + CascadeClassifier)
-onnx==1.23.1              # Apache-2.0  (export validation)
-torch==2.14.1             # BSD-3       (export + upstream PyTorch parity only)
-pillow==12.3.0            # HPND        (imported by the upstream transform module)
-pytest==9.1.1             # MIT
-ruff==0.16.10             # MIT         (lint)
-pyright==1.1.414          # MIT         (type check)
