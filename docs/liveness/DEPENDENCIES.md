@@ -60,3 +60,17 @@ All are OSI-approved licences. Versions are pinned in `android/build.gradle` (`e
 |---|---|---|---|
 | ONNX Runtime (desktop Java) | 1.19.2 | MIT | real inference in `:minifasnet` tests |
 | JUnit Jupiter | 5.10.2 | EPL-2.0 | `:minifasnet` tests |
+
+## MiniFASNet weights: source and licence (read 2026-10-22)
+
+| Item | Finding |
+|---|---|
+| Where the weights come from | https://github.com/minivision-ai/Silent-Face-Anti-Spoofing (Caffe models in `models/`; its README says the open-source models are in that folder) |
+| Licence of that repository | Apache License 2.0. Read at https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/blob/master/LICENSE (GitHub also shows "Apache-2.0 license") |
+| Does it say it covers the weights? | **No.** The README (https://github.com/minivision-ai/Silent-Face-Anti-Spoofing) has no sentence about a licence, terms of use or commercial use of the weights. Weights licence not stated separately; covered only by the repository licence: **known issue** |
+| Training data | not released, origin and licence not stated |
+| ONNX export and vendored Java code we ship | https://github.com/pratik-aep/faceDetection_manifestNET @ `d0cfabe`: no licence label and no LICENSE file among its top-level files (checked 2026-10-22). Needs a LICENSE from its author |
+
+These pages were read through a web-fetch tool that summarises pages, not by cloning the repositories. Re-check the
+LICENSE files directly before release. Nothing here is legal advice; whether Apache-2.0 on the repository also covers the
+binary weights needs a legal read.
