@@ -512,14 +512,17 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
 .motion .reveal{transform:translateY(30px);opacity:0;transition:transform .9s cubic-bezier(.16,1,.3,1),opacity .9s cubic-bezier(.16,1,.3,1)}
 .motion .reveal.in{transform:none;opacity:1}
 
-/* ---------- Intro: full-viewport video hero at the very top of the landing page ----------
-   .intro is a 180svh-tall track; .intro-stage sticks to the top of the screen inside it. The intro script maps the
-   scroll through the track (0 to 80svh) to --ip (0 → 1): the stage dissolves, the landing hero (pulled up under the
-   track's last screen by the negative margin) fades and rises in, and the nav fades in. Nothing runs on a timer. */
-.intro{position:relative;z-index:2;pointer-events:none;height:180vh;height:180svh;margin-bottom:-100vh;margin-bottom:-100svh;--ip:0}
-.intro-stage{position:sticky;top:0;height:100vh;height:100dvh;overflow:hidden;background:#000;opacity:calc(1 - var(--ip));pointer-events:auto}
-.intro.is-past .intro-stage{pointer-events:none}
-.intro.is-gone .intro-stage{visibility:hidden}
+/* ---------- Intro → landing hero: one pinned stage with two stacked layers ----------
+   .stage = .stage-pin + a 150svh run of scroll. The pin sticks to the top for that run and holds Layer A (video,
+   "Memento") over Layer B (the landing hero). The intro script maps the run to p (0 → 1) and crossfades the layers
+   with opacity, blur and scale only; nothing moves vertically until the run ends and the pin scrolls away with
+   the page. Layer B stays in flow (min one screen tall), so a hero taller than the screen is never cut off. */
+.stage{position:relative}
+.stage-pin{position:sticky;top:0;min-height:100vh;min-height:100dvh;overflow:hidden;background:#000;--ip:0;--pa:0;--pb:0}
+.stage-run{height:150vh;height:150svh}
+.stage-a{position:absolute;inset:0 0 auto;height:100vh;height:100dvh;z-index:2;overflow:hidden;background:#000;opacity:calc(1 - var(--pa));transform:translateZ(0);will-change:opacity,transform,filter}
+.stage-b{z-index:1;min-height:100vh;min-height:100dvh;opacity:var(--pb);transform:translateZ(0);will-change:opacity,transform}
+.stage-pin.a-off .stage-a,.stage-pin.b-off .stage-b{visibility:hidden;pointer-events:none}
 .intro video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s var(--ease)}
 .intro video.on{opacity:1}
 .intro-scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.86) 0%,rgba(0,0,0,.5) 34%,rgba(0,0,0,.1) 66%,rgba(0,0,0,.38) 100%)}
@@ -540,10 +543,8 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
 .intro-sub{transition-delay:.1s}
 .intro-cue{transition-delay:.35s}
 .intro.is-go .intro-title .ln>span,.intro.is-go .intro-sub,.intro.is-go .intro-cue{opacity:1;transform:none}
-.hero .wrap{opacity:var(--hero-in,1)}
 @media (prefers-reduced-motion:no-preference){
-  .intro-stage{filter:blur(calc(var(--ip)*12px));transform:scale(calc(1 + var(--ip)*.04));will-change:opacity,filter,transform}
-  .hero .wrap{transform:translateY(calc((1 - var(--hero-in,1))*40px))}
+  .stage-a{filter:blur(calc(var(--pa)*12px));transform:scale(calc(1 + var(--pa)*.05)) translateZ(0)}
 }
 @media (prefers-reduced-motion:reduce){
   .intro-title .ln>span,.intro-sub,.intro-cue{transform:none;transition:opacity .4s linear}
@@ -580,57 +581,91 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
 </div>
 
 <main id="view-site" class="view" hidden>
-  <section class="intro" id="intro" aria-label="Memento">
-    <div class="intro-stage band-ink">
-      <video id="intro-video" autoplay muted playsinline preload="auto" aria-hidden="true" tabindex="-1"></video>
-      <div class="intro-scrim" aria-hidden="true"></div>
-      <div class="intro-body">
-        <div class="wrap">
-          <p class="intro-title"><span class="ln"><span>Memento</span></span></p>
-          <p class="intro-sub">Identity, registered <em>with certainty.</em></p>
+  <div class="stage" id="stage">
+    <div class="stage-pin">
+      <section class="intro stage-a band-ink" id="intro" aria-label="Memento">
+        <video id="intro-video" autoplay muted playsinline preload="auto" aria-hidden="true" tabindex="-1"></video>
+        <div class="intro-scrim" aria-hidden="true"></div>
+        <div class="intro-body">
+          <div class="wrap">
+            <p class="intro-title"><span class="ln"><span>Memento</span></span></p>
+            <p class="intro-sub">Identity, registered <em>with certainty.</em></p>
+          </div>
         </div>
-      </div>
-      <div class="intro-cue-wrap"><button type="button" class="label intro-cue" id="intro-cue" aria-label="Scroll to the main content">Scroll<span class="intro-cue-line" aria-hidden="true"></span></button></div>
+        <div class="intro-cue-wrap"><button type="button" class="label intro-cue" id="intro-cue" aria-label="Scroll to the main content">Scroll<span class="intro-cue-line" aria-hidden="true"></span></button></div>
+      </section>
+      <section class="hero band-paper stage-b" id="top" aria-labelledby="hero-h">
+        <canvas id="hero-canvas" aria-hidden="true"></canvas>
+        <div class="wrap">
+          <h1 id="hero-h"><span class="ln"><span>Identity,</span></span><span class="ln"><span>registered</span></span><span class="ln"><span><em>with certainty.</em></span></span></h1>
+          <p class="hero-sub">The registration client that operators use to enrol residents into a national ID system. It captures demographics, documents and biometrics, and checks face liveness on the device, with or without a network.</p>
+          <div class="hero-cta">
+            <a class="btn btn-primary btn-lg" href="#signin">Open the demo client <span class="arr">→</span></a>
+            <a class="btn btn-line btn-lg" href="#how">See how it works</a>
+          </div>
+          <div class="hero-meta">
+            <div><span class="label">Liveness</span><strong>Passive check, then random challenges</strong></div>
+            <div><span class="label">Runs</span><strong>On the device, offline first</strong></div>
+            <div><span class="label">Biometrics</span><strong>Fingers, iris and face via certified devices</strong></div>
+            <div><span class="label">Output</span><strong>Encrypted, machine-signed packet</strong></div>
+          </div>
+        </div>
+      </section>
     </div>
-  </section>
+    <div class="stage-run" aria-hidden="true"></div>
+  </div>
   <script>
   (function(){
     var CLIP_END_S=5;          // only the first 5 s of the clip play, on a loop
     var TEXT_WAIT_MS=3000;     // the text animates in when the video plays, or after this if it is slow
-    var HERO_FADE=[.15,.85];   // landing hero fades and rises in over this part
+    var A_FADE=[0,.75];        // Layer A (video) fades out over this part of the run
+    var B_FADE=[.3,.85];       // Layer B (landing hero) fades in over this part; .85 → 1 is a hold before the pin lets go
+    var LERP=.15;              // display smoothing per frame when Lenis is not already smoothing the scroll
     var VIDEO_SRC='intro-1080p.mp4';
 
-    var root=document.documentElement, track=document.getElementById('intro'), stage=track.firstElementChild;
+    var root=document.documentElement, stage=document.getElementById('stage'), pin=stage.firstElementChild;
     var v=document.getElementById('intro-video');
     var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var p=-1, raf=0, blocked=false, goTimer=0, frameRun=0;
+    var shown=-1, raf=0, a=0, blocked=false, goTimer=0, frameRun=0;
 
     function clamp(x){ return x<0?0:x>1?1:x; }
-    function range(){ return track.offsetHeight-stage.offsetHeight; }
-    // 0 at the top of the page, 1 once the stage has fully dissolved. 1 when the landing view is hidden.
-    function progress(){
-      if(!track.getClientRects().length) return 1;
-      var r=range(); if(r<=0) return 1;
-      return clamp(-track.getBoundingClientRect().top/r);
+    function ease(x){ x=clamp(x); return x*x*(3-2*x); }   // smoothstep
+    function seg(p,r){ return ease((p-r[0])/(r[1]-r[0])); }
+    // Read: progress through the run. 1 when the landing view is hidden.
+    function measure(){
+      if(!pin.getClientRects().length) return 1;
+      var run=stage.offsetHeight-pin.offsetHeight; if(run<=0) return 1;
+      return clamp(-stage.getBoundingClientRect().top/run);
     }
-    function update(){
-      raf=0;
-      var np=progress(); if(np===p) return; p=np;
-      track.style.setProperty('--ip',p.toFixed(4));
-      root.style.setProperty('--hero-in',clamp((p-HERO_FADE[0])/(HERO_FADE[1]-HERO_FADE[0])).toFixed(4));
-      track.classList.toggle('is-past',p>.5);
-      track.classList.toggle('is-gone',p>=1);
+    // Write: both layers from one value.
+    function paint(p){
+      a=seg(p,A_FADE); var b=seg(p,B_FADE);
+      pin.style.setProperty('--ip',p.toFixed(4));
+      pin.style.setProperty('--pa',a.toFixed(4));
+      pin.style.setProperty('--pb',b.toFixed(4));
+      pin.classList.toggle('a-off',a>=.999);
+      pin.classList.toggle('b-off',b<=.001);
+      window.mosipIntroP=p;
       playback();
+      if(window.mosipOnIntro) window.mosipOnIntro();
     }
-    function schedule(){ if(!raf) raf=requestAnimationFrame(update); }
-    // Play only while the stage is on screen; pause when it has dissolved or the tab is hidden.
+    function frame(){
+      raf=0;
+      var target=measure(), p=target;
+      // Ease toward the target only while pinned; at 0 and 1 (pin about to move) snap, so a layer never moves half-faded.
+      if(shown>=0&&target>0&&target<1&&!reduce&&!root.classList.contains('lenis')){ p=shown+(target-shown)*LERP; if(Math.abs(target-p)<.002) p=target; }
+      if(p!==shown){ shown=p; paint(p); }
+      if(shown!==target) raf=requestAnimationFrame(frame);
+    }
+    function schedule(){ if(!raf) raf=requestAnimationFrame(frame); }
+    // Play only while Layer A is visible and the tab is shown.
     function playback(){
       if(reduce||blocked||!v.getAttribute('src')) return;
-      if(p<1&&!document.hidden){ if(v.paused){ var pr=v.play(); if(pr&&pr.catch) pr.catch(function(e){ if(e&&e.name==='NotAllowedError') blocked=true; }); } }
+      if(a<.999&&!document.hidden){ if(v.paused){ var pr=v.play(); if(pr&&pr.catch) pr.catch(function(e){ if(e&&e.name==='NotAllowedError') blocked=true; }); } }
       else if(!v.paused) v.pause();
     }
     function loop(){ try{ v.currentTime=0; }catch(e){} }   // back to the start at 5 s; keeps playing
-    function go(){ clearTimeout(goTimer); track.classList.add('is-go'); }
+    function go(){ clearTimeout(goTimer); document.getElementById('intro').classList.add('is-go'); }
     function watchFrames(){
       if(!('requestVideoFrameCallback' in v)) return;
       var id=++frameRun;
@@ -638,54 +673,36 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
     }
     v.addEventListener('timeupdate',function(){ if(v.currentTime>=CLIP_END_S) loop(); });
     v.addEventListener('ended',function(){ loop(); playback(); });   // safety net only; the clip is longer than 5 s
-    v.addEventListener('play',function(){ if(p>=1||reduce) v.pause(); });   // e.g. autoplay while the landing view is hidden
+    v.addEventListener('play',function(){ if(a>=.999||reduce) v.pause(); });   // e.g. autoplay while the landing view is hidden
     v.addEventListener('playing',function(){ v.classList.add('on'); go(); });
     v.addEventListener('loadeddata',function(){ if(reduce) v.classList.add('on'); });
     document.getElementById('intro-cue').addEventListener('click',function(){
-      var y=track.getBoundingClientRect().top+window.scrollY+range();
+      var y=stage.getBoundingClientRect().top+window.scrollY+stage.offsetHeight-pin.offsetHeight;
       if(window.mosipScrollTo) window.mosipScrollTo(y); else window.scrollTo({top:y,behavior:reduce?'auto':'smooth'});
     });
     window.addEventListener('scroll',schedule,{passive:true});
     window.addEventListener('resize',schedule);
     window.addEventListener('hashchange',schedule);
-    // Re-measure when the landing view is shown or hidden by the router, or the track resizes.
-    if('ResizeObserver' in window) new ResizeObserver(schedule).observe(track);
+    if('ResizeObserver' in window) new ResizeObserver(schedule).observe(stage);   // view shown/hidden, hero resized
     window.addEventListener('load',schedule);
     document.addEventListener('visibilitychange',playback);
 
-    // Every load (and every back/forward-cache restore) starts the clip from 0.
+    // Every load (and every back/forward-cache restore) starts the clip from 0 and re-measures p without easing.
     function start(){
-      blocked=false; p=-1;
-      track.classList.remove('is-go'); v.classList.remove('on');
+      blocked=false; shown=-1;
+      document.getElementById('intro').classList.remove('is-go'); v.classList.remove('on');
       clearTimeout(goTimer); goTimer=setTimeout(go,TEXT_WAIT_MS);
       if(reduce){ v.removeAttribute('autoplay'); go(); }   // reduced motion: a still frame, no playback
       v.muted=true; v.defaultMuted=true;
       if(v.getAttribute('src')!==VIDEO_SRC) v.src=VIDEO_SRC;
       try{ v.currentTime=0; }catch(e){}
       watchFrames();
-      update();
+      cancelAnimationFrame(raf); raf=0; frame();
     }
     window.addEventListener('pageshow',function(e){ if(e.persisted) start(); });
     start();
   })();
   </script>
-  <section class="hero band-paper" id="top" aria-labelledby="hero-h">
-    <canvas id="hero-canvas" aria-hidden="true"></canvas>
-    <div class="wrap">
-      <h1 id="hero-h"><span class="ln"><span>Identity,</span></span><span class="ln"><span>registered</span></span><span class="ln"><span><em>with certainty.</em></span></span></h1>
-      <p class="hero-sub">The registration client that operators use to enrol residents into a national ID system. It captures demographics, documents and biometrics, and checks face liveness on the device, with or without a network.</p>
-      <div class="hero-cta">
-        <a class="btn btn-primary btn-lg" href="#signin">Open the demo client <span class="arr">→</span></a>
-        <a class="btn btn-line btn-lg" href="#how">See how it works</a>
-      </div>
-      <div class="hero-meta">
-        <div><span class="label">Liveness</span><strong>Passive check, then random challenges</strong></div>
-        <div><span class="label">Runs</span><strong>On the device, offline first</strong></div>
-        <div><span class="label">Biometrics</span><strong>Fingers, iris and face via certified devices</strong></div>
-        <div><span class="label">Output</span><strong>Encrypted, machine-signed packet</strong></div>
-      </div>
-    </div>
-  </section>
 
   <section class="sec band-paper" id="how" aria-labelledby="how-h">
     <div class="wrap">
@@ -2077,22 +2094,25 @@ $('#announce-x').onclick=function(){$('#announce').hidden=true;store.set('mosip-
 // Banner: hidden over the intro video, shown as the landing hero arrives, hidden again once you scroll on.
 // Bar: transparent until the landing hero has scrolled under it, then a dark backing.
 function headScrolled(){
-  var h=$('#top'), head=$('#site-head'), y=window.scrollY, onSite=!!(h&&h.offsetParent);
-  var off=onSite?h.getBoundingClientRect().top+y:0, ann=$('#announce');
+  var st=$('#stage'), head=$('#site-head'), y=window.scrollY, onSite=!!(st&&st.offsetParent);
+  // end = scroll position where the stage lets go; ip = the stage's progress (0 video … 1 landing hero)
+  var end=onSite?st.getBoundingClientRect().top+y+st.offsetHeight-st.firstElementChild.offsetHeight:0;
+  var ip=onSite&&typeof window.mosipIntroP==='number'?window.mosipIntroP:1, ann=$('#announce');
   head.style.setProperty('--announce-h',(ann.hidden?0:ann.offsetHeight)+'px');   // banner tucks away by exactly its own height
-  head.classList.toggle('scrolled',y>off+40||(onSite&&y<off*.85));
-  head.classList.toggle('solid',y>off+10);
-  // Band under the bar (the intro video counts as dark until it is half dissolved)
+  head.classList.toggle('scrolled',y>end+40||(onSite&&ip<.85));
+  head.classList.toggle('solid',y>end+10);
+  // Band under the bar (the video layer counts as dark until the hero has mostly faded in)
   var paper=false;
-  if(!(onSite&&y<off*.5)){
+  if(!(onSite&&ip<.6)){
     var mid=40+(head.querySelector('.navbar').getBoundingClientRect().top||0);
     $$('main:not([hidden]).band-ink, main:not([hidden]).band-paper, main:not([hidden]) .band-ink, main:not([hidden]) .band-paper, main:not([hidden]) .band-navy').forEach(function(b){
-      if(b.closest('.intro')) return;
+      if(b.closest('.stage-a')) return;
       var r=b.getBoundingClientRect(); if(r.top<=mid&&r.bottom>mid) paper=b.classList.contains('band-paper');
     });
   }
   head.classList.toggle('on-paper',paper);
 }
+window.mosipOnIntro=headScrolled;
 window.addEventListener('scroll',headScrolled,{passive:true});
 window.addEventListener('hashchange',function(){ requestAnimationFrame(headScrolled); });
 // Same-page section links: update the URL without the browser's instant jump to the anchor, then scroll
