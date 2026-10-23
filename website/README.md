@@ -10,7 +10,7 @@ Built by Charvi Paliwal, team member. Integrated from [CharviPaliwal/Mosip_deskt
 |---|---|
 | `index.html` | The built page: landing site plus the demo client. Open it directly in a browser. |
 | `index.src.html` | Source template. `__SPEC_JSON__` is replaced with `spec.json` at build time. |
-| `intro-1080p.mp4` | Intro video shown full screen before the page on every load; only the first 5 s play. A 1080p copy of `full16x9_4k_10s.mp4` (84 MB, not loaded by the page) made with macOS `avconvert`. |
+| `intro-1080p.mp4` | Full-screen video at the top of the landing page that dissolves as you scroll. Only the first 5 s play, on a loop. A 1080p copy of `full16x9_4k_10s.mp4` (84 MB, not loaded by the page) made with macOS `avconvert`. |
 | `spec.json` | Compact UI spec used by the demo client (extracted from the upstream build; see discovery section b3). |
 | `build.py` | Rebuilds `index.html`; `--check` verifies it is up to date and follows project rules. |
 | `vendor/` | Self-hosted Lenis smooth scrolling (MIT) and fonts Inter Tight / JetBrains Mono (OFL), with licence files. |
