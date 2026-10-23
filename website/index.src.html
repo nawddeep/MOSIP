@@ -125,15 +125,55 @@ button,input,select,textarea{font:inherit;color:inherit}
 .announce a{color:inherit;font-weight:560;text-underline-offset:3px}
 .announce .x{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:32px;height:32px;border:0;background:transparent;color:inherit;cursor:pointer;border-radius:4px;font-size:18px;line-height:1}
 .announce .x:hover{background:rgba(255,255,255,.14)}
-.site-head.scrolled .announce{margin-top:-60px;opacity:0}
-.navpill{pointer-events:auto;margin:12px auto 0;width:min(920px,calc(100% - 24px));display:flex;align-items:center;gap:6px;padding:6px 6px 6px 16px;border-radius:999px;background:color-mix(in srgb,var(--ink-1) 90%,transparent);border:1px solid rgba(245,245,247,.08);color:var(--fg-on-ink);backdrop-filter:saturate(1.2) blur(10px);-webkit-backdrop-filter:saturate(1.2) blur(10px)}
+.site-head.scrolled .announce{margin-top:calc(-1*var(--announce-h,40px));opacity:0}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:600;letter-spacing:-.02em;font-size:16px;white-space:nowrap}
 .brand svg{flex:none}
-.navlinks{display:flex;gap:2px;margin-inline:auto}
-.navlinks a{color:var(--mute-on-ink);text-decoration:none;font-size:14px;padding:8px 12px;border-radius:999px;transition:color .2s}
-.navlinks a:hover{color:var(--fg-on-ink)}
-.navpill .btn{border-radius:999px;--h:38px}
-@media (max-width:760px){.navlinks{display:none}.navpill .brand{margin-right:auto}}
+/* Nav: a full-width transparent bar (no container). Menu trigger left, wordmark centred, text links right.
+   A soft top gradient keeps it readable over the intro video; past the landing hero it gets a dark backing,
+   because the sections below include light (paper) bands. */
+.site-head::before{content:"";position:absolute;inset:0 0 auto;height:calc(100% + 56px);background:linear-gradient(rgba(0,0,0,.5),transparent);pointer-events:none;transition:opacity .3s var(--ease)}
+.site-head.solid::before,.site-head.menu-open::before{opacity:0}
+.navbar{--focus:#86A6F5;--nav-fg:var(--fg-on-ink);--nav-bg:var(--ink-0);pointer-events:auto;position:relative;display:flex;align-items:center;justify-content:space-between;gap:24px;height:80px;padding-inline:clamp(16px,4.4vw,64px);color:var(--nav-fg);transition:background-color .3s var(--ease),color .3s var(--ease)}
+.site-head.solid .navbar{background:color-mix(in srgb,var(--nav-bg) 88%,transparent)}
+/* Over a light (paper) band: dark text, paper backing, no top gradient */
+.site-head.on-paper .navbar{--nav-fg:var(--fg-on-paper);--nav-bg:var(--paper-0);--focus:#2F5FD0}
+.site-head.on-paper::before{opacity:0}
+.site-head.menu-open .navbar{--nav-fg:var(--fg-on-ink);--focus:#86A6F5}
+.site-head.menu-open .navbar{background:transparent}
+.nav-link,.nav-menu-btn{position:relative;display:inline-flex;align-items:center;font:500 13px/1 var(--f-sans);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;white-space:nowrap;color:color-mix(in srgb,var(--nav-fg) 78%,transparent);transition:color .2s var(--ease)}
+.nav-link{padding:10px 0}
+.nav-link::after{content:"";position:absolute;left:0;right:.08em;bottom:5px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .2s var(--ease)}
+.nav-link:hover,.nav-link:focus-visible,.nav-menu-btn:hover,.nav-menu-btn:focus-visible,.nav-menu-btn[aria-expanded="true"]{color:var(--nav-fg)}
+.nav-link:hover::after,.nav-link:focus-visible::after{transform:scaleX(1)}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-menu-btn{gap:14px;height:44px;padding:0;border:0;background:none;cursor:pointer}
+.nav-burger{display:grid;gap:6px;width:26px}
+.nav-burger i{display:block;width:100%;height:1.5px;background:currentColor;transform-origin:center;transition:transform .3s var(--ease),width .3s var(--ease)}
+.nav-burger i:last-child{width:58%}
+.nav-menu-btn:hover .nav-burger i:last-child{width:100%}
+.nav-menu-btn[aria-expanded="true"] .nav-burger i{width:100%}
+.nav-menu-btn[aria-expanded="true"] .nav-burger i:first-child{transform:translateY(3.75px) rotate(45deg)}
+.nav-menu-btn[aria-expanded="true"] .nav-burger i:last-child{transform:translateY(-3.75px) rotate(-45deg)}
+.nav-mark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:500 17px/1 var(--f-sans);letter-spacing:.3em;text-transform:uppercase;text-decoration:none;white-space:nowrap;color:var(--nav-fg);padding:10px 0}
+.nav-mark .dot{color:var(--blue);letter-spacing:0}
+.site-head.menu-open .announce{margin-top:calc(-1*var(--announce-h,40px));opacity:0}
+/* Menu panel: full screen, under the bar (the bar's button turns into Close) */
+.nav-panel{position:fixed;inset:0;z-index:-1;pointer-events:auto;background:var(--ink-0);display:flex;flex-direction:column;justify-content:center;padding:calc(96px + env(safe-area-inset-top,0px)) clamp(16px,4.4vw,64px) 48px;opacity:0;transition:opacity .3s var(--ease);overflow-y:auto;overscroll-behavior:contain}
+.site-head.menu-open .nav-panel{opacity:1}
+.nav-panel ol{list-style:none;margin:0;padding:0;display:grid;border-top:1px solid var(--line)}
+.nav-panel li{border-bottom:1px solid var(--line)}
+.nav-panel a{display:flex;align-items:center;gap:clamp(16px,3vw,40px);padding-block:clamp(14px,2.4vw,26px);text-decoration:none;color:var(--fg);font-size:var(--t-d2);font-weight:560;letter-spacing:-.035em;line-height:1;transform:translateY(16px);opacity:0;transition:color .2s var(--ease),transform .5s var(--ease),opacity .5s var(--ease)}
+.nav-panel a .label{min-width:2.5em}
+.nav-panel a:hover,.nav-panel a:focus-visible{color:var(--mute)}
+.site-head.menu-open .nav-panel a{transform:none;opacity:1}
+.nav-panel li:nth-child(2) a{transition-delay:.04s}.nav-panel li:nth-child(3) a{transition-delay:.08s}.nav-panel li:nth-child(4) a{transition-delay:.12s}
+html.menu-lock{overflow:hidden}
+@media (max-width:767px){.nav-links{display:none}}
+@media (max-width:400px){.nav-mark{font-size:15px;letter-spacing:.24em}.nav-menu-btn{gap:10px}}
+@media (prefers-reduced-motion:reduce){
+  .navbar,.nav-link,.nav-link::after,.nav-menu-btn,.nav-burger i,.nav-panel,.nav-panel a,.site-head::before{transition:none}
+  .nav-panel a{transform:none}
+}
 
 /* Views + transitions */
 .view{animation:viewIn .7s var(--ease) both}
@@ -513,24 +553,30 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
 }
 </style>
 
-<div class="site-head" id="site-head">
+<div class="site-head scrolled" id="site-head">
   <div class="announce" id="announce" role="region" aria-label="Announcement">
     <span>Try the registration client in your browser with demo data.</span>
     <a href="#signin">Open the demo client →</a>
     <button class="x" id="announce-x" aria-label="Dismiss announcement">×</button>
   </div>
-  <nav class="navpill" aria-label="Primary">
-    <a class="brand" href="#top" aria-label="MOSIP Registration Client home">
-      <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect x="1" y="1" width="20" height="20" fill="none" stroke="currentColor"/><rect x="6" y="6" width="10" height="10" fill="#3B6FE8"/></svg>
-      MOSIP <span class="mute" style="font-weight:450">Registration</span>
-    </a>
-    <div class="navlinks">
-      <a href="#how">How it works</a>
-      <a href="#security">Security</a>
-      <a href="#usecases">Who uses it</a>
+  <nav class="navbar" aria-label="Primary">
+    <button type="button" class="nav-menu-btn" id="nav-menu-btn" aria-expanded="false" aria-controls="nav-panel"><span class="nav-burger" aria-hidden="true"><i></i><i></i></span><span id="nav-menu-lbl">Menu</span></button>
+    <a class="nav-mark" href="#top" aria-label="Memento, back to top">Memento<span class="dot" aria-hidden="true">.</span></a>
+    <div class="nav-links">
+      <a class="nav-link" href="#how">How it works</a>
+      <a class="nav-link" href="#security">Security</a>
+      <a class="nav-link" href="#usecases">Who uses it</a>
+      <a class="nav-link" id="nav-cta" data-cta href="#signin">Sign in</a>
     </div>
-    <a class="btn btn-primary" id="nav-cta" href="#signin">Sign in</a>
   </nav>
+  <div class="nav-panel band-ink" id="nav-panel" role="dialog" aria-modal="true" aria-label="Menu" data-lenis-prevent hidden>
+    <ol>
+      <li><a href="#how"><span class="label num">01</span>How it works</a></li>
+      <li><a href="#security"><span class="label num">02</span>Security</a></li>
+      <li><a href="#usecases"><span class="label num">03</span>Who uses it</a></li>
+      <li><a href="#signin" data-cta><span class="label num">04</span><span data-cta-text>Sign in</span></a></li>
+    </ol>
+  </div>
 </div>
 
 <main id="view-site" class="view" hidden>
@@ -551,12 +597,11 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
   (function(){
     var CLIP_END_S=5;          // only the first 5 s of the clip play, on a loop
     var TEXT_WAIT_MS=3000;     // the text animates in when the video plays, or after this if it is slow
-    var HEAD_FADE=[.55,1];     // nav + banner fade in over this part of the dissolve
     var HERO_FADE=[.15,.85];   // landing hero fades and rises in over this part
     var VIDEO_SRC='intro-1080p.mp4';
 
     var root=document.documentElement, track=document.getElementById('intro'), stage=track.firstElementChild;
-    var v=document.getElementById('intro-video'), head=document.getElementById('site-head');
+    var v=document.getElementById('intro-video');
     var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var p=-1, raf=0, blocked=false, goTimer=0, frameRun=0;
 
@@ -573,9 +618,6 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
       var np=progress(); if(np===p) return; p=np;
       track.style.setProperty('--ip',p.toFixed(4));
       root.style.setProperty('--hero-in',clamp((p-HERO_FADE[0])/(HERO_FADE[1]-HERO_FADE[0])).toFixed(4));
-      var ho=clamp((p-HEAD_FADE[0])/(HEAD_FADE[1]-HEAD_FADE[0]));
-      head.style.opacity=ho<1?ho.toFixed(4):'';
-      if(ho<.5) head.setAttribute('inert',''); else head.removeAttribute('inert');
       track.classList.toggle('is-past',p>.5);
       track.classList.toggle('is-gone',p>=1);
       playback();
@@ -627,7 +669,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
     start();
   })();
   </script>
-  <section class="hero band-ink" id="top" aria-labelledby="hero-h">
+  <section class="hero band-paper" id="top" aria-labelledby="hero-h">
     <canvas id="hero-canvas" aria-hidden="true"></canvas>
     <div class="wrap">
       <h1 id="hero-h"><span class="ln"><span>Identity,</span></span><span class="ln"><span>registered</span></span><span class="ln"><span><em>with certainty.</em></span></span></h1>
@@ -992,8 +1034,9 @@ function router(){
   var h=(location.hash||'').slice(1)||'top';
   stopIdleIfLoggedOut();
   if(SITE_ANCHORS[h]){
+    // On a view switch, lenis.resize() first: Lenis still has the previous view's page height.
     var was=current; current='site'; show('view-site');
-    if(was!=='site'){ scrollTop(); setTimeout(function(){ if(window.ScrollTrigger) ScrollTrigger.refresh(); goAnchor(h,true); },60); }
+    if(was!=='site'){ scrollTop(); setTimeout(function(){ if(window.ScrollTrigger) ScrollTrigger.refresh(); if(lenis&&lenis.resize) lenis.resize(); goAnchor(h,true); },60); }
     else goAnchor(h,false);
     setNavCta(); return;
   }
@@ -1010,7 +1053,7 @@ function goAnchor(h,immediate){
   if(h==='top'){ if(lenis) lenis.scrollTo(0,{immediate:immediate}); else window.scrollTo({top:0,behavior:immediate||reduceMotion?'auto':'smooth'}); return; }
   if(lenis) lenis.scrollTo(el,{offset:-20,immediate:immediate,duration:1.2}); else el.scrollIntoView({behavior:immediate||reduceMotion?'auto':'smooth'});
 }
-function setNavCta(){ var a=$('#nav-cta'); if(S.session){a.textContent='Open client';a.href='#dashboard'}else{a.textContent='Sign in';a.href='#signin'} }
+function setNavCta(){ $$('[data-cta]').forEach(function(a){ var t=a.querySelector('[data-cta-text]')||a; t.textContent=S.session?'Open client':'Sign in'; a.href=S.session?'#dashboard':'#signin'; }); }
 
 /* ================= Sign in ================= */
 var SI = {step:1,lang:'eng',username:'',password:'',show:false,busy:false,err:'',net:false,next:null};
@@ -1969,6 +2012,7 @@ function buildHowSvg(){
 }
 function heroCanvas(){
   var cv=$('#hero-canvas'); if(!cv||!cv.getContext) return;
+  var ink=cv.parentElement.classList.contains('band-paper')?'10,10,11':'245,245,247';
   var ctx=cv.getContext('2d'), W=0,H=0,dpr=Math.min(window.devicePixelRatio||1,2), mx=-1e4, my=-1e4, tx=-1e4, run=true, raf=0, vis=true;
   function size(){ var r=cv.getBoundingClientRect(); W=r.width; H=r.height; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); if(reduceMotion) draw(0); }
   function draw(t){
@@ -1978,7 +2022,7 @@ function heroCanvas(){
       var x=i*gap+0.5, d=Math.abs(x-mx), prox=Math.max(0,1-d/220);
       var wave=0.5+0.5*Math.sin(t*0.00035+i*0.17)*Math.cos(t*0.00021+i*0.05);
       var len=H*(0.18+0.42*wave+0.25*prox*prox);
-      ctx.strokeStyle= d<gap*0.6 ? 'rgba(59,111,232,0.95)' : 'rgba(245,245,247,'+(0.05+0.09*wave+0.32*prox*prox).toFixed(3)+')';
+      ctx.strokeStyle= d<gap*0.6 ? 'rgba(59,111,232,0.95)' : 'rgba('+ink+','+(0.05+0.09*wave+0.32*prox*prox).toFixed(3)+')';
       ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x,H); ctx.lineTo(x,H-len); ctx.stroke();
     }
   }
@@ -2030,12 +2074,69 @@ function motion(){
 try{ var th=store.get('mosip-theme'); if(th==='dark'||th==='light') document.documentElement.setAttribute('data-theme',th); }catch(e){}
 if(store.get('mosip-announce')==='0') $('#announce').hidden=true;
 $('#announce-x').onclick=function(){$('#announce').hidden=true;store.set('mosip-announce','0')};
-function headScrolled(){ var h=$('#top'), off=h&&h.offsetParent?h.getBoundingClientRect().top+window.scrollY:0; $('#site-head').classList.toggle('scrolled',window.scrollY>off+40); }
+// Banner: hidden over the intro video, shown as the landing hero arrives, hidden again once you scroll on.
+// Bar: transparent until the landing hero has scrolled under it, then a dark backing.
+function headScrolled(){
+  var h=$('#top'), head=$('#site-head'), y=window.scrollY, onSite=!!(h&&h.offsetParent);
+  var off=onSite?h.getBoundingClientRect().top+y:0, ann=$('#announce');
+  head.style.setProperty('--announce-h',(ann.hidden?0:ann.offsetHeight)+'px');   // banner tucks away by exactly its own height
+  head.classList.toggle('scrolled',y>off+40||(onSite&&y<off*.85));
+  head.classList.toggle('solid',y>off+10);
+  // Band under the bar (the intro video counts as dark until it is half dissolved)
+  var paper=false;
+  if(!(onSite&&y<off*.5)){
+    var mid=40+(head.querySelector('.navbar').getBoundingClientRect().top||0);
+    $$('main:not([hidden]).band-ink, main:not([hidden]).band-paper, main:not([hidden]) .band-ink, main:not([hidden]) .band-paper, main:not([hidden]) .band-navy').forEach(function(b){
+      if(b.closest('.intro')) return;
+      var r=b.getBoundingClientRect(); if(r.top<=mid&&r.bottom>mid) paper=b.classList.contains('band-paper');
+    });
+  }
+  head.classList.toggle('on-paper',paper);
+}
 window.addEventListener('scroll',headScrolled,{passive:true});
 window.addEventListener('hashchange',function(){ requestAnimationFrame(headScrolled); });
+// Same-page section links: update the URL without the browser's instant jump to the anchor, then scroll
+// smoothly. (The instant jump left Lenis measuring from a stale position, so links stopped short.)
+document.addEventListener('click',function(e){
+  var a=e.target.closest&&e.target.closest('a[href^="#"]');
+  if(!a||e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
+  var h=a.getAttribute('href').slice(1);
+  if(current!=='site'||!SITE_ANCHORS[h]||!document.getElementById(h)) return;
+  e.preventDefault();
+  if(location.hash!=='#'+h) history.pushState(null,'','#'+h);
+  goAnchor(h,false);
+});
+window.addEventListener('resize',headScrolled);
+window.addEventListener('load',headScrolled);
+// Menu: full-screen panel under the bar. Esc or a link closes it; Tab stays inside while it is open.
+(function(){
+  var btn=$('#nav-menu-btn'), panel=$('#nav-panel'), head=$('#site-head'), lbl=$('#nav-menu-lbl'), hideT=0;
+  function isOpen(){ return btn.getAttribute('aria-expanded')==='true'; }
+  function set(open,refocus){
+    if(open===isOpen()) return;
+    clearTimeout(hideT);
+    btn.setAttribute('aria-expanded',String(open)); lbl.textContent=open?'Close':'Menu';
+    document.documentElement.classList.toggle('menu-lock',open);
+    if(lenis){ if(open) lenis.stop(); else lenis.start(); }
+    if(open){ panel.hidden=false; void panel.offsetWidth; head.classList.add('menu-open'); panel.querySelector('a').focus({preventScroll:true}); }
+    else { head.classList.remove('menu-open'); hideT=setTimeout(function(){ panel.hidden=true; },reduceMotion?0:300); if(refocus) btn.focus({preventScroll:true}); }
+  }
+  btn.addEventListener('click',function(){ set(!isOpen(),true); });
+  $$('a',panel).forEach(function(a){ a.addEventListener('click',function(){ set(false,false); }); });
+  document.addEventListener('keydown',function(e){
+    if(!isOpen()) return;
+    if(e.key==='Escape'){ e.preventDefault(); set(false,true); return; }
+    if(e.key!=='Tab') return;
+    var f=[btn].concat($$('a',panel)), i=f.indexOf(document.activeElement);
+    e.preventDefault();
+    f[i===-1?0:(i+(e.shiftKey?-1:1)+f.length)%f.length].focus();
+  });
+  window.addEventListener('hashchange',function(){ set(false,false); });
+})();
 window.mosipScrollTo=function(y){ if(lenis) lenis.scrollTo(y,{duration:1.4}); else window.scrollTo({top:y,behavior:reduceMotion?'auto':'smooth'}); };
 buildHowSvg(); heroCanvas(); howSteps(); motion();
 window.addEventListener('hashchange',router);
 router();
+requestAnimationFrame(headScrolled);
 })();
 </script>
