@@ -68,6 +68,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .btn[disabled],.btn[aria-disabled="true"]{opacity:.42;cursor:not-allowed;transform:none}
 .btn-primary{background:var(--blue);color:var(--on-blue)}
 .btn-primary:not([disabled]):hover{background:var(--blue-press)}
+.btn-navy{background:var(--navy);color:var(--fg-on-ink)}
+.btn-navy:not([disabled]):hover{background:#1B3168}
 .btn-solid{background:var(--fg);color:var(--bg)}
 .btn-solid:not([disabled]):hover{opacity:.88}
 .btn-line{border-color:var(--line-strong);background:transparent;color:var(--fg)}
@@ -125,15 +127,55 @@ button,input,select,textarea{font:inherit;color:inherit}
 .announce a{color:inherit;font-weight:560;text-underline-offset:3px}
 .announce .x{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:32px;height:32px;border:0;background:transparent;color:inherit;cursor:pointer;border-radius:4px;font-size:18px;line-height:1}
 .announce .x:hover{background:rgba(255,255,255,.14)}
-.site-head.scrolled .announce{margin-top:-60px;opacity:0}
-.navpill{pointer-events:auto;margin:12px auto 0;width:min(920px,calc(100% - 24px));display:flex;align-items:center;gap:6px;padding:6px 6px 6px 16px;border-radius:999px;background:color-mix(in srgb,var(--ink-1) 90%,transparent);border:1px solid rgba(245,245,247,.08);color:var(--fg-on-ink);backdrop-filter:saturate(1.2) blur(10px);-webkit-backdrop-filter:saturate(1.2) blur(10px)}
+.site-head.scrolled .announce{margin-top:calc(-1*var(--announce-h,40px));opacity:0}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:600;letter-spacing:-.02em;font-size:16px;white-space:nowrap}
 .brand svg{flex:none}
-.navlinks{display:flex;gap:2px;margin-inline:auto}
-.navlinks a{color:var(--mute-on-ink);text-decoration:none;font-size:14px;padding:8px 12px;border-radius:999px;transition:color .2s}
-.navlinks a:hover{color:var(--fg-on-ink)}
-.navpill .btn{border-radius:999px;--h:38px}
-@media (max-width:760px){.navlinks{display:none}.navpill .brand{margin-right:auto}}
+/* Nav: a full-width transparent bar (no container). Menu trigger left, wordmark centred, text links right.
+   A soft top gradient keeps it readable over the intro video; past the landing hero it gets a dark backing,
+   because the sections below include light (paper) bands. */
+.site-head::before{content:"";position:absolute;inset:0 0 auto;height:calc(100% + 56px);background:linear-gradient(rgba(0,0,0,.5),transparent);pointer-events:none;transition:opacity .3s var(--ease)}
+.site-head.solid::before,.site-head.menu-open::before{opacity:0}
+.navbar{--focus:#86A6F5;--nav-fg:var(--fg-on-ink);--nav-bg:var(--ink-0);pointer-events:auto;position:relative;display:flex;align-items:center;justify-content:space-between;gap:24px;height:80px;padding-inline:clamp(16px,4.4vw,64px);color:var(--nav-fg);transition:background-color .3s var(--ease),color .3s var(--ease)}
+.site-head.solid .navbar{background:color-mix(in srgb,var(--nav-bg) 88%,transparent)}
+/* Over a light (paper) band: dark text, paper backing, no top gradient */
+.site-head.on-paper .navbar{--nav-fg:var(--fg-on-paper);--nav-bg:var(--paper-0);--focus:#2F5FD0}
+.site-head.on-paper::before{opacity:0}
+.site-head.menu-open .navbar{--nav-fg:var(--fg-on-ink);--focus:#86A6F5}
+.site-head.menu-open .navbar{background:transparent}
+.nav-link,.nav-menu-btn{position:relative;display:inline-flex;align-items:center;font:500 13px/1 var(--f-sans);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;white-space:nowrap;color:color-mix(in srgb,var(--nav-fg) 78%,transparent);transition:color .2s var(--ease)}
+.nav-link{padding:10px 0}
+.nav-link::after{content:"";position:absolute;left:0;right:.08em;bottom:5px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .2s var(--ease)}
+.nav-link:hover,.nav-link:focus-visible,.nav-menu-btn:hover,.nav-menu-btn:focus-visible,.nav-menu-btn[aria-expanded="true"]{color:var(--nav-fg)}
+.nav-link:hover::after,.nav-link:focus-visible::after{transform:scaleX(1)}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-menu-btn{gap:14px;height:44px;padding:0;border:0;background:none;cursor:pointer}
+.nav-burger{display:grid;gap:6px;width:26px}
+.nav-burger i{display:block;width:100%;height:1.5px;background:currentColor;transform-origin:center;transition:transform .3s var(--ease),width .3s var(--ease)}
+.nav-burger i:last-child{width:58%}
+.nav-menu-btn:hover .nav-burger i:last-child{width:100%}
+.nav-menu-btn[aria-expanded="true"] .nav-burger i{width:100%}
+.nav-menu-btn[aria-expanded="true"] .nav-burger i:first-child{transform:translateY(3.75px) rotate(45deg)}
+.nav-menu-btn[aria-expanded="true"] .nav-burger i:last-child{transform:translateY(-3.75px) rotate(-45deg)}
+.nav-mark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:500 17px/1 var(--f-sans);letter-spacing:.3em;text-transform:uppercase;text-decoration:none;white-space:nowrap;color:var(--nav-fg);padding:10px 0}
+.nav-mark .dot{color:var(--blue);letter-spacing:0}
+.site-head.menu-open .announce{margin-top:calc(-1*var(--announce-h,40px));opacity:0}
+/* Menu panel: full screen, under the bar (the bar's button turns into Close) */
+.nav-panel{position:fixed;inset:0;z-index:-1;pointer-events:auto;background:var(--ink-0);display:flex;flex-direction:column;justify-content:center;padding:calc(96px + env(safe-area-inset-top,0px)) clamp(16px,4.4vw,64px) 48px;opacity:0;transition:opacity .3s var(--ease);overflow-y:auto;overscroll-behavior:contain}
+.site-head.menu-open .nav-panel{opacity:1}
+.nav-panel ol{list-style:none;margin:0;padding:0;display:grid;border-top:1px solid var(--line)}
+.nav-panel li{border-bottom:1px solid var(--line)}
+.nav-panel a{display:flex;align-items:center;gap:clamp(16px,3vw,40px);padding-block:clamp(14px,2.4vw,26px);text-decoration:none;color:var(--fg);font-size:var(--t-d2);font-weight:560;letter-spacing:-.035em;line-height:1;transform:translateY(16px);opacity:0;transition:color .2s var(--ease),transform .5s var(--ease),opacity .5s var(--ease)}
+.nav-panel a .label{min-width:2.5em}
+.nav-panel a:hover,.nav-panel a:focus-visible{color:var(--mute)}
+.site-head.menu-open .nav-panel a{transform:none;opacity:1}
+.nav-panel li:nth-child(2) a{transition-delay:.04s}.nav-panel li:nth-child(3) a{transition-delay:.08s}.nav-panel li:nth-child(4) a{transition-delay:.12s}
+html.menu-lock{overflow:hidden}
+@media (max-width:767px){.nav-links{display:none}}
+@media (max-width:400px){.nav-mark{font-size:15px;letter-spacing:.24em}.nav-menu-btn{gap:10px}}
+@media (prefers-reduced-motion:reduce){
+  .navbar,.nav-link,.nav-link::after,.nav-menu-btn,.nav-burger i,.nav-panel,.nav-panel a,.site-head::before{transition:none}
+  .nav-panel a{transform:none}
+}
 
 /* Views + transitions */
 .view{animation:viewIn .7s var(--ease) both}
@@ -145,7 +187,6 @@ button,input,select,textarea{font:inherit;color:inherit}
 .hero canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:.9}
 .hero::after{content:"";position:absolute;inset:auto 0 0 0;height:40%;background:linear-gradient(to bottom,transparent,var(--bg));pointer-events:none}
 .hero .wrap{position:relative;z-index:1}
-.hero-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:28px}
 .hero h1{font-size:var(--t-hero);font-weight:560;letter-spacing:-.045em;line-height:.96;max-width:13ch}
 .hero h1 .ln{display:block;overflow:hidden;padding-bottom:.04em}
 .hero h1 .ln>span{display:inline-block}
@@ -246,7 +287,6 @@ button,input,select,textarea{font:inherit;color:inherit}
 .foot ul{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
 .foot a{color:var(--mute);text-decoration:none}
 .foot a:hover{color:var(--fg)}
-.foot .base{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;color:var(--mute);font-size:13px}
 @media (max-width:760px){.foot .cols{grid-template-columns:repeat(2,minmax(0,1fr))}.foot .cols>div:first-child{grid-column:1/-1}}
 
 /* ---------- Auth pages ---------- */
@@ -472,47 +512,198 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
 .motion .hero-meta{animation-delay:.61s}
 .motion .reveal{transform:translateY(30px);opacity:0;transition:transform .9s cubic-bezier(.16,1,.3,1),opacity .9s cubic-bezier(.16,1,.3,1)}
 .motion .reveal.in{transform:none;opacity:1}
+
+/* ---------- Intro → landing hero: one pinned stage with two stacked layers ----------
+   .stage = .stage-pin + a 150svh run of scroll. The pin sticks to the top for that run and holds Layer A (video,
+   "Memento") over Layer B (the landing hero). The intro script maps the run to p (0 → 1) and crossfades the layers
+   with opacity, blur and scale only; nothing moves vertically until the run ends and the pin scrolls away with
+   the page. Layer B stays in flow (min one screen tall), so a hero taller than the screen is never cut off. */
+.stage{position:relative}
+.stage-pin{position:sticky;top:0;min-height:100vh;min-height:100dvh;overflow:hidden;background:#000;--ip:0;--pa:0;--pb:0}
+.stage-run{height:150vh;height:150svh}
+.stage-a{position:absolute;inset:0 0 auto;height:100vh;height:100dvh;z-index:2;overflow:hidden;background:#000;opacity:calc(1 - var(--pa));transform:translateZ(0);will-change:opacity,transform,filter}
+.stage-b{z-index:1;min-height:100vh;min-height:100dvh;opacity:var(--pb);transform:translateZ(0);will-change:opacity,transform}
+.stage-pin.a-off .stage-a,.stage-pin.b-off .stage-b{visibility:hidden;pointer-events:none}
+.intro video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s var(--ease)}
+.intro video.on{opacity:1}
+.intro-scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.86) 0%,rgba(0,0,0,.5) 34%,rgba(0,0,0,.1) 66%,rgba(0,0,0,.38) 100%)}
+.intro-body{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding-block:calc(64px + env(safe-area-inset-top,0px)) calc(112px + env(safe-area-inset-bottom,0px))}
+.intro-body .wrap{width:100%}
+.intro-title{font-size:clamp(64px,15vw,224px);font-weight:560;letter-spacing:-.05em;line-height:.9;color:var(--fg)}
+.intro-title .ln{display:block;overflow:hidden;padding-bottom:.05em}
+.intro-title .ln>span{display:inline-block;transform:translateY(105%);transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.intro-sub{margin-top:clamp(12px,1.8vw,22px);max-width:20ch;font-size:clamp(26px,4.4vw,64px);font-weight:560;letter-spacing:-.04em;line-height:1;text-wrap:balance;color:var(--fg)}
+.intro-sub em{font-style:normal;color:var(--mute)}
+.intro-cue-wrap{position:absolute;left:0;right:0;bottom:calc(clamp(20px,4vw,40px) + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;opacity:max(0,calc(1 - var(--ip)*10))}
+.intro-cue{display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 14px;border:0;background:none;cursor:pointer;transition-property:opacity,transform,color}
+.intro-cue:hover{color:var(--fg)}
+.intro-cue-line{position:relative;width:1px;height:44px;background:var(--line-strong);overflow:hidden}
+.intro-cue-line::after{content:"";position:absolute;left:0;top:0;width:1px;height:45%;background:var(--fg);animation:intro-cue 1.8s cubic-bezier(.65,0,.35,1) infinite}
+@keyframes intro-cue{from{transform:translateY(-100%)}to{transform:translateY(230%)}}
+.intro-sub,.intro-cue{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1),color .25s}
+.intro-sub{transition-delay:.1s}
+.intro-cue{transition-delay:.35s}
+.intro.is-go .intro-title .ln>span,.intro.is-go .intro-sub,.intro.is-go .intro-cue{opacity:1;transform:none}
+@media (prefers-reduced-motion:no-preference){
+  .stage-a{filter:blur(calc(var(--pa)*12px));transform:scale(calc(1 + var(--pa)*.05)) translateZ(0)}
+}
+@media (prefers-reduced-motion:reduce){
+  .intro-title .ln>span,.intro-sub,.intro-cue{transform:none;transition:opacity .4s linear}
+  .intro-title{opacity:0;transition:opacity .4s linear}
+  .intro.is-go .intro-title{opacity:1}
+  .intro-cue-line::after{animation:none;height:100%}
+}
 </style>
 
-<div class="site-head" id="site-head">
+<div class="site-head scrolled" id="site-head">
   <div class="announce" id="announce" role="region" aria-label="Announcement">
     <span>Try the registration client in your browser with demo data.</span>
     <a href="#signin">Open the demo client →</a>
     <button class="x" id="announce-x" aria-label="Dismiss announcement">×</button>
   </div>
-  <nav class="navpill" aria-label="Primary">
-    <a class="brand" href="#top" aria-label="MOSIP Registration Client home">
-      <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect x="1" y="1" width="20" height="20" fill="none" stroke="currentColor"/><rect x="6" y="6" width="10" height="10" fill="#3B6FE8"/></svg>
-      MOSIP <span class="mute" style="font-weight:450">Registration</span>
-    </a>
-    <div class="navlinks">
-      <a href="#how">How it works</a>
-      <a href="#security">Security</a>
-      <a href="#usecases">Who uses it</a>
+  <nav class="navbar" aria-label="Primary">
+    <button type="button" class="nav-menu-btn" id="nav-menu-btn" aria-expanded="false" aria-controls="nav-panel"><span class="nav-burger" aria-hidden="true"><i></i><i></i></span><span id="nav-menu-lbl">Menu</span></button>
+    <a class="nav-mark" href="#top" aria-label="Memento, back to top">Memento<span class="dot" aria-hidden="true">.</span></a>
+    <div class="nav-links">
+      <a class="nav-link" href="#how">How it works</a>
+      <a class="nav-link" href="#security">Security</a>
+      <a class="nav-link" href="#usecases">Who uses it</a>
+      <a class="nav-link" id="nav-cta" data-cta href="#signin">Sign in</a>
     </div>
-    <a class="btn btn-primary" id="nav-cta" href="#signin">Sign in</a>
   </nav>
+  <div class="nav-panel band-ink" id="nav-panel" role="dialog" aria-modal="true" aria-label="Menu" data-lenis-prevent hidden>
+    <ol>
+      <li><a href="#how"><span class="label num">01</span>How it works</a></li>
+      <li><a href="#security"><span class="label num">02</span>Security</a></li>
+      <li><a href="#usecases"><span class="label num">03</span>Who uses it</a></li>
+      <li><a href="#signin" data-cta><span class="label num">04</span><span data-cta-text>Sign in</span></a></li>
+    </ol>
+  </div>
 </div>
 
 <main id="view-site" class="view" hidden>
-  <section class="hero band-ink" id="top" aria-labelledby="hero-h">
-    <canvas id="hero-canvas" aria-hidden="true"></canvas>
-    <div class="wrap">
-      <div class="hero-eyebrow"><span class="sq"></span><span class="label">MOSIP Registration Client · v1.1.1</span></div>
-      <h1 id="hero-h"><span class="ln"><span>Identity,</span></span><span class="ln"><span>registered</span></span><span class="ln"><span><em>with certainty.</em></span></span></h1>
-      <p class="hero-sub">The registration client that operators use to enrol residents into a national ID system. It captures demographics, documents and biometrics, and checks face liveness on the device, with or without a network.</p>
-      <div class="hero-cta">
-        <a class="btn btn-primary btn-lg" href="#signin">Open the demo client <span class="arr">→</span></a>
-        <a class="btn btn-line btn-lg" href="#how">See how it works</a>
-      </div>
-      <div class="hero-meta">
-        <div><span class="label">Liveness</span><strong>Passive check, then random challenges</strong></div>
-        <div><span class="label">Runs</span><strong>On the device, offline first</strong></div>
-        <div><span class="label">Biometrics</span><strong>Fingers, iris and face via certified devices</strong></div>
-        <div><span class="label">Output</span><strong>Encrypted, machine-signed packet</strong></div>
-      </div>
+  <div class="stage" id="stage">
+    <div class="stage-pin">
+      <section class="intro stage-a band-ink" id="intro" aria-label="Memento">
+        <video id="intro-video" autoplay muted playsinline preload="auto" aria-hidden="true" tabindex="-1"></video>
+        <div class="intro-scrim" aria-hidden="true"></div>
+        <div class="intro-body">
+          <div class="wrap">
+            <p class="intro-title"><span class="ln"><span>Memento</span></span></p>
+            <p class="intro-sub">Identity, registered <em>with certainty.</em></p>
+          </div>
+        </div>
+        <div class="intro-cue-wrap"><button type="button" class="label intro-cue" id="intro-cue" aria-label="Scroll to the main content">Scroll<span class="intro-cue-line" aria-hidden="true"></span></button></div>
+      </section>
+      <section class="hero band-paper stage-b" id="top" aria-labelledby="hero-h">
+        <canvas id="hero-canvas" aria-hidden="true"></canvas>
+        <div class="wrap">
+          <h1 id="hero-h"><span class="ln"><span>Identity,</span></span><span class="ln"><span>registered</span></span><span class="ln"><span><em>with certainty.</em></span></span></h1>
+          <p class="hero-sub">The registration client that operators use to enrol residents into a national ID system. It captures demographics, documents and biometrics, and checks face liveness on the device, with or without a network.</p>
+          <div class="hero-cta">
+            <a class="btn btn-navy btn-lg" href="#signin">Open the demo client <span class="arr">→</span></a>
+            <a class="btn btn-line btn-lg" href="#how">See how it works</a>
+          </div>
+          <div class="hero-meta">
+            <div><span class="label">Liveness</span><strong>Passive check, then random challenges</strong></div>
+            <div><span class="label">Runs</span><strong>On the device, offline first</strong></div>
+            <div><span class="label">Biometrics</span><strong>Fingers, iris and face via certified devices</strong></div>
+            <div><span class="label">Output</span><strong>Encrypted, machine-signed packet</strong></div>
+          </div>
+        </div>
+      </section>
     </div>
-  </section>
+    <div class="stage-run" aria-hidden="true"></div>
+  </div>
+  <script>
+  (function(){
+    var CLIP_END_S=5;          // only the first 5 s of the clip play, on a loop
+    var TEXT_WAIT_MS=3000;     // the text animates in when the video plays, or after this if it is slow
+    var A_FADE=[0,.75];        // Layer A (video) fades out over this part of the run
+    var B_FADE=[.3,.85];       // Layer B (landing hero) fades in over this part; .85 → 1 is a hold before the pin lets go
+    var LERP=.15;              // display smoothing per frame when Lenis is not already smoothing the scroll
+    var VIDEO_SRC='intro-1080p.mp4';
+
+    var root=document.documentElement, stage=document.getElementById('stage'), pin=stage.firstElementChild;
+    var v=document.getElementById('intro-video');
+    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var shown=-1, raf=0, a=0, blocked=false, goTimer=0, frameRun=0;
+
+    function clamp(x){ return x<0?0:x>1?1:x; }
+    function ease(x){ x=clamp(x); return x*x*(3-2*x); }   // smoothstep
+    function seg(p,r){ return ease((p-r[0])/(r[1]-r[0])); }
+    // Read: progress through the run. 1 when the landing view is hidden.
+    function measure(){
+      if(!pin.getClientRects().length) return 1;
+      var run=stage.offsetHeight-pin.offsetHeight; if(run<=0) return 1;
+      return clamp(-stage.getBoundingClientRect().top/run);
+    }
+    // Write: both layers from one value.
+    function paint(p){
+      a=seg(p,A_FADE); var b=seg(p,B_FADE);
+      pin.style.setProperty('--ip',p.toFixed(4));
+      pin.style.setProperty('--pa',a.toFixed(4));
+      pin.style.setProperty('--pb',b.toFixed(4));
+      pin.classList.toggle('a-off',a>=.999);
+      pin.classList.toggle('b-off',b<=.001);
+      window.mosipIntroP=p;
+      playback();
+      if(window.mosipOnIntro) window.mosipOnIntro();
+    }
+    function frame(){
+      raf=0;
+      var target=measure(), p=target;
+      // Ease toward the target only while pinned; at 0 and 1 (pin about to move) snap, so a layer never moves half-faded.
+      if(shown>=0&&target>0&&target<1&&!reduce&&!root.classList.contains('lenis')){ p=shown+(target-shown)*LERP; if(Math.abs(target-p)<.002) p=target; }
+      if(p!==shown){ shown=p; paint(p); }
+      if(shown!==target) raf=requestAnimationFrame(frame);
+    }
+    function schedule(){ if(!raf) raf=requestAnimationFrame(frame); }
+    // Play only while Layer A is visible and the tab is shown.
+    function playback(){
+      if(reduce||blocked||!v.getAttribute('src')) return;
+      if(a<.999&&!document.hidden){ if(v.paused){ var pr=v.play(); if(pr&&pr.catch) pr.catch(function(e){ if(e&&e.name==='NotAllowedError') blocked=true; }); } }
+      else if(!v.paused) v.pause();
+    }
+    function loop(){ try{ v.currentTime=0; }catch(e){} }   // back to the start at 5 s; keeps playing
+    function go(){ clearTimeout(goTimer); document.getElementById('intro').classList.add('is-go'); }
+    function watchFrames(){
+      if(!('requestVideoFrameCallback' in v)) return;
+      var id=++frameRun;
+      v.requestVideoFrameCallback(function cb(now,m){ if(id!==frameRun) return; if(m.mediaTime>=CLIP_END_S-.05) loop(); v.requestVideoFrameCallback(cb); });
+    }
+    v.addEventListener('timeupdate',function(){ if(v.currentTime>=CLIP_END_S) loop(); });
+    v.addEventListener('ended',function(){ loop(); playback(); });   // safety net only; the clip is longer than 5 s
+    v.addEventListener('play',function(){ if(a>=.999||reduce) v.pause(); });   // e.g. autoplay while the landing view is hidden
+    v.addEventListener('playing',function(){ v.classList.add('on'); go(); });
+    v.addEventListener('loadeddata',function(){ if(reduce) v.classList.add('on'); });
+    document.getElementById('intro-cue').addEventListener('click',function(){
+      var y=stage.getBoundingClientRect().top+window.scrollY+stage.offsetHeight-pin.offsetHeight;
+      if(window.mosipScrollTo) window.mosipScrollTo(y); else window.scrollTo({top:y,behavior:reduce?'auto':'smooth'});
+    });
+    window.addEventListener('scroll',schedule,{passive:true});
+    window.addEventListener('resize',schedule);
+    window.addEventListener('hashchange',schedule);
+    if('ResizeObserver' in window) new ResizeObserver(schedule).observe(stage);   // view shown/hidden, hero resized
+    window.addEventListener('load',schedule);
+    document.addEventListener('visibilitychange',playback);
+
+    // Every load (and every back/forward-cache restore) starts the clip from 0 and re-measures p without easing.
+    function start(){
+      blocked=false; shown=-1;
+      document.getElementById('intro').classList.remove('is-go'); v.classList.remove('on');
+      clearTimeout(goTimer); goTimer=setTimeout(go,TEXT_WAIT_MS);
+      if(reduce){ v.removeAttribute('autoplay'); go(); }   // reduced motion: a still frame, no playback
+      v.muted=true; v.defaultMuted=true;
+      if(v.getAttribute('src')!==VIDEO_SRC) v.src=VIDEO_SRC;
+      try{ v.currentTime=0; }catch(e){}
+      watchFrames();
+      cancelAnimationFrame(raf); raf=0; frame();
+    }
+    window.addEventListener('pageshow',function(e){ if(e.persisted) start(); });
+    start();
+  })();
+  </script>
 
   <section class="sec band-paper" id="how" aria-labelledby="how-h">
     <div class="wrap">
@@ -624,14 +815,13 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
     <div class="wrap">
       <div class="cols">
         <div style="display:grid;gap:14px;align-content:start">
-          <a class="brand" href="#top"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect x="1" y="1" width="20" height="20" fill="none" stroke="currentColor"/><rect x="6" y="6" width="10" height="10" fill="#3B6FE8"/></svg>MOSIP Registration</a>
+          <a class="brand" href="#top">Memento</a>
           <p class="mute" style="max-width:36ch">Powered by MOSIP, the Modular Open Source Identity Platform.</p>
         </div>
         <div><span class="label">Product</span><ul><li><a href="#how">How it works</a></li><li><a href="#security">Security</a></li><li><a href="#usecases">Who uses it</a></li></ul></div>
         <div><span class="label">Client</span><ul><li><a href="#signin">Sign in</a></li><li><a href="#request">Request an account</a></li><li><a href="#dashboard">Dashboard</a></li></ul></div>
         <div><span class="label">Project</span><ul><li><a href="https://github.com/mosip/android-registration-client" target="_blank" rel="noopener">Source on GitHub</a></li><li><a href="https://docs.mosip.io" target="_blank" rel="noopener">MOSIP docs</a></li></ul></div>
       </div>
-      <div class="base"><span>MIT licence</span><span class="mono">mosip.registration.client · demo build</span></div>
     </div>
   </footer>
 </main>
@@ -861,8 +1051,9 @@ function router(){
   var h=(location.hash||'').slice(1)||'top';
   stopIdleIfLoggedOut();
   if(SITE_ANCHORS[h]){
+    // On a view switch, lenis.resize() first: Lenis still has the previous view's page height.
     var was=current; current='site'; show('view-site');
-    if(was!=='site'){ scrollTop(); setTimeout(function(){ if(window.ScrollTrigger) ScrollTrigger.refresh(); goAnchor(h,true); },60); }
+    if(was!=='site'){ scrollTop(); setTimeout(function(){ if(window.ScrollTrigger) ScrollTrigger.refresh(); if(lenis&&lenis.resize) lenis.resize(); goAnchor(h,true); },60); }
     else goAnchor(h,false);
     setNavCta(); return;
   }
@@ -879,7 +1070,7 @@ function goAnchor(h,immediate){
   if(h==='top'){ if(lenis) lenis.scrollTo(0,{immediate:immediate}); else window.scrollTo({top:0,behavior:immediate||reduceMotion?'auto':'smooth'}); return; }
   if(lenis) lenis.scrollTo(el,{offset:-20,immediate:immediate,duration:1.2}); else el.scrollIntoView({behavior:immediate||reduceMotion?'auto':'smooth'});
 }
-function setNavCta(){ var a=$('#nav-cta'); if(S.session){a.textContent='Open client';a.href='#dashboard'}else{a.textContent='Sign in';a.href='#signin'} }
+function setNavCta(){ $$('[data-cta]').forEach(function(a){ var t=a.querySelector('[data-cta-text]')||a; t.textContent=S.session?'Open client':'Sign in'; a.href=S.session?'#dashboard':'#signin'; }); }
 
 /* ================= Sign in ================= */
 var SI = {step:1,lang:'eng',username:'',password:'',show:false,busy:false,err:'',net:false,next:null};
@@ -904,7 +1095,7 @@ function renderSignin(){
     '<div class="actions" style="margin-top:4px"><button type="button" class="btn btn-ghost btn-sm" id="si-back">'+T.back+'</button><button type="button" class="btn btn-ghost btn-sm" id="si-forgot">'+T.forgot+'</button></div></form>';
   }
   root.innerHTML='<div class="auth"><div class="wrap grid12">'+
-    '<div class="auth-intro"><span class="label" style="display:flex;gap:10px;align-items:center"><span class="sq"></span>Registration client</span><p style="font-size:20px">'+T.welcome+'</p><h1>MOSIP Registration Client</h1><p>'+T.info+'</p>'+
+    '<div class="auth-intro"><p style="font-size:20px">'+T.welcome+'</p><h1>MOSIP Registration Client</h1><p>'+T.info+'</p>'+
     '<div class="demo-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span class="label">Demo accounts</span><div class="seg" role="group" aria-label="Network"><button type="button" data-net="1" aria-pressed="'+S.online+'">Online</button><button type="button" data-net="0" aria-pressed="'+(!S.online)+'">Offline</button></div></div>'+
     '<table><tbody><tr><td class="mono">officer01</td><td class="mute">Registration officer</td></tr><tr><td class="mono">supervisor01</td><td class="mute">Supervisor + officer</td></tr><tr><td class="mono">operator02</td><td class="mute">Operator, not onboarded</td></tr></tbody></table>'+
     '<span class="mute">Password for all: <span class="mono" style="color:var(--fg)">'+DEMO_PW+'</span>. Offline login works only after one online login in this tab, as on the device.</span></div></div>'+
@@ -1838,6 +2029,7 @@ function buildHowSvg(){
 }
 function heroCanvas(){
   var cv=$('#hero-canvas'); if(!cv||!cv.getContext) return;
+  var ink=cv.parentElement.classList.contains('band-paper')?'10,10,11':'245,245,247';
   var ctx=cv.getContext('2d'), W=0,H=0,dpr=Math.min(window.devicePixelRatio||1,2), mx=-1e4, my=-1e4, tx=-1e4, run=true, raf=0, vis=true;
   function size(){ var r=cv.getBoundingClientRect(); W=r.width; H=r.height; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); if(reduceMotion) draw(0); }
   function draw(t){
@@ -1847,7 +2039,7 @@ function heroCanvas(){
       var x=i*gap+0.5, d=Math.abs(x-mx), prox=Math.max(0,1-d/220);
       var wave=0.5+0.5*Math.sin(t*0.00035+i*0.17)*Math.cos(t*0.00021+i*0.05);
       var len=H*(0.18+0.42*wave+0.25*prox*prox);
-      ctx.strokeStyle= d<gap*0.6 ? 'rgba(59,111,232,0.95)' : 'rgba(245,245,247,'+(0.05+0.09*wave+0.32*prox*prox).toFixed(3)+')';
+      ctx.strokeStyle= d<gap*0.6 ? 'rgba(59,111,232,0.95)' : 'rgba('+ink+','+(0.05+0.09*wave+0.32*prox*prox).toFixed(3)+')';
       ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x,H); ctx.lineTo(x,H-len); ctx.stroke();
     }
   }
@@ -1899,9 +2091,72 @@ function motion(){
 try{ var th=store.get('mosip-theme'); if(th==='dark'||th==='light') document.documentElement.setAttribute('data-theme',th); }catch(e){}
 if(store.get('mosip-announce')==='0') $('#announce').hidden=true;
 $('#announce-x').onclick=function(){$('#announce').hidden=true;store.set('mosip-announce','0')};
-window.addEventListener('scroll',function(){ $('#site-head').classList.toggle('scrolled',window.scrollY>40); },{passive:true});
+// Banner: hidden over the intro video, shown as the landing hero arrives, hidden again once you scroll on.
+// Bar: transparent until the landing hero has scrolled under it, then a dark backing.
+function headScrolled(){
+  var st=$('#stage'), head=$('#site-head'), y=window.scrollY, onSite=!!(st&&st.offsetParent);
+  // end = scroll position where the stage lets go; ip = the stage's progress (0 video … 1 landing hero)
+  var end=onSite?st.getBoundingClientRect().top+y+st.offsetHeight-st.firstElementChild.offsetHeight:0;
+  var ip=onSite&&typeof window.mosipIntroP==='number'?window.mosipIntroP:1, ann=$('#announce');
+  head.style.setProperty('--announce-h',(ann.hidden?0:ann.offsetHeight)+'px');   // banner tucks away by exactly its own height
+  head.classList.toggle('scrolled',y>end+40||(onSite&&ip<.85));
+  head.classList.toggle('solid',y>end+10);
+  // Band under the bar (the video layer counts as dark until the hero has mostly faded in)
+  var paper=false;
+  if(!(onSite&&ip<.6)){
+    var mid=40+(head.querySelector('.navbar').getBoundingClientRect().top||0);
+    $$('main:not([hidden]).band-ink, main:not([hidden]).band-paper, main:not([hidden]) .band-ink, main:not([hidden]) .band-paper, main:not([hidden]) .band-navy').forEach(function(b){
+      if(b.closest('.stage-a')) return;
+      var r=b.getBoundingClientRect(); if(r.top<=mid&&r.bottom>mid) paper=b.classList.contains('band-paper');
+    });
+  }
+  head.classList.toggle('on-paper',paper);
+}
+window.mosipOnIntro=headScrolled;
+window.addEventListener('scroll',headScrolled,{passive:true});
+window.addEventListener('hashchange',function(){ requestAnimationFrame(headScrolled); });
+// Same-page section links: update the URL without the browser's instant jump to the anchor, then scroll
+// smoothly. (The instant jump left Lenis measuring from a stale position, so links stopped short.)
+document.addEventListener('click',function(e){
+  var a=e.target.closest&&e.target.closest('a[href^="#"]');
+  if(!a||e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
+  var h=a.getAttribute('href').slice(1);
+  if(current!=='site'||!SITE_ANCHORS[h]||!document.getElementById(h)) return;
+  e.preventDefault();
+  if(location.hash!=='#'+h) history.pushState(null,'','#'+h);
+  goAnchor(h,false);
+});
+window.addEventListener('resize',headScrolled);
+window.addEventListener('load',headScrolled);
+// Menu: full-screen panel under the bar. Esc or a link closes it; Tab stays inside while it is open.
+(function(){
+  var btn=$('#nav-menu-btn'), panel=$('#nav-panel'), head=$('#site-head'), lbl=$('#nav-menu-lbl'), hideT=0;
+  function isOpen(){ return btn.getAttribute('aria-expanded')==='true'; }
+  function set(open,refocus){
+    if(open===isOpen()) return;
+    clearTimeout(hideT);
+    btn.setAttribute('aria-expanded',String(open)); lbl.textContent=open?'Close':'Menu';
+    document.documentElement.classList.toggle('menu-lock',open);
+    if(lenis){ if(open) lenis.stop(); else lenis.start(); }
+    if(open){ panel.hidden=false; void panel.offsetWidth; head.classList.add('menu-open'); panel.querySelector('a').focus({preventScroll:true}); }
+    else { head.classList.remove('menu-open'); hideT=setTimeout(function(){ panel.hidden=true; },reduceMotion?0:300); if(refocus) btn.focus({preventScroll:true}); }
+  }
+  btn.addEventListener('click',function(){ set(!isOpen(),true); });
+  $$('a',panel).forEach(function(a){ a.addEventListener('click',function(){ set(false,false); }); });
+  document.addEventListener('keydown',function(e){
+    if(!isOpen()) return;
+    if(e.key==='Escape'){ e.preventDefault(); set(false,true); return; }
+    if(e.key!=='Tab') return;
+    var f=[btn].concat($$('a',panel)), i=f.indexOf(document.activeElement);
+    e.preventDefault();
+    f[i===-1?0:(i+(e.shiftKey?-1:1)+f.length)%f.length].focus();
+  });
+  window.addEventListener('hashchange',function(){ set(false,false); });
+})();
+window.mosipScrollTo=function(y){ if(lenis) lenis.scrollTo(y,{duration:1.4}); else window.scrollTo({top:y,behavior:reduceMotion?'auto':'smooth'}); };
 buildHowSvg(); heroCanvas(); howSteps(); motion();
 window.addEventListener('hashchange',router);
 router();
+requestAnimationFrame(headScrolled);
 })();
 </script>
