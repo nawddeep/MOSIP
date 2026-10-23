@@ -1,4 +1,4 @@
-# TODO(team): project name
+# Team Impala: Momento
 
 MOSIP Decode 2026, Problem Statement 04: Face Liveness and Presentation Attack Detection for Registration and Biometric Authentication.
 
