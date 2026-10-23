@@ -1,4 +1,8 @@
 <title>MOSIP Registration Client</title>
+<script>
+/* Intro: show the overlay from the first paint on every load. Without JS it stays hidden (nothing could dismiss it). */
+document.documentElement.classList.add('intro-on');
+</script>
 <link rel="stylesheet" href="vendor/fonts/fonts.css">
 <style>
 /* Layout: 12-col grid. Site = alternating ink / paper bands with a floating pill nav.
@@ -471,7 +475,155 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
 .motion .hero-meta{animation-delay:.61s}
 .motion .reveal{transform:translateY(30px);opacity:0;transition:transform .9s cubic-bezier(.16,1,.3,1),opacity .9s cubic-bezier(.16,1,.3,1)}
 .motion .reveal.in{transform:none;opacity:1}
+
+/* ---------- Intro: full-screen video before the landing page, then dissolves (no scrolling) ----------
+   <html>.intro-on = intro playing: page scroll locked, hero entrance held until the dissolve. */
+html.intro-on,html.intro-on body{overflow:hidden}
+.intro-on #view-site,.intro-on .hero h1 .ln>span,.intro-on .hero-sub,.intro-on .hero-cta,.intro-on .hero-meta{animation-play-state:paused}
+.intro{display:none}
+.intro-on .intro,.intro.is-out{display:block}
+.intro{position:fixed;inset:0;z-index:1000;background:#000;overflow:hidden;will-change:opacity,transform,filter}
+.intro.is-out{opacity:0;filter:blur(14px);transform:scale(1.04);pointer-events:none;transition:opacity var(--intro-dissolve,1s) var(--ease),filter var(--intro-dissolve,1s) var(--ease),transform var(--intro-dissolve,1s) var(--ease)}
+.intro video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s var(--ease)}
+.intro video.on{opacity:1}
+.intro-scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.86) 0%,rgba(0,0,0,.5) 34%,rgba(0,0,0,.1) 66%,rgba(0,0,0,.38) 100%)}
+.intro-body{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:calc(clamp(28px,5vw,56px) + env(safe-area-inset-bottom,0px))}
+.intro-body .wrap{width:100%}
+.intro-title{font-size:clamp(64px,15vw,224px);font-weight:560;letter-spacing:-.05em;line-height:.9;color:var(--fg)}
+.intro-title .ln{display:block;overflow:hidden;padding-bottom:.05em}
+.intro-title .ln>span{display:inline-block;transform:translateY(105%);transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.intro-sub{margin-top:clamp(12px,1.8vw,22px);max-width:20ch;font-size:clamp(26px,4.4vw,64px);font-weight:560;letter-spacing:-.04em;line-height:1;text-wrap:balance;color:var(--fg)}
+.intro-sub em{font-style:normal;color:var(--mute)}
+.intro-bar{margin-top:clamp(32px,5vw,64px);display:flex;align-items:center;gap:clamp(12px,2vw,20px)}
+.intro-track{flex:1;min-width:40px;background:var(--line-strong)}
+.intro-track i{position:absolute;inset:0;background:var(--blue);transform:scaleX(0);transform-origin:left}
+.intro-skip{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border:1px solid var(--line-strong);border-radius:var(--r);background:rgba(0,0,0,.25);color:var(--fg);cursor:pointer;transition:border-color .25s var(--ease)}
+.intro-skip:hover{border-color:var(--fg)}
+/* Title and sub-heading are fully in by ~0.6 s after playback starts. */
+.intro-sub,.intro-bar{opacity:0;transform:translateY(24px);transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .5s cubic-bezier(.16,1,.3,1)}
+.intro-sub{transition-delay:.1s}
+.intro-bar{transition-delay:.18s}
+.intro.is-go .intro-title .ln>span,.intro.is-go .intro-sub,.intro.is-go .intro-bar{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .intro-title .ln>span{transform:none}
+  .intro-title,.intro-sub,.intro-bar{transition:opacity .4s linear;transform:none}
+  .intro-title{opacity:0}
+  .intro.is-go .intro-title{opacity:1}
+  .intro.is-out{filter:none;transform:none;transition:opacity var(--intro-dissolve,.5s) linear}
+}
 </style>
+
+<div class="intro band-ink" id="intro" role="dialog" aria-modal="true" aria-label="Memento intro" data-lenis-prevent>
+  <video id="intro-video" autoplay muted playsinline preload="auto" aria-hidden="true" tabindex="-1"></video>
+  <div class="intro-scrim" aria-hidden="true"></div>
+  <div class="intro-body">
+    <div class="wrap">
+      <p class="intro-title"><span class="ln"><span>Memento</span></span></p>
+      <p class="intro-sub">Identity, registered <em>with certainty.</em></p>
+      <div class="intro-bar">
+        <span class="label num" id="intro-time">00:00</span>
+        <div class="rule intro-track" aria-hidden="true"><i id="intro-fill"></i></div>
+        <button type="button" class="label intro-skip" id="intro-skip">Skip <span aria-hidden="true">→</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var INTRO_DURATION_MS=5000;   // whole intro, from playback start to the end of the dissolve
+  var DISSOLVE_MS=1000;         // fade + blur + scale-up at the end of the intro
+  var LOAD_WAIT_MS=3000;        // video not playing by then (slow network): run the intro without it
+  var REDUCED_DURATION_MS=1800, REDUCED_DISSOLVE_MS=500;  // prefers-reduced-motion: text only, short cross-fade
+  var VIDEO_SRC='intro-1080p.mp4';
+
+  var root=document.documentElement, el=document.getElementById('intro');
+  var v=document.getElementById('intro-video'), fill=document.getElementById('intro-fill'), time=document.getElementById('intro-time');
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Per-run state; start() resets it so a back/forward-cache restore plays the intro again.
+  var run=0, started=false, dissolving=false, finished=false, t0=0, total=INTRO_DURATION_MS, dissolveMs=DISSOLVE_MS, dissolveAt=0, timers=[], raf=0, inerted=[];
+
+  function later(fn,ms){ var r=run; timers.push(setTimeout(function(){ if(r===run) fn(); },ms)); }
+  function clearTimers(){ timers.forEach(clearTimeout); timers=[]; cancelAnimationFrame(raf); }
+  function fmt(s){ s=Math.max(0,Math.floor(s)); return '00:'+(s<10?'0':'')+s; }
+  function tick(){
+    var t=performance.now()-t0;
+    fill.style.transform='scaleX('+Math.min(1,t/total).toFixed(4)+')'; time.textContent=fmt(t/1000);
+    raf=requestAnimationFrame(tick);
+  }
+  // Keep the page behind the intro out of reach of keyboard and screen readers.
+  function setInert(on){
+    if(on){ Array.prototype.forEach.call(document.body.children,function(c){ if(c!==el&&!/^(SCRIPT|STYLE|LINK)$/.test(c.tagName)&&!c.hasAttribute('inert')){ c.setAttribute('inert',''); inerted.push(c); } }); }
+    else { inerted.forEach(function(c){ c.removeAttribute('inert'); }); inerted=[]; }
+  }
+  // Starts the timeline: text in, dissolve at (ms - dms), finishIntro at ms.
+  function begin(ms,dms){
+    if(started||finished) return; started=true;
+    total=ms; dissolveMs=dms; t0=performance.now();
+    el.style.setProperty('--intro-dissolve',dms+'ms');
+    el.classList.add('is-go'); raf=requestAnimationFrame(tick);
+    later(dissolve,ms-dms);
+    later(finishIntro,ms);   // fallback end if the video stalls or timeupdate is late
+  }
+  function dissolve(){
+    if(dissolving) return; dissolving=true; dissolveAt=performance.now();
+    el.classList.add('is-out');
+    root.classList.remove('intro-on');   // restores scroll and lets the hero entrance play
+    setInert(false);
+  }
+  // Runs once per intro, whichever trigger comes first (timeupdate, timer, Skip, ended).
+  function finishIntro(){
+    if(finished) return; finished=true;
+    dissolve(); clearTimers();
+    try{ v.pause(); }catch(e){}
+    var left=Math.max(0,dissolveMs-(performance.now()-dissolveAt)), r=run;
+    setTimeout(function(){
+      if(r!==run) return;
+      try{ v.removeAttribute('src'); v.load(); }catch(e){}
+      if(el.parentNode) el.parentNode.removeChild(el);
+    },left);
+  }
+  function skip(){
+    if(dissolving) return;
+    clearTimers();
+    if(!started){ dissolveMs=reduce?REDUCED_DISSOLVE_MS:DISSOLVE_MS; el.style.setProperty('--intro-dissolve',dissolveMs+'ms'); }
+    dissolve(); later(finishIntro,dissolveMs);
+  }
+  function fallback(){ begin(reduce?REDUCED_DURATION_MS:INTRO_DURATION_MS,reduce?REDUCED_DISSOLVE_MS:DISSOLVE_MS); }
+
+  v.addEventListener('playing',function(){ if(finished) return; v.classList.add('on'); begin(INTRO_DURATION_MS,DISSOLVE_MS); });
+  v.addEventListener('timeupdate',function(){
+    if(!started||finished) return;
+    if(v.currentTime>=(INTRO_DURATION_MS-DISSOLVE_MS)/1000) dissolve();
+    if(v.currentTime>=INTRO_DURATION_MS/1000) finishIntro();   // only the first 5 s of the clip play
+  });
+  v.addEventListener('ended',finishIntro);
+  v.addEventListener('error',function(){ if(v.getAttribute('src')) fallback(); });
+  document.getElementById('intro-skip').addEventListener('click',skip);
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&el.parentNode&&!dissolving) skip(); });
+
+  function start(){
+    run++; clearTimers();
+    started=dissolving=finished=false; dissolveAt=0;
+    el.classList.remove('is-go','is-out'); el.style.setProperty('--intro-dissolve',(reduce?REDUCED_DISSOLVE_MS:DISSOLVE_MS)+'ms');
+    fill.style.transform='scaleX(0)'; time.textContent='00:00';
+    if(!el.parentNode) document.body.insertBefore(el,document.body.firstChild);
+    root.classList.add('intro-on');
+    var r=run;
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ if(r===run&&!dissolving) setInert(true); },{once:true});
+    else setInert(true);
+    v.classList.remove('on');
+    if(reduce){ fallback(); return; }   // no video under reduced motion
+    v.muted=true; v.defaultMuted=true;
+    if(v.getAttribute('src')!==VIDEO_SRC) v.src=VIDEO_SRC;
+    try{ v.currentTime=0; }catch(e){}
+    later(fallback,LOAD_WAIT_MS);
+    var p; try{ p=v.play(); }catch(e){ fallback(); }
+    if(p&&p.catch) p.catch(function(){ if(r===run&&v.paused) fallback(); });   // autoplay blocked: text + timer
+  }
+  window.addEventListener('pageshow',function(e){ if(e.persisted) start(); });
+  start();
+})();
+</script>
 
 <div class="site-head" id="site-head">
   <div class="announce" id="announce" role="region" aria-label="Announcement">
