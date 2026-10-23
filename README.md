@@ -8,7 +8,7 @@ We added face liveness and presentation attack detection to the MOSIP Registrati
 
 ## Team
 
-Team name: TODO(team)
+Team Impala: 
 
 - Navdeep Vyas ([nawddeep](https://github.com/nawddeep))
 - Pratik Kansara ([pratik-aep](https://github.com/pratik-aep))
