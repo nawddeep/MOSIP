@@ -1095,7 +1095,7 @@ function renderSignin(){
     '<div class="actions" style="margin-top:4px"><button type="button" class="btn btn-ghost btn-sm" id="si-back">'+T.back+'</button><button type="button" class="btn btn-ghost btn-sm" id="si-forgot">'+T.forgot+'</button></div></form>';
   }
   root.innerHTML='<div class="auth"><div class="wrap grid12">'+
-    '<div class="auth-intro"><span class="label" style="display:flex;gap:10px;align-items:center"><span class="sq"></span>Registration client</span><p style="font-size:20px">'+T.welcome+'</p><h1>MOSIP Registration Client</h1><p>'+T.info+'</p>'+
+    '<div class="auth-intro"><p style="font-size:20px">'+T.welcome+'</p><h1>MOSIP Registration Client</h1><p>'+T.info+'</p>'+
     '<div class="demo-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span class="label">Demo accounts</span><div class="seg" role="group" aria-label="Network"><button type="button" data-net="1" aria-pressed="'+S.online+'">Online</button><button type="button" data-net="0" aria-pressed="'+(!S.online)+'">Offline</button></div></div>'+
     '<table><tbody><tr><td class="mono">officer01</td><td class="mute">Registration officer</td></tr><tr><td class="mono">supervisor01</td><td class="mute">Supervisor + officer</td></tr><tr><td class="mono">operator02</td><td class="mute">Operator, not onboarded</td></tr></tbody></table>'+
     '<span class="mute">Password for all: <span class="mono" style="color:var(--fg)">'+DEMO_PW+'</span>. Offline login works only after one online login in this tab, as on the device.</span></div></div>'+
