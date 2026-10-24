@@ -24,6 +24,7 @@ Charvi Paliwal built the in-browser web demo in https://memento-mosip-registrati
 |---|---|
 | Demo video | Team Impala : demo video link |
 | Submission document | Team Impala: submission document link |
+| Test recordings | [Test_Recording - Android app & website (Google Drive)](https://drive.google.com/drive/folders/1sS7vi-nFq0Z8lqwoh-1rxfwm4llc6EbS) |
 | Test evidence | Android: [docs/liveness/12-test-evidence.md](docs/liveness/12-test-evidence.md) · Desktop: [desktop/docs/liveness/test-evidence.md](desktop/docs/liveness/test-evidence.md) |
 | Release APK | [decode-2026-v1](https://github.com/nawddeep/MOSIP/releases/tag/decode-2026-v1): a production-like build and an evaluation build for judges (works offline) |
 | Android liveness docs | [docs/liveness/README.md](docs/liveness/README.md) |
@@ -188,6 +189,20 @@ If you encounter any issues or have any questions, please open an issue on the [
 
 * [Flutter- Get started: Install](https://flutter.dev/docs/get-started/install)
 * [Android Studio- Download](https://developer.android.com/studio)
+
+---
+
+## Test Recordings
+
+Screen-recorded test sessions for both the **Android app** and the **website demo** are available on Google Drive:
+
+> 📹 **[Test_Recording – Google Drive](https://drive.google.com/drive/folders/1sS7vi-nFq0Z8lqwoh-1rxfwm4llc6EbS)**
+
+The folder contains:
+- **Android app recordings** — end-to-end liveness flow tested on real devices (passive check, active blink/smile/head-turn challenge, operator login, resident face capture, supervisor approval).
+- **Website demo recordings** — in-browser demo ([website/](website/)) showing the same liveness engine running fully offline in a browser.
+
+All recordings were captured by **Divyanshu Nagarchi** ([divyanshdamami2018-web](https://github.com/divyanshdamami2018-web)) on **2026-10-24** as part of the final submission for MOSIP Decode 2026.
 
 ---
 
