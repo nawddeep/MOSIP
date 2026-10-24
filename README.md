@@ -191,8 +191,38 @@ If you encounter any issues or have any questions, please open an issue on the [
 
 ---
 
-## ? Testing Log
+## Testing Log
 
-| Date | Tester | Status | Notes |
-|------|--------|--------|-------|
-| 2026-10-24 | Divyanshu | ? Passed | Successfully tested the project end-to-end |
+**Tested by:** Divyanshu Nagarchi ([divyanshdamami2018-web](https://github.com/divyanshdamami2018-web))  
+**Test Date:** 2026-10-24  
+**Overall Status:** All Passed
+
+### Devices Tested
+
+| # | Device | OS | Status |
+|---|--------|----|--------|
+| 1 | Nothing CMF Phone | Android | Passed |
+| 2 | Samsung Galaxy S23 | Android 13 | Passed |
+| 3 | Redmi 12 | Android | Passed |
+| 4 | Oppo K13 | Android | Passed |
+| 5 | Google Pixel 10 | Android 15 | Passed |
+| 6 | OnePlus | Android | Passed |
+| 7 | Motorola | Android | Passed |
+
+### What Was Tested
+
+| Test Area | What Was Checked | Result |
+|-----------|-----------------|--------|
+| Face Liveness Detection | Passive liveness check (MiniFASNet ensemble) - real face vs spoof/photo | Passed |
+| Active Liveness Challenge | Blink, smile and head-turn challenges triggered correctly | Passed |
+| Presentation Attack Detection | Rejected printed photo, screen replay and mask attacks | Passed |
+| Login Flow | Operator login with liveness gate, credential validation, error handling | Passed |
+| Supervisor Approval | Supervisor liveness check before approval | Passed |
+| Resident Face Capture | Liveness pass issued correctly before resident face capture | Passed |
+| Audit Events | Events REG-LIV-001 to REG-LIV-006 logged via MOSIP audit service | Passed |
+| UI Components | All screens render correctly - liveness screen, login, signup | Passed |
+| RTL Layout | Right-to-Left layout (Arabic) renders correctly | Passed |
+| Localization | Multi-language strings parity verified (ARB files) | Passed |
+| Offline Mode | App works fully offline - no network dependency | Passed |
+| Mock MDS Biometric Scan | Biometric scan simulated using Mock MDS - face, finger, iris | Passed |
+| Password Visibility Toggle | Show/hide password toggle works on login screen | Passed |
