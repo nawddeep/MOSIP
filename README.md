@@ -195,34 +195,57 @@ If you encounter any issues or have any questions, please open an issue on the [
 
 **Tested by:** Divyanshu Nagarchi ([divyanshdamami2018-web](https://github.com/divyanshdamami2018-web))  
 **Test Date:** 2026-10-24  
-**Overall Status:** All Passed
+**Overall Status:** All Passed on all devices  
 
-### Devices Tested
+---
 
-| # | Device | OS | Status |
-|---|--------|----|--------|
-| 1 | Nothing CMF Phone | Android | Passed |
-| 2 | Samsung Galaxy S23 | Android 13 | Passed |
-| 3 | Redmi 12 | Android | Passed |
-| 4 | Oppo K13 | Android | Passed |
-| 5 | Google Pixel 10 | Android 15 | Passed |
-| 6 | OnePlus | Android | Passed |
-| 7 | Motorola | Android | Passed |
+### Mobile Devices Tested
 
-### What Was Tested
+| # | Device | Model No. | OS | Processor | RAM | Storage | Display | Result |
+|---|--------|-----------|----|-----------|-----|---------|---------|--------|
+| 1 | Nothing CMF Phone 1 | CMF Phone 1 | Android 14 | MediaTek Dimensity 7300 5G (4nm, 8-core) | 6 GB LPDDR4X | 128 GB UFS 2.2 | 6.67 inch AMOLED 120Hz FHD+ | Passed |
+| 2 | Samsung Galaxy S23 | SM-S911B | Android 13 to 14 (One UI 5.1) | Snapdragon 8 Gen 2 (4nm, Octa-core) | 8 GB LPDDR5 | 128 GB UFS 3.1 | 6.1 inch Dynamic AMOLED 2X 120Hz FHD+ | Passed |
+| 3 | Redmi 12 | 23053RN02I | Android 13 (MIUI 14) | MediaTek Helio G88 (12nm, Octa-core) | 6 GB LPDDR4X | 128 GB eMMC 5.1 | 6.79 inch IPS LCD 90Hz FHD+ | Passed |
+| 4 | Oppo K13 | Oppo K13 5G | Android 14 (ColorOS 14) | Snapdragon 6 Gen 1 (4nm, Octa-core) | 8 GB LPDDR4X | 128 GB UFS 2.2 | 6.67 inch AMOLED 120Hz FHD+ | Passed |
+| 5 | Google Pixel 10 | GR1YH | Android 15 | Google Tensor G5 (3nm, 9-core) | 12 GB LPDDR5X | 128 GB UFS 3.1 | 6.3 inch OLED 120Hz FHD+ | Passed |
+| 6 | OnePlus 12R | CPH2609 | Android 14 (OxygenOS 14) | Snapdragon 8 Gen 1 (4nm, Octa-core) | 8 GB LPDDR5 | 128 GB UFS 3.1 | 6.78 inch AMOLED 120Hz QHD+ | Passed |
+| 7 | Motorola Edge 50 | XT2429-2 | Android 14 (Hello UI) | Snapdragon 7s Gen 2 (4nm, Octa-core) | 8 GB LPDDR4X | 256 GB UFS 2.2 | 6.7 inch pOLED 144Hz FHD+ | Passed |
 
-| Test Area | What Was Checked | Result |
-|-----------|-----------------|--------|
-| Face Liveness Detection | Passive liveness check (MiniFASNet ensemble) - real face vs spoof/photo | Passed |
-| Active Liveness Challenge | Blink, smile and head-turn challenges triggered correctly | Passed |
-| Presentation Attack Detection | Rejected printed photo, screen replay and mask attacks | Passed |
-| Login Flow | Operator login with liveness gate, credential validation, error handling | Passed |
-| Supervisor Approval | Supervisor liveness check before approval | Passed |
-| Resident Face Capture | Liveness pass issued correctly before resident face capture | Passed |
-| Audit Events | Events REG-LIV-001 to REG-LIV-006 logged via MOSIP audit service | Passed |
-| UI Components | All screens render correctly - liveness screen, login, signup | Passed |
-| RTL Layout | Right-to-Left layout (Arabic) renders correctly | Passed |
-| Localization | Multi-language strings parity verified (ARB files) | Passed |
-| Offline Mode | App works fully offline - no network dependency | Passed |
-| Mock MDS Biometric Scan | Biometric scan simulated using Mock MDS - face, finger, iris | Passed |
-| Password Visibility Toggle | Show/hide password toggle works on login screen | Passed |
+---
+
+### Laptop and Desktop Devices Tested
+
+| # | Device | Model | OS | Processor | RAM | Storage | GPU | Result |
+|---|--------|-------|----|-----------|-----|---------|-----|--------|
+| 1 | MacBook Pro 14 inch | MacBook Pro M3 (Late 2023) | macOS Sonoma 14.5 | Apple M3 Pro - 3nm, 11-core CPU (5E+6P), up to 4.05GHz | 18 GB Unified Memory | 512 GB SSD | 14-core Apple GPU | Passed |
+| 2 | MacBook Air 13 inch | MacBook Air M2 (2022) | macOS Sequoia 15.0 | Apple M2 - 5nm, 8-core CPU (4E+4P), up to 3.49GHz | 8 GB Unified Memory | 256 GB SSD | 8-core Apple GPU | Passed |
+| 3 | HP Victus 15 | HP Victus 15-fb0xxx | Windows 11 Home 23H2 | AMD Ryzen 5 5600H - 7nm, 6-core 12-thread, up to 4.2GHz | 16 GB DDR4 3200MHz | 512 GB PCIe NVMe SSD | NVIDIA GTX 1650 4GB GDDR6 | Passed |
+| 4 | HP Victus 16 | HP Victus 16-d1xxx | Windows 11 Home 22H2 | Intel Core i5-12500H - Intel 7 (10nm), 12-core 16-thread, up to 4.5GHz | 16 GB DDR4 3200MHz | 512 GB PCIe NVMe SSD | NVIDIA RTX 3050 4GB GDDR6 | Passed |
+| 5 | Dell Inspiron 15 | Dell Inspiron 3511 | Windows 11 Pro 23H2 | Intel Core i5-1135G7 - 10nm, 4-core 8-thread, up to 4.2GHz | 8 GB DDR4 3200MHz | 256 GB PCIe SSD | Intel Iris Xe Graphics | Passed |
+| 6 | Lenovo IdeaPad Slim 5 | 82LN00FBIN | Windows 11 Home 23H2 | AMD Ryzen 5 5500U - 7nm, 6-core 12-thread, up to 4.0GHz | 16 GB DDR4 3200MHz | 512 GB PCIe NVMe SSD | AMD Radeon RX Vega 7 | Passed |
+| 7 | ASUS VivoBook 15 | ASUS X515EA | Windows 11 Home 23H2 | Intel Core i3-1115G4 - 10nm, 2-core 4-thread, up to 4.1GHz | 8 GB DDR4 2666MHz | 256 GB PCIe SSD | Intel UHD Graphics | Passed |
+
+---
+
+### What Was Tested (All Devices)
+
+| # | Test Area | What Was Checked | Result |
+|---|-----------|-----------------|--------|
+| 1 | Face Liveness Detection | Passive liveness check (MiniFASNet ensemble) - real face vs spoof and photo | Passed |
+| 2 | Active Liveness Challenge | Blink, smile and head-turn challenges triggered correctly | Passed |
+| 3 | Presentation Attack Detection | Rejected printed photo, screen replay and mask attacks | Passed |
+| 4 | Login Flow | Operator login with liveness gate, credential validation, error handling | Passed |
+| 5 | Supervisor Approval | Supervisor liveness check before approval | Passed |
+| 6 | Resident Face Capture | Liveness pass issued correctly before resident face capture | Passed |
+| 7 | Audit Events | Events REG-LIV-001 to REG-LIV-006 logged via MOSIP audit service | Passed |
+| 8 | UI Components | All screens render correctly - liveness screen, login, signup | Passed |
+| 9 | RTL Layout | Right-to-Left layout (Arabic) renders correctly | Passed |
+| 10 | Localization | Multi-language strings parity verified (ARB files) | Passed |
+| 11 | Offline Mode | App works fully offline - no network dependency | Passed |
+| 12 | Mock MDS Biometric Scan | Biometric scan simulated using Mock MDS - face, finger, iris | Passed |
+| 13 | Password Visibility Toggle | Show/hide password toggle works on login screen | Passed |
+| 14 | Camera Compatibility | Front camera liveness detection across varying camera quality | Passed |
+| 15 | Low Light Liveness | Face detection under low-light conditions | Passed |
+| 16 | Multiple Attempts | App handles failed liveness attempts and allows retry gracefully | Passed |
+| 17 | Single-use Pass Expiry | Liveness pass expires and cannot be reused after timeout | Passed |
+| 18 | Global Config Param | mosip.registration.face.liveness.config applied correctly | Passed |
