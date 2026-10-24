@@ -16,7 +16,7 @@ Team Impala:
 - Charvi Paliwal ([charvi11](https://github.com/charvi11))
 - Divyanshu Nagarchi ([divyanshdamami2018-web](https://github.com/divyanshdamami2018-web))
 
-Charvi Paliwal built the in-browser web demo in [website/](website/).
+Charvi Paliwal built the in-browser web demo in https://memento-mosip-registration-client.vercel.app.
 
 ## Quick links
 
