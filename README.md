@@ -188,3 +188,11 @@ If you encounter any issues or have any questions, please open an issue on the [
 
 * [Flutter- Get started: Install](https://flutter.dev/docs/get-started/install)
 * [Android Studio- Download](https://developer.android.com/studio)
+
+---
+
+## ? Testing Log
+
+| Date | Tester | Status | Notes |
+|------|--------|--------|-------|
+| 2026-10-24 | Divyanshu | ? Passed | Successfully tested the project end-to-end |
