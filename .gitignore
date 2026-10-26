@@ -92,3 +92,7 @@ app.*.map.json
 coverage/
 CLAUDE.md
 AGENTS.md
+
+# Internal task document and the 4K website video (kept out of the repository)
+Desktop Liveness Derby*.pdf
+website/full16x9_4k_10s.mp4

@@ -57,7 +57,9 @@ CI runs the Android, `test/face_liveness` and both Desktop commands. `test/ui` i
 
 ## Failures and skips
 
-No test failed. Six were skipped, all `GoldenSamplesTest` (3 in `android/minifasnet`, 3 in `registration-liveness-core`): they compare scores on the upstream sample photos and skip with "samples not provided (`-PminifasnetSamples`)". The photos are not in the repository.
+No test failed. **Six tests were skipped and are not evidence of anything**: all are `GoldenSamplesTest` (3 in `android/minifasnet`, 3 in `registration-liveness-core`), skipped with "samples not provided (`-PminifasnetSamples`)".
+
+What they would verify: that our Java implementation of the passive PAD model reproduces the scores of upstream's reference implementation on three sample photos from the upstream Silent-Face-Anti-Spoofing project (one genuine face and two spoof images), within a tolerance of 0.02. They check that the Java port matches the reference. They do not measure detection accuracy. The photos are not in this repository (faces are kept out of git); to run them, put `image_T1.jpg`, `image_F1.jpg` and `image_F2.jpg` in a folder and pass `-PminifasnetSamples=<folder>`.
 
 ## Not covered by this run
 
