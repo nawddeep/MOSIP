@@ -31,6 +31,7 @@ Charvi Paliwal built the in-browser web demo in https://memento-mosip-registrati
 | Desktop liveness docs | [desktop/docs/liveness/README.md](desktop/docs/liveness/README.md) |
 | Desktop upstream comparison | [nawddeep/registration-client](https://github.com/nawddeep/registration-client) (fork of mosip/registration-client) |
 | Judge guide | [docs/liveness/11-judge-evaluation-guide.md](docs/liveness/11-judge-evaluation-guide.md) |
+| API documentation | [docs/API.md](docs/API.md) |
 
 ## Status, honestly
 
