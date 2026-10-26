@@ -36,6 +36,7 @@ Charvi Paliwal built the in-browser web demo in https://memento-mosip-registrati
 ## Status, honestly
 
 - CI is green for both clients: the Android liveness tests, the Flutter liveness tests and the Desktop liveness tests run on GitHub Actions.
+- Automated test results (361 passed, 0 failed, 6 skipped): [docs/test-results/summary.md](docs/test-results/summary.md).
 - Android measurements so far come from an Android 14 emulator; real-device results: see the evidence files linked above, which are still templates.
 - The Desktop client has not yet run inside a MOSIP environment (it needs one, and a Windows 10 machine with TPM 2.0); its engine, adapters, audit chain and screens were tested on their own.
 - The MiniFASNet model weights have no separate licence upstream: a known issue, see [docs/liveness/DEPENDENCIES.md](docs/liveness/DEPENDENCIES.md).
