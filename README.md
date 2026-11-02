@@ -1,4 +1,4 @@
-# Team Impala: Momento
+# Team Impala: Memento
 
 MOSIP Decode 2026, Problem Statement 04: Face Liveness and Presentation Attack Detection for Registration and Biometric Authentication.
 
